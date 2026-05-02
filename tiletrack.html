@@ -150,21 +150,19 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 /* MODAL */
 .modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:200;}
 
-/* VOICE */
-.voice-bar{display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:14px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--brd);}
-.mic-btn{width:48px;height:48px;border-radius:50%;background:var(--g);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:all 0.2s;}
-.mic-btn.rec{background:var(--r);animation:micpulse 1s infinite;}
-.mic-btn.processing{background:var(--a);}
-@keyframes micpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
-.voice-info{flex:1;}
-.voice-title{font-size:13px;font-weight:600;color:var(--txt);}
-.voice-sub{font-size:11px;color:var(--txt2);margin-top:2px;line-height:1.4;}
-.voice-result{background:var(--gl);border-radius:10px;padding:10px 14px;margin-bottom:10px;border:1px solid var(--g);display:none;}
-.voice-result .vr-label{font-size:11px;color:var(--gd);font-weight:600;margin-bottom:4px;}
-.voice-result .vr-text{font-size:13px;color:var(--gd);}
-.wave-bars{display:flex;align-items:center;gap:2px;height:20px;margin-top:6px;}
-.wb{width:3px;border-radius:2px;background:var(--r);transition:height 0.1s;}
-.not-supported{background:var(--al);border-radius:10px;padding:10px;font-size:12px;color:#633806;margin-bottom:10px;text-align:center;}
+/* QUICK ENTRY */
+.qs-label{font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
+.qs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;}
+.qs-btn{padding:10px 6px;border-radius:10px;border:1.5px solid var(--brd);font-size:12px;font-weight:600;text-align:center;cursor:pointer;background:var(--bg2);color:var(--txt2);}
+.qs-btn.qs-on{background:var(--gl);color:var(--gd);border-color:var(--g);}
+.qs-wt-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
+.qn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.qn-btn{padding:9px 12px;border-radius:9px;border:1.5px solid var(--brd);font-size:14px;font-weight:700;cursor:pointer;background:var(--bg2);color:var(--txt2);}
+.qn-btn.qn-on{background:var(--bl);color:var(--bd);border-color:var(--b);}
+.entry-header{background:var(--g);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.entry-header .eh-icon{font-size:26px;}
+.entry-header .eh-title{font-size:15px;font-weight:700;color:#fff;}
+.entry-header .eh-sub{font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px;}
 .modal-sheet{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
 .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
 .mt{font-size:17px;font-weight:700;color:var(--txt);}
@@ -453,31 +451,62 @@ function empTab(tab,btn){
   document.querySelectorAll('[id^=ebn-]').forEach(b=>b.classList.remove('on'));
   if(btn)btn.classList.add('on');
   const t=T[CL],c=document.getElementById('emp-content');
-  if(tab==='work'){c.innerHTML=`<div class="notice">${t.notice}</div>
-    <div class="voice-bar">
-      <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎤</button>
-      <div class="voice-info">
-        <div class="voice-title">${t.voiceLbl||'Voice Entry'}</div>
-        <div class="voice-sub" id="voice-sub">${t.voiceBtn||'Tap mic & speak'}</div>
-        <div class="wave-bars" id="wave-bars" style="display:none;">
-          ${[1,2,3,4,5,6,7,8].map((_,i)=>`<div class="wb" id="wb${i}" style="height:${4+Math.random()*16}px"></div>`).join('')}
-        </div>
+  if(tab==='work'){
+    const sites=['ZXZ Villa 123','Palm Site A','Marina B2'];
+    const wts=['Floor Tile','Wall Tile','Marble Floor','Marble Wall','Plaster Only','Plaster+Tile','Tile+Glue','Grouting','Skirting Simple','Skirting+Groove','Skirting+Light'];
+    const qtys=[5,10,15,18,20,22,25,30,40,50];
+    c.innerHTML=`
+    <div class="entry-header">
+      <span class="eh-icon">⚡</span>
+      <div><div class="eh-title">${t.ewTitle}</div><div class="eh-sub">Tap to select — fast entry</div></div>
+    </div>
+
+    <div class="card">
+      <div class="qs-label">${t.ewSite}</div>
+      <div class="qs-grid">
+        ${sites.map((s,i)=>`<div class="qs-btn qs-site" onclick="quickSelectSite(${i},this)">${s}</div>`).join('')}
+      </div>
+      <select id="v-site" style="display:none;">${sites.map(s=>`<option>${s}</option>`).join('')}</select>
+
+      <div class="qs-label">${t.ewRole}</div>
+      <div class="qs-grid" style="grid-template-columns:1fr 1fr;">
+        <div class="qs-btn qs-role qs-on" onclick="quickSelectRole(0,this)">Tile Master</div>
+        <div class="qs-btn qs-role" onclick="quickSelectRole(1,this)">Helper</div>
+      </div>
+      <select id="v-role" style="display:none;"><option>Tile Master</option><option>Helper</option></select>
+    </div>
+
+    <div class="card">
+      <div class="qs-label">${t.ewWorkT}</div>
+      <div class="qs-wt-grid">
+        ${wts.map((w,i)=>`<div class="qs-btn qs-wt" onclick="quickSelectWT(${i},this)">${w}</div>`).join('')}
+      </div>
+      <select id="wt-sel" style="display:none;">${wts.map(w=>`<option>${w}</option>`).join('')}</select>
+    </div>
+
+    <div class="card">
+      <div class="qs-label">${t.ewQty} (m² / lm)</div>
+      <div class="qn-row">
+        ${qtys.map(n=>`<div class="qn-btn" data-n="${n}" onclick="quickSetQty(${n},this)">${n}</div>`).join('')}
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+        <input type="number" id="e-qty" value="" inputmode="numeric" placeholder="Or type..." style="flex:1;padding:10px 14px;font-size:16px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);" oninput="calcEmp();document.querySelectorAll('.qn-btn').forEach(b=>b.classList.remove('qn-on'))">
+        <select id="e-unit" style="width:80px;padding:10px 8px;font-size:14px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+          <option>m²</option><option>lm</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+        <label style="font-size:12px;color:var(--txt2);font-weight:500;white-space:nowrap;">${t.ewRate}</label>
+        <input type="number" id="e-rate" value="5" inputmode="numeric" style="flex:1;padding:10px 14px;font-size:16px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);" oninput="calcEmp()">
       </div>
     </div>
-    <div class="voice-result" id="voice-result">
-      <div class="vr-label" id="vr-label">${t.voiceFill||'Fields filled from voice:'}</div>
-      <div class="vr-text" id="vr-text"></div>
+
+    <div class="earn-box" style="margin-bottom:12px;">
+      <span class="earn-lbl">${t.ewEarn}</span>
+      <span class="earn-val" id="emp-earn">AED 0</span>
     </div>
-    <div class="card"><div class="ct">${t.ewTitle}</div>
-    <div class="fmg"><label>${t.ewSite}</label><select id="v-site"><option>ZXZ Villa 123</option><option>Palm Site A</option><option>Marina B2</option></select></div>
-    <div class="fmg"><label>${t.ewRole}</label><select id="v-role"><option>Tile Master</option><option>Helper</option></select></div>
-    <div class="fmg"><label>${t.ewWorkT}</label><select id="wt-sel" onchange="calcEmp()"><option>Floor Tile</option><option>Wall Tile</option><option>Marble Floor</option><option>Marble Wall</option><option>Plaster Only</option><option>Plaster+Tile</option><option>Tile+Glue</option><option>Grouting</option><option>Skirting Simple</option><option>Skirting+Groove</option><option>Skirting+Light</option></select></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-    <div class="fmg"><label>${t.ewQty} (m²)</label><input type="number" value="22" id="e-qty" inputmode="numeric" oninput="calcEmp()"></div>
-    <div class="fmg"><label>${t.ewRate}</label><input type="number" value="5" id="e-rate" inputmode="numeric" oninput="calcEmp()"></div></div>
-    <div class="earn-box"><span class="earn-lbl">${t.ewEarn}</span><span class="earn-val" id="emp-earn">AED 110</span></div>
-    <button class="bbtn bb" onclick="saveWork(this)">${t.ewSave}</button></div>
-    <div class="hint" style="margin-top:4px;">${t.voiceHint||'Say: site name, work type, quantity'}</div>`;}
+    <button class="bbtn bb" onclick="saveWork(this)">${t.ewSave}</button>
+    `;}
   else if(tab==='sal'){c.innerHTML=`<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div><div class="salary-big" style="font-size:26px;font-weight:700;color:var(--g);">AED 2,420</div><div style="font-size:12px;color:var(--txt2);margin-top:3px;">${t.salTitle}</div></div><span class="tag ta">Processing</span></div>
     <div class="stat2" style="margin-bottom:12px;"><div class="sc"><div class="sl">${t.salEarn}</div><div class="sv" style="color:var(--g);font-size:16px;">AED 2,420</div></div><div class="sc"><div class="sl">${t.salDays}</div><div class="sv">22</div></div></div>
@@ -525,141 +554,18 @@ function calcExp(){const q=parseFloat(document.getElementById('ex-qty')?.value)|
 function closeModal(){document.getElementById('modal').style.display='none';}
 function closeModalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
 
-// ══ VOICE RECOGNITION ENGINE ══
-let recognition=null, isRecording=false, waveInterval=null;
-
-const VOICE_KEYWORDS={
-  sites:{
-    'zxz':0,'villa 123':0,'villa':0,'123':0,'zxz villa':0,
-    'palm':1,'palm site':1,'palm a':1,'palm site a':1,
-    'marina':2,'marina b2':2,'b2':2,
-    'ولا':0,'پام':1,'مارینا':2,'زیڈ':0,
-    'विला':0,'पाम':1,'मरीना':2,
-    'ভিলা':0,'পাম':1,'মেরিনা':2,
-    'فيلا':0,'النخيل':1,'مارينا':2
-  },
-  workTypes:{
-    'floor tile':0,'floor':0,'فرش':0,'فلور':0,'floor tiles':0,'फर्श':0,'মেঝে':0,
-    'wall tile':1,'wall':1,'دیوار':1,'وال':1,'دار':1,'दीवार':1,'দেওয়াল':1,
-    'marble floor':2,'marble':2,'ماربل':2,'سنگ':2,'संगमरमर':2,'মার্বেল':2,
-    'marble wall':3,
-    'plaster only':4,'plaster':4,'پلستر':4,'پلاسٹر':4,'प्लास्टर':4,'প্লাস্টার':4,'جبص':4,
-    'plaster tile':5,'plaster and tile':5,'plaster+tile':5,'plastertile':5,
-    'tile glue':6,'glue':6,'گلو':6,'گوند':6,
-    'grouting':7,'grout':7,'گراؤٹ':7,'जोड़':7,'গ্রাউট':7,'مونة':7,
-    'skirting simple':8,'skirting':8,'simple':8,'سکرٹنگ':8,'skirt':8,
-    'skirting groove':9,'groove':9,'گرو':9,
-    'skirting light':10,'light groove':10,'lighting':10,'لائٹ':10,'لاইট':10
-  }
-};
-
-const LANG_CODES={en:'en-US',ur:'ur-PK',hi:'hi-IN',bn:'bn-BD',ar:'ar-SA',tl:'fil-PH',si:'si-LK',ne:'ne-NP'};
-
-function parseVoiceText(txt){
-  const lower=txt.toLowerCase();
-  let site=-1,workType=-1,qty=0;
-  for(const[kw,idx] of Object.entries(VOICE_KEYWORDS.sites)){if(lower.includes(kw)){site=idx;break;}}
-  for(const[kw,idx] of Object.entries(VOICE_KEYWORDS.workTypes)){if(lower.includes(kw)){workType=idx;break;}}
-  const nums=txt.match(/\d+(\.\d+)?/g);
-  if(nums){qty=parseFloat(nums[nums.length-1]);}
-  const words=['zero','one','two','three','four','five','six','seven','eight','nine','ten',
-    'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty',
-    'thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred',
-    'ایک','دو','تین','چار','پانچ','دس','بیس','تیس','پچاس',
-    'ek','do','teen','char','panch','das','bees','tees','pachas'];
-  const wordNums=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,30,40,50,60,70,80,90,100,1,2,3,4,5,10,20,30,50,1,2,3,4,5,10,20,30,50];
-  words.forEach((w,i)=>{if(lower.includes(w)&&wordNums[i]>0)qty=wordNums[i];});
-  return{site,workType,qty};
+function quickSelectRole(idx,el){
+  document.querySelectorAll('.qs-role').forEach(b=>b.classList.remove('qs-on'));
+  el.classList.add('qs-on');
+  const sel=document.getElementById('v-role');
+  if(sel)sel.selectedIndex=idx;
 }
-
-function applyVoiceResult(parsed,rawText){
-  const t=T[CL];
-  const siteEl=document.getElementById('v-site');
-  const wtEl=document.getElementById('wt-sel');
-  const qtyEl=document.getElementById('e-qty');
-  const resultEl=document.getElementById('voice-result');
-  const vrText=document.getElementById('vr-text');
-  let filled=[];
-  if(parsed.site>=0&&siteEl){siteEl.selectedIndex=parsed.site;filled.push(siteEl.options[parsed.site].text);}
-  if(parsed.workType>=0&&wtEl){wtEl.selectedIndex=parsed.workType;filled.push(wtEl.options[parsed.workType].text);}
-  if(parsed.qty>0&&qtyEl){qtyEl.value=parsed.qty;filled.push(parsed.qty+' m²');}
-  calcEmp();
-  if(resultEl&&vrText){
-    vrText.textContent='"'+rawText+'" → '+filled.join(', ');
-    resultEl.style.display='block';
-  }
-  return filled.length>0;
+function quickSetQty(n,el){
+  const inp=document.getElementById('e-qty');
+  if(inp){inp.value=n;calcEmp();}
+  document.querySelectorAll('.qn-btn').forEach(b=>b.classList.remove('qn-on'));
+  if(el)el.classList.add('qn-on');
 }
-
-function toggleVoice(){
-  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){
-    const sub=document.getElementById('voice-sub');
-    if(sub)sub.textContent=T[CL].voiceNo||'Voice not supported. Use Chrome.';
-    return;
-  }
-  if(isRecording){stopVoice();return;}
-  startVoice();
-}
-
-function startVoice(){
-  const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
-  recognition=new SpeechRec();
-  recognition.lang=LANG_CODES[CL]||'en-US';
-  recognition.interimResults=false;
-  recognition.maxAlternatives=3;
-  recognition.continuous=false;
-  isRecording=true;
-  const btn=document.getElementById('mic-btn');
-  const sub=document.getElementById('voice-sub');
-  const waves=document.getElementById('wave-bars');
-  if(btn){btn.classList.add('rec');btn.textContent='🔴';}
-  if(sub)sub.textContent=T[CL].voiceRec||'Listening... speak now';
-  if(waves){waves.style.display='flex';animateWaves();}
-  recognition.onresult=function(e){
-    stopWaves();
-    if(btn){btn.classList.remove('rec');btn.classList.add('processing');btn.textContent='⏳';}
-    if(sub)sub.textContent=T[CL].voiceProc||'Understanding...';
-    const results=Array.from(e.results[0]).map(r=>r.transcript);
-    let best=results[0];
-    let parsed=null;
-    for(const r of results){
-      const p=parseVoiceText(r);
-      if(!parsed||(p.site>=0)+(p.workType>=0)+(p.qty>0)>(parsed.site>=0)+(parsed.workType>=0)+(parsed.qty>0)){parsed=p;best=r;}
-    }
-    setTimeout(()=>{
-      if(btn){btn.classList.remove('processing');btn.textContent='🎤';}
-      const ok=applyVoiceResult(parsed,best);
-      if(sub)sub.textContent=ok?(T[CL].voiceOk||'Entry detected! Check fields below.'):(T[CL].voiceErr||'Could not understand. Try again.');
-      isRecording=false;
-    },400);
-  };
-  recognition.onerror=function(e){
-    stopWaves();isRecording=false;
-    if(btn){btn.classList.remove('rec');btn.textContent='🎤';}
-    if(sub)sub.textContent=e.error==='not-allowed'?'Microphone access denied.':(T[CL].voiceErr||'Could not understand. Try again.');
-  };
-  recognition.onend=function(){if(isRecording){stopWaves();isRecording=false;if(btn){btn.classList.remove('rec');btn.textContent='🎤';}}};
-  recognition.start();
-}
-
-function stopVoice(){
-  if(recognition)recognition.stop();
-  stopWaves();isRecording=false;
-  const btn=document.getElementById('mic-btn');
-  if(btn){btn.classList.remove('rec');btn.textContent='🎤';}
-}
-
-function animateWaves(){
-  waveInterval=setInterval(()=>{
-    for(let i=0;i<8;i++){const b=document.getElementById('wb'+i);if(b)b.style.height=(4+Math.random()*22)+'px';}
-  },120);
-}
-function stopWaves(){
-  clearInterval(waveInterval);
-  const w=document.getElementById('wave-bars');if(w)w.style.display='none';
-  for(let i=0;i<8;i++){const b=document.getElementById('wb'+i);if(b)b.style.height='4px';}
-}
-// ══ END VOICE ══
 
 
 function updateClock(){const n=new Date();let h=n.getHours(),m=n.getMinutes(),a='AM';if(h>=12){a='PM';if(h>12)h-=12;}if(h===0)h=12;const el=document.getElementById('clk');if(el)el.textContent=h+':'+(m<10?'0':'')+m+' '+a;}
