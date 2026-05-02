@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="TileTrack Pro">
+<title>TileTrack Pro</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--g:#1D9E75;--gl:#E1F5EE;--gd:#085041;--b:#378ADD;--bl:#E6F1FB;--bd:#042C53;--r:#E24B4A;--rl:#FCEBEB;--a:#BA7517;--al:#FAEEDA;--bg:#fff;--bg2:#f7f7f5;--bg3:#f0f0ec;--txt:#1a1a1a;--txt2:#666;--txt3:#999;--brd:rgba(0,0,0,0.12);--brd2:rgba(0,0,0,0.2);}
+@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--txt:#fff;--txt2:#ebebf5cc;--txt3:#ebebf599;--brd:rgba(255,255,255,0.12);--brd2:rgba(255,255,255,0.2);}}
+html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden;}
+.app{max-width:430px;margin:0 auto;height:100dvh;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.sbar{background:var(--bg2);padding:env(safe-area-inset-top,12px) 16px 8px;display:flex;justify-content:space-between;border-bottom:0.5px solid var(--brd);flex-shrink:0;}
+.sbar span{font-size:12px;color:var(--txt2);}
+.scr{display:none;flex-direction:column;flex:1;overflow:hidden;}
+.scr.on{display:flex;}
+.sa{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
+.back{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--b);cursor:pointer;padding:12px 16px 4px;flex-shrink:0;}
+
+/* LANGUAGE */
+.lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+.lcard{padding:14px 10px;border-radius:12px;border:1px solid var(--brd);text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.15s;}
+.lcard.sel{background:var(--gl);border-color:var(--g);}
+.lc-flag{font-size:22px;display:block;margin-bottom:6px;}
+.lc-name{font-size:14px;font-weight:600;color:var(--txt);}
+.lc-nat{font-size:12px;color:var(--txt2);margin-top:2px;}
+
+/* BRAND */
+.brand{text-align:center;padding:20px 0 18px;}
+.bicon{width:56px;height:56px;border-radius:16px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;}
+.bname{font-size:20px;font-weight:700;color:var(--txt);}
+.bsub{font-size:13px;color:var(--txt2);margin-top:4px;}
+
+/* ROLE CARDS */
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.rcard{padding:20px 12px;border-radius:14px;border:1px solid var(--brd);text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.15s;}
+.rcard:active{transform:scale(0.97);}
+.rc-ico{font-size:26px;display:block;margin-bottom:8px;}
+.rc-t{font-size:15px;font-weight:600;color:var(--txt);}
+.rc-s{font-size:12px;color:var(--txt2);margin-top:3px;}
+
+/* FORMS */
+.fmg{margin-bottom:12px;}
+.fmg label{font-size:12px;color:var(--txt2);display:block;margin-bottom:5px;font-weight:500;}
+.fmg input,.fmg select,.fmg textarea{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);-webkit-appearance:none;appearance:none;}
+.fmg textarea{resize:none;height:70px;font-size:13px;}
+.fmg input:focus,.fmg select:focus{outline:none;border-color:var(--g);}
+.pfrow{display:flex;gap:8px;}
+.pfbtn{padding:12px 10px;border-radius:10px;border:1px solid var(--brd);font-size:13px;cursor:pointer;background:var(--bg2);white-space:nowrap;color:var(--txt);}
+.pfinp{flex:1;padding:12px 14px;font-size:15px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);}
+
+/* PIN */
+.pin-row{display:flex;gap:12px;justify-content:center;margin:12px 0 16px;}
+.pbox{width:58px;height:62px;border-radius:12px;border:1.5px solid var(--brd);font-size:26px;display:flex;align-items:center;justify-content:center;font-weight:700;background:var(--bg);color:var(--txt);}
+.pbox.filled{border-color:var(--g);background:var(--gl);color:var(--gd);}
+.pbox.cur{border-color:var(--g);box-shadow:0 0 0 3px rgba(29,158,117,0.15);}
+
+/* NUMPAD */
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.nb{padding:14px;border-radius:12px;border:1px solid var(--brd);font-size:20px;font-weight:600;text-align:center;cursor:pointer;background:var(--bg2);color:var(--txt);user-select:none;}
+.nb:active{background:var(--gl);border-color:var(--g);}
+.nb.del{font-size:14px;color:var(--txt2);}
+.nb.emp{background:transparent;border-color:transparent;cursor:default;}
+
+/* BUTTONS */
+.bbtn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px;transition:all 0.15s;}
+.bbtn:active{transform:scale(0.98);}
+.bg{background:var(--g);color:#fff;}
+.bb{background:var(--b);color:#fff;}
+.bo{background:transparent;border:1px solid var(--brd);color:var(--txt2);}
+.hint{font-size:12px;color:var(--txt3);text-align:center;margin-top:8px;}
+.err{font-size:13px;color:var(--r);text-align:center;min-height:18px;margin-bottom:8px;font-weight:500;}
+
+/* TOPBAR */
+.topbar{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--brd);flex-shrink:0;}
+.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.av-g{background:var(--gl);color:var(--gd);}
+.av-b{background:var(--bl);color:var(--bd);}
+.tb-name{font-size:14px;font-weight:600;color:var(--txt);}
+.tb-role{font-size:11px;color:var(--txt2);}
+.tbtn{font-size:11px;color:var(--txt3);cursor:pointer;padding:5px 10px;border:1px solid var(--brd);border-radius:8px;background:transparent;}
+
+/* BOTTOM NAV */
+.bnav{display:flex;border-top:0.5px solid var(--brd);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0px);flex-shrink:0;}
+.bni{flex:1;padding:8px 4px;text-align:center;cursor:pointer;border:none;background:transparent;}
+.bni .bi{font-size:20px;display:block;}
+.bni .bt{font-size:9px;color:var(--txt3);display:block;margin-top:2px;}
+.bni.on .bt{color:var(--g);font-weight:600;}
+
+/* CARDS */
+.card{background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:12px;}
+.ct{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.addbtn{font-size:12px;color:var(--g);cursor:pointer;padding:3px 10px;border:1px solid var(--g);border-radius:8px;font-weight:500;}
+
+.er{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--brd);}
+.er:last-child{border-bottom:none;}
+.er-l .es{font-size:13px;color:var(--txt);font-weight:500;}
+.er-l .et{font-size:11px;color:var(--txt2);}
+.er-r .ev{font-size:14px;font-weight:600;color:var(--g);}
+.er-r .ed{font-size:10px;color:var(--txt3);}
+
+/* STATS */
+.stat2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.sc{background:var(--bg2);border-radius:10px;padding:12px;}
+.sc .sl{font-size:11px;color:var(--txt2);font-weight:500;}
+.sc .sv{font-size:18px;font-weight:700;color:var(--txt);margin-top:3px;}
+
+/* ATTENDANCE */
+.att-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--brd);}
+.att-row:last-child{border-bottom:none;}
+.att-name{font-size:13px;font-weight:500;color:var(--txt);}
+.att-role{font-size:11px;color:var(--txt2);}
+.pl-btns{display:flex;gap:6px;}
+.plb{width:38px;height:32px;border-radius:8px;border:1px solid var(--brd);font-size:13px;font-weight:600;cursor:pointer;background:var(--bg2);color:var(--txt2);}
+.plb.p-on{background:var(--gl);color:var(--gd);border-color:var(--g);}
+.plb.l-on{background:var(--rl);color:#A32D2D;border-color:var(--r);}
+
+/* TAGS */
+.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;}
+.tg{background:var(--gl);color:var(--gd);}
+.ta{background:var(--al);color:#633806;}
+.tb2{background:var(--bl);color:var(--bd);}
+.tr{background:var(--rl);color:#A32D2D;}
+
+/* EARN BOX */
+.earn-box{background:var(--gl);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.earn-lbl{font-size:13px;color:var(--gd);font-weight:500;}
+.earn-val{font-size:20px;font-weight:700;color:var(--gd);}
+
+/* PROFILE */
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.pg-item .pgl{font-size:11px;color:var(--txt2);margin-bottom:3px;font-weight:500;}
+.pg-item .pgv{font-size:13px;color:var(--txt);font-weight:600;}
+
+/* NOTICE */
+.notice{background:var(--gl);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--gd);margin-bottom:12px;text-align:center;font-weight:500;}
+
+/* SETTINGS */
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--brd);cursor:pointer;}
+.settings-row:last-child{border-bottom:none;}
+.sr-l{font-size:14px;color:var(--txt);}
+.sr-r{font-size:13px;color:var(--txt2);}
+
+/* LANG CHIP */
+.lang-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;background:var(--gl);border:1px solid var(--g);font-size:12px;color:var(--gd);cursor:pointer;font-weight:500;}
+
+/* MODAL */
+.modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:200;}
+
+/* VOICE */
+.voice-bar{display:flex;align-items:center;gap:12px;background:var(--bg2);border-radius:14px;padding:12px 14px;margin-bottom:12px;border:1px solid var(--brd);}
+.mic-btn{width:48px;height:48px;border-radius:50%;background:var(--g);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:all 0.2s;}
+.mic-btn.rec{background:var(--r);animation:micpulse 1s infinite;}
+.mic-btn.processing{background:var(--a);}
+@keyframes micpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+.voice-info{flex:1;}
+.voice-title{font-size:13px;font-weight:600;color:var(--txt);}
+.voice-sub{font-size:11px;color:var(--txt2);margin-top:2px;line-height:1.4;}
+.voice-result{background:var(--gl);border-radius:10px;padding:10px 14px;margin-bottom:10px;border:1px solid var(--g);display:none;}
+.voice-result .vr-label{font-size:11px;color:var(--gd);font-weight:600;margin-bottom:4px;}
+.voice-result .vr-text{font-size:13px;color:var(--gd);}
+.wave-bars{display:flex;align-items:center;gap:2px;height:20px;margin-top:6px;}
+.wb{width:3px;border-radius:2px;background:var(--r);transition:height 0.1s;}
+.not-supported{background:var(--al);border-radius:10px;padding:10px;font-size:12px;color:#633806;margin-bottom:10px;text-align:center;}
+.modal-sheet{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.mt{font-size:17px;font-weight:700;color:var(--txt);}
+.mc{background:var(--bg2);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--txt2);display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<div class="sbar">
+  <span id="clk">9:41 AM</span>
+  <div style="display:flex;gap:10px;"><span>📶</span><span>🔋</span></div>
+</div>
+
+<!-- LANGUAGE -->
+<div class="scr on" id="scr-lang">
+<div class="sa">
+  <div class="brand"><div class="bicon">🔷</div><div class="bname">TileTrack Pro</div><div class="bsub" id="ls-sub">Choose your language / اپنی زبان چنیں</div></div>
+  <div class="lang-grid">
+    <div class="lcard" onclick="pickLang('en',this)"><span class="lc-flag">🇬🇧</span><div class="lc-name">English</div><div class="lc-nat">English</div></div>
+    <div class="lcard" onclick="pickLang('ur',this)"><span class="lc-flag">🇵🇰</span><div class="lc-name">Urdu</div><div class="lc-nat">اردو</div></div>
+    <div class="lcard" onclick="pickLang('hi',this)"><span class="lc-flag">🇮🇳</span><div class="lc-name">Hindi</div><div class="lc-nat">हिन्दी</div></div>
+    <div class="lcard" onclick="pickLang('bn',this)"><span class="lc-flag">🇧🇩</span><div class="lc-name">Bengali</div><div class="lc-nat">বাংলা</div></div>
+    <div class="lcard" onclick="pickLang('ar',this)"><span class="lc-flag">🇸🇦</span><div class="lc-name">Arabic</div><div class="lc-nat">عربي</div></div>
+    <div class="lcard" onclick="pickLang('tl',this)"><span class="lc-flag">🇵🇭</span><div class="lc-name">Filipino</div><div class="lc-nat">Tagalog</div></div>
+    <div class="lcard" onclick="pickLang('si',this)"><span class="lc-flag">🇱🇰</span><div class="lc-name">Sinhala</div><div class="lc-nat">සිංහල</div></div>
+    <div class="lcard" onclick="pickLang('ne',this)"><span class="lc-flag">🇳🇵</span><div class="lc-name">Nepali</div><div class="lc-nat">नेपाली</div></div>
+  </div>
+  <button class="bbtn bg" id="lang-btn" onclick="confirmLang()" style="opacity:0.4;" disabled>Continue →</button>
+  <div class="hint" id="lang-hint">Select a language to continue</div>
+</div>
+</div>
+
+<!-- LANDING -->
+<div class="scr" id="scr-landing">
+<div class="sa">
+  <div class="brand"><div class="bicon">🔷</div><div class="bname">TileTrack Pro</div><div class="bsub" id="ld-sub">Select your portal</div></div>
+  <div style="text-align:center;margin-bottom:14px;"><span class="lang-chip" id="lang-chip" onclick="go('lang')">🇬🇧 English ✎</span></div>
+  <div class="role-grid">
+    <div class="rcard" onclick="go('owner-phone')"><span class="rc-ico">👔</span><div class="rc-t" id="ld-own">Owner</div><div class="rc-s" id="ld-owns">Full management</div></div>
+    <div class="rcard" onclick="go('emp-phone')"><span class="rc-ico">👷</span><div class="rc-t" id="ld-emp">Employee</div><div class="rc-s" id="ld-emps">Work entry & profile</div></div>
+  </div>
+  <div style="text-align:center;padding-top:10px;"><div style="font-size:12px;color:var(--txt3);" id="ld-nq">New company?</div><div style="font-size:13px;color:var(--g);cursor:pointer;margin-top:4px;font-weight:600;" id="ld-reg">Register →</div></div>
+</div>
+</div>
+
+<!-- OWNER PHONE -->
+<div class="scr" id="scr-owner-phone">
+<div class="back" onclick="go('landing')">‹ <span id="ob-back">Back</span></div>
+<div class="sa">
+  <div class="brand" style="padding:10px 0 16px;"><div class="bicon" style="width:48px;height:48px;font-size:22px;">👔</div><div class="bname" style="font-size:18px;" id="ol-t">Owner Login</div></div>
+  <div class="fmg"><label id="ol-cc">Company Code</label><input type="text" value="ACB-2024" inputmode="text"></div>
+  <div class="fmg"><label id="ol-ph">Phone Number</label><div class="pfrow"><button class="pfbtn" onclick="cycleCode('o')"><span id="o-code">🇦🇪 +971</span></button><input class="pfinp" type="tel" inputmode="numeric" value="50 555 0001"></div></div>
+  <button class="bbtn bg" onclick="go('owner-pin')" id="ol-cont">Continue →</button>
+  <div class="hint" id="ol-hint">Step 1 of 2</div>
+</div>
+</div>
+
+<!-- OWNER PIN -->
+<div class="scr" id="scr-owner-pin">
+<div class="back" onclick="go('owner-phone')">‹ <span id="opb">Back</span></div>
+<div class="sa">
+  <div style="text-align:center;margin-bottom:6px;padding-top:10px;"><div style="font-size:17px;font-weight:700;color:var(--txt);" id="op-t">Enter your PIN</div><div style="font-size:12px;color:var(--txt3);margin-top:4px;">+971 50 555 0001</div></div>
+  <div class="pin-row"><div class="pbox cur" id="op0"></div><div class="pbox" id="op1"></div><div class="pbox" id="op2"></div><div class="pbox" id="op3"></div></div>
+  <div class="err" id="o-err"></div>
+  <div class="numpad" id="o-pad"></div>
+  <div class="hint" id="op-hint">Demo PIN: 1234</div>
+</div>
+</div>
+
+<!-- EMP PHONE -->
+<div class="scr" id="scr-emp-phone">
+<div class="back" onclick="go('landing')">‹ <span id="eb-back">Back</span></div>
+<div class="sa">
+  <div class="brand" style="padding:10px 0 16px;"><div class="bicon" style="width:48px;height:48px;font-size:22px;background:var(--b);">👷</div><div class="bname" style="font-size:18px;" id="el-t">Employee Login</div><div class="bsub" id="el-sub">Enter your registered phone</div></div>
+  <div class="fmg"><label id="el-ph">Phone Number</label><div class="pfrow"><button class="pfbtn" onclick="cycleCode('e')"><span id="e-code">🇵🇰 +92</span></button><input class="pfinp" type="tel" inputmode="numeric" value="300 111 2222"></div></div>
+  <div style="font-size:12px;color:var(--txt3);margin-bottom:12px;text-align:center;" id="el-note">Use the number registered by your owner</div>
+  <button class="bbtn bb" onclick="go('emp-pin')" id="el-cont">Continue →</button>
+  <div class="hint" id="el-hint">Step 1 of 2</div>
+</div>
+</div>
+
+<!-- EMP PIN -->
+<div class="scr" id="scr-emp-pin">
+<div class="back" onclick="go('emp-phone')">‹ <span id="epb">Back</span></div>
+<div class="sa">
+  <div style="text-align:center;margin-bottom:6px;padding-top:10px;"><div style="font-size:17px;font-weight:700;color:var(--txt);" id="ep-t">Enter your PIN</div><div style="font-size:12px;color:var(--txt3);margin-top:4px;">+92 300 111 2222</div></div>
+  <div class="pin-row"><div class="pbox cur" id="ep0"></div><div class="pbox" id="ep1"></div><div class="pbox" id="ep2"></div><div class="pbox" id="ep3"></div></div>
+  <div class="err" id="e-err"></div>
+  <div class="numpad" id="e-pad"></div>
+  <div style="text-align:center;font-size:12px;color:var(--txt3);margin-top:6px;" id="ep-forgot">Forgot PIN? Ask your owner to reset.</div>
+  <div class="hint" id="ep-hint">Demo PIN: 5678</div>
+</div>
+</div>
+
+<!-- OWNER DASHBOARD -->
+<div class="scr" id="scr-owner-dash">
+<div class="topbar">
+  <div class="av av-g">IQ</div>
+  <div style="flex:1;"><div class="tb-name">Imran Sheikh</div><div class="tb-role" id="od-role">Owner — ACB Company</div></div>
+  <button class="tbtn" onclick="logout()" id="od-lo">Logout</button>
+</div>
+<div class="sa" id="owner-content"></div>
+<div class="bnav">
+  <button class="bni on" id="obn-home" onclick="ownerTab('home',this)"><span class="bi">🏠</span><span class="bt" id="ont-home">Home</span></button>
+  <button class="bni" id="obn-att" onclick="ownerTab('att',this)"><span class="bi">✅</span><span class="bt" id="ont-att">Attendance</span></button>
+  <button class="bni" id="obn-team" onclick="ownerTab('team',this)"><span class="bi">👥</span><span class="bt" id="ont-team">Team</span></button>
+  <button class="bni" id="obn-exp" onclick="ownerTab('exp',this)"><span class="bi">💸</span><span class="bt" id="ont-exp">Expenses</span></button>
+  <button class="bni" id="obn-set" onclick="ownerTab('set',this)"><span class="bi">⚙️</span><span class="bt" id="ont-set">Settings</span></button>
+</div>
+</div>
+
+<!-- EMPLOYEE DASHBOARD -->
+<div class="scr" id="scr-emp-dash">
+<div class="topbar">
+  <div class="av av-b">AA</div>
+  <div style="flex:1;"><div class="tb-name">Ahmed Ali</div><div class="tb-role" id="ed-role">Tile Master — ACB Company</div></div>
+  <button class="tbtn" onclick="logout()" id="ed-lo">Logout</button>
+</div>
+<div class="sa" id="emp-content"></div>
+<div class="bnav">
+  <button class="bni on" id="ebn-work" onclick="empTab('work',this)"><span class="bi">🔨</span><span class="bt" id="ent-work">Work</span></button>
+  <button class="bni" id="ebn-sal" onclick="empTab('sal',this)"><span class="bi">💰</span><span class="bt" id="ent-sal">Salary</span></button>
+  <button class="bni" id="ebn-prof" onclick="empTab('prof',this)"><span class="bi">👤</span><span class="bt" id="ent-prof">Profile</span></button>
+  <button class="bni" id="ebn-set" onclick="empTab('set',this)"><span class="bi">⚙️</span><span class="bt" id="ent-set">Settings</span></button>
+</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-wrap" id="modal" style="display:none;" onclick="closeModalBg(event)">
+<div class="modal-sheet">
+  <div class="mh"><span class="mt" id="modal-title">Add</span><button class="mc" onclick="closeModal()">✕</button></div>
+  <div id="modal-body"></div>
+</div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+const T={
+en:{cont:'Continue →',back:'Back',lo:'Logout',sel:'Select a language to continue',ldsub:'Select your portal',ldOwn:'Owner',ldOwns:'Full management',ldEmp:'Employee',ldEmps:'Work entry & profile',ldNq:'New company?',ldReg:'Register →',olT:'Owner Login',olCc:'Company Code',olPh:'Phone Number',olH:'Step 1 of 2',opT:'Enter your PIN',opH:'Demo PIN: 1234',elT:'Employee Login',elSub:'Enter your registered phone',elPh:'Phone Number',elNote:'Use the number registered by your owner',elH:'Step 1 of 2',epT:'Enter your PIN',epF:'Forgot PIN? Ask your owner to reset.',epH:'Demo PIN: 5678',oWr:'Incorrect PIN. Try again.',eWr:'Incorrect PIN. Contact your owner.',odRole:'Owner — ACB Company',oHome:'Home',oAtt:'Attendance',oTeam:'Team',oExp:'Expenses',oSet:'Settings',eWork:'Work',eSal:'Salary',eProf:'Profile',eSet:'Settings',edRole:'Tile Master — ACB Company',dir:'ltr',chip:'🇬🇧 English ✎',
+todayEnt:"Today's Entries",activeW:'Active Workers',monthBill:'Month Bill',alerts:'Alerts',leaveSch:'Leave Schedule',toolNotes:'Tool Notes',attTitle:'Mark P = Present, L = Leave',present:'P',leave:'L',saveAtt:'Save Attendance',teamW:'Workers',roles:'Roles',workTypes:'Work Types',addW:'+ Add Worker',addR:'+ Add Role',addWt:'+ Add Work Type',expTitle:'Expenses',addExp:'+ Add Expense',totalExp:'Total',stgTitle:'Settings',stgLang:'Language',stgComp:'Company Profile',stgRates:'Manage Rates',stgPIN:'Change PIN',stgLogout:'Logout',
+ewTitle:"Today's Entry",ewSite:'Site',ewRole:'My Role',ewWorkT:'Work Type',ewQty:'Quantity',ewRate:'Rate (AED)',ewEarn:"Today's Earn",ewSave:'Save My Work',salTitle:'My Salary — May 2026',salEarn:'Total Earned',salDays:'Days Worked',profTitle:'My Profile',profName:'Name',profFather:'Father Name',profPhone:'Phone',profCountry:'Country',profID:'ID Expiry',profPass:'Passport',
+addWorkerT:'Add Worker',addRoleT:'Add Role',addWtT:'Add Work Type',addExpT:'Add Expense',addLeaveT:'Add Leave',nameLbl:'Full Name',fatherLbl:'Father Name',phoneLbl:'Phone',countryLbl:'Country',roleLbl:'Role',siteLbl:'Site',idExpLbl:'ID Expiry',passExpLbl:'Passport Expiry',descLbl:'Description',qtyLbl:'Quantity',unitPriceLbl:'Unit Price (AED)',supplierLbl:'Supplier (optional)',totalLbl:'Total',roleNameLbl:'Role Name',wtNameLbl:'Work Type Name',labRateLbl:'Labour Rate (AED)',compRateLbl:'Company Rate (AED)',unitLbl:'Unit',departureLbl:'Departure',returnLbl:'Return',notesLbl:'Notes',saveLbl:'Save',notice:'Welcome! Mark your work for today.',expiredTag:'EXPIRED',
+voiceBtn:'Tap mic & speak',voiceRec:'Listening... speak now',voiceProc:'Understanding...',voiceOk:'Entry detected! Check fields below.',voiceErr:'Could not understand. Try again.',voiceHint:'Say: site name, work type, quantity',voiceNo:'Voice not supported. Use Chrome.',voiceLbl:'Voice Entry'},
+ur:{cont:'جاری رکھیں →',back:'واپس',lo:'لاگ آؤٹ',sel:'زبان منتخب کریں',ldsub:'اپنا پورٹل چنیں',ldOwn:'مالک',ldOwns:'مکمل انتظام',ldEmp:'ملازم',ldEmps:'کام اندراج',ldNq:'نئی کمپنی؟',ldReg:'رجسٹر کریں ←',olT:'مالک لاگ ان',olCc:'کمپنی کوڈ',olPh:'فون نمبر',olH:'مرحلہ ۱ از ۲',opT:'PIN درج کریں',opH:'ڈیمو PIN: 1234',elT:'ملازم لاگ ان',elSub:'اپنا رجسٹرڈ فون نمبر درج کریں',elPh:'فون نمبر',elNote:'مالک کا رجسٹرڈ نمبر استعمال کریں',elH:'مرحلہ ۱ از ۲',epT:'PIN درج کریں',epF:'PIN بھولے؟ مالک سے رابطہ کریں۔',epH:'ڈیمو PIN: 5678',oWr:'غلط PIN۔ دوبارہ کوشش کریں۔',eWr:'غلط PIN۔ مالک سے رابطہ کریں۔',odRole:'مالک — ACB کمپنی',oHome:'ہوم',oAtt:'حاضری',oTeam:'ٹیم',oExp:'اخراجات',oSet:'ترتیبات',eWork:'کام',eSal:'تنخواہ',eProf:'پروفائل',eSet:'ترتیبات',edRole:'ٹائل ماسٹر — ACB کمپنی',dir:'rtl',chip:'🇵🇰 اردو ✎',
+todayEnt:'آج کی اندراجات',activeW:'فعال ملازمین',monthBill:'ماہانہ بل',alerts:'الرٹس',leaveSch:'چھٹی شیڈول',toolNotes:'اوزار نوٹس',attTitle:'P = حاضر، L = غیر حاضر',present:'P',leave:'L',saveAtt:'حاضری محفوظ کریں',teamW:'ملازمین',roles:'کردار',workTypes:'کام کی اقسام',addW:'+ ملازم شامل کریں',addR:'+ کردار شامل کریں',addWt:'+ کام کی قسم',expTitle:'اخراجات',addExp:'+ خرچ شامل کریں',totalExp:'کل',stgTitle:'ترتیبات',stgLang:'زبان',stgComp:'کمپنی پروفائل',stgRates:'ریٹ مینیج',stgPIN:'PIN تبدیل کریں',stgLogout:'لاگ آؤٹ',
+ewTitle:'آج کا کام درج کریں',ewSite:'سائٹ',ewRole:'میرا کردار',ewWorkT:'کام کی قسم',ewQty:'مقدار',ewRate:'ریٹ (AED)',ewEarn:'آج کی کمائی',ewSave:'کام محفوظ کریں',salTitle:'میری تنخواہ — مئی ۲۰۲۶',salEarn:'کل کمائی',salDays:'کام کے دن',profTitle:'میرا پروفائل',profName:'نام',profFather:'والد کا نام',profPhone:'فون',profCountry:'ملک',profID:'ID میعاد',profPass:'پاسپورٹ',
+addWorkerT:'ملازم شامل کریں',addRoleT:'کردار شامل کریں',addWtT:'کام کی قسم',addExpT:'خرچ شامل کریں',addLeaveT:'چھٹی شامل کریں',nameLbl:'پورا نام',fatherLbl:'والد کا نام',phoneLbl:'فون',countryLbl:'ملک',roleLbl:'کردار',siteLbl:'سائٹ',idExpLbl:'ID میعاد',passExpLbl:'پاسپورٹ میعاد',descLbl:'تفصیل',qtyLbl:'مقدار',unitPriceLbl:'یونٹ قیمت (AED)',supplierLbl:'سپلائر (اختیاری)',totalLbl:'کل',roleNameLbl:'کردار کا نام',wtNameLbl:'کام کی قسم',labRateLbl:'مزدور ریٹ (AED)',compRateLbl:'کمپنی ریٹ (AED)',unitLbl:'یونٹ',departureLbl:'روانگی',returnLbl:'واپسی',notesLbl:'نوٹس',saveLbl:'محفوظ کریں',notice:'خوش آمدید! آج کا کام درج کریں۔',expiredTag:'میعاد ختم',
+voiceBtn:'مائیک دبائیں اور بولیں',voiceRec:'سن رہا ہے... بولیں',voiceProc:'سمجھ رہا ہے...',voiceOk:'اندراج مل گیا! نیچے دیکھیں۔',voiceErr:'سمجھ نہ سکا۔ دوبارہ کوشش کریں۔',voiceHint:'بولیں: سائٹ، کام کی قسم، مقدار',voiceNo:'آواز سپورٹ نہیں۔ Chrome استعمال کریں۔',voiceLbl:'آواز سے اندراج'},
+hi:{cont:'जारी रखें →',back:'वापस',lo:'लॉग आउट',sel:'भाषा चुनें',ldsub:'पोर्टल चुनें',ldOwn:'मालिक',ldOwns:'पूर्ण प्रबंधन',ldEmp:'कर्मचारी',ldEmps:'काम दर्ज करें',ldNq:'नई कंपनी?',ldReg:'रजिस्टर →',olT:'मालिक लॉगिन',olCc:'कंपनी कोड',olPh:'फोन नंबर',olH:'चरण 1/2',opT:'PIN डालें',opH:'डेमो PIN: 1234',elT:'कर्मचारी लॉगिन',elSub:'रजिस्टर्ड फोन नंबर डालें',elPh:'फोन नंबर',elNote:'मालिक द्वारा दर्ज नंबर उपयोग करें',elH:'चरण 1/2',epT:'PIN डालें',epF:'PIN भूले? मालिक से रीसेट करवाएं।',epH:'डेमो PIN: 5678',oWr:'गलत PIN।',eWr:'गलत PIN। मालिक से संपर्क करें।',odRole:'मालिक — ACB कंपनी',oHome:'होम',oAtt:'उपस्थिति',oTeam:'टीम',oExp:'खर्च',oSet:'सेटिंग्स',eWork:'काम',eSal:'वेतन',eProf:'प्रोफाइल',eSet:'सेटिंग्स',edRole:'टाइल मास्टर — ACB कंपनी',dir:'ltr',chip:'🇮🇳 हिन्दी ✎',
+todayEnt:'आज की प्रविष्टियां',activeW:'सक्रिय कर्मचारी',monthBill:'महीने का बिल',alerts:'अलर्ट',leaveSch:'छुट्टी शेड्यूल',toolNotes:'औजार नोट्स',attTitle:'P = उपस्थित, L = छुट्टी',present:'P',leave:'L',saveAtt:'उपस्थिति सहेजें',teamW:'कर्मचारी',roles:'भूमिकाएं',workTypes:'काम के प्रकार',addW:'+ कर्मचारी जोड़ें',addR:'+ भूमिका जोड़ें',addWt:'+ काम प्रकार',expTitle:'खर्च',addExp:'+ खर्च जोड़ें',totalExp:'कुल',stgTitle:'सेटिंग्स',stgLang:'भाषा',stgComp:'कंपनी प्रोफाइल',stgRates:'दरें',stgPIN:'PIN बदलें',stgLogout:'लॉग आउट',
+ewTitle:'आज का काम दर्ज करें',ewSite:'साइट',ewRole:'मेरी भूमिका',ewWorkT:'काम का प्रकार',ewQty:'मात्रा',ewRate:'दर (AED)',ewEarn:'आज की कमाई',ewSave:'काम सहेजें',salTitle:'मेरा वेतन — मई 2026',salEarn:'कुल कमाई',salDays:'काम के दिन',profTitle:'मेरी प्रोफाइल',profName:'नाम',profFather:'पिता का नाम',profPhone:'फोन',profCountry:'देश',profID:'ID समाप्ति',profPass:'पासपोर्ट',
+addWorkerT:'कर्मचारी जोड़ें',addRoleT:'भूमिका जोड़ें',addWtT:'काम प्रकार जोड़ें',addExpT:'खर्च जोड़ें',addLeaveT:'छुट्टी जोड़ें',nameLbl:'पूरा नाम',fatherLbl:'पिता का नाम',phoneLbl:'फोन',countryLbl:'देश',roleLbl:'भूमिका',siteLbl:'साइट',idExpLbl:'ID समाप्ति',passExpLbl:'पासपोर्ट समाप्ति',descLbl:'विवरण',qtyLbl:'मात्रा',unitPriceLbl:'यूनिट मूल्य (AED)',supplierLbl:'आपूर्तिकर्ता',totalLbl:'कुल',roleNameLbl:'भूमिका नाम',wtNameLbl:'काम प्रकार',labRateLbl:'मजदूर दर (AED)',compRateLbl:'कंपनी दर (AED)',unitLbl:'इकाई',departureLbl:'प्रस्थान',returnLbl:'वापसी',notesLbl:'नोट्स',saveLbl:'सहेजें',notice:'स्वागत! आज का काम दर्ज करें।',expiredTag:'समाप्त',
+voiceBtn:'माइक दबाएं और बोलें',voiceRec:'सुन रहा है... बोलें',voiceProc:'समझ रहा है...',voiceOk:'एंट्री मिली! नीचे देखें।',voiceErr:'समझ नहीं आया। फिर कोशिश करें।',voiceHint:'बोलें: साइट, काम का प्रकार, मात्रा',voiceNo:'वॉयस सपोर्ट नहीं। Chrome उपयोग करें।',voiceLbl:'आवाज़ से दर्ज'},
+bn:{cont:'চালিয়ে যান →',back:'ফিরে',lo:'লগ আউট',sel:'ভাষা নির্বাচন করুন',ldsub:'পোর্টাল বেছে নিন',ldOwn:'মালিক',ldOwns:'পূর্ণ ব্যবস্থাপনা',ldEmp:'কর্মী',ldEmps:'কাজ নথিভুক্ত',ldNq:'নতুন কোম্পানি?',ldReg:'নিবন্ধন →',olT:'মালিক লগইন',olCc:'কোম্পানি কোড',olPh:'ফোন নম্বর',olH:'ধাপ ১/২',opT:'PIN দিন',opH:'ডেমো PIN: 1234',elT:'কর্মী লগইন',elSub:'নিবন্ধিত ফোন নম্বর দিন',elPh:'ফোন নম্বর',elNote:'মালিকের দেওয়া নম্বর ব্যবহার করুন',elH:'ধাপ ১/২',epT:'PIN দিন',epF:'PIN ভুলে গেছেন? মালিককে বলুন।',epH:'ডেমো PIN: 5678',oWr:'ভুল PIN।',eWr:'ভুল PIN। মালিককে বলুন।',odRole:'মালিক — ACB কোম্পানি',oHome:'হোম',oAtt:'উপস্থিতি',oTeam:'দল',oExp:'খরচ',oSet:'সেটিংস',eWork:'কাজ',eSal:'বেতন',eProf:'প্রোফাইল',eSet:'সেটিংস',edRole:'টাইল মাস্টার — ACB কোম্পানি',dir:'ltr',chip:'🇧🇩 বাংলা ✎',
+todayEnt:'আজকের এন্ট্রি',activeW:'সক্রিয় কর্মী',monthBill:'মাসের বিল',alerts:'সতর্কতা',leaveSch:'ছুটির সময়সূচি',toolNotes:'সরঞ্জাম নোট',attTitle:'P = উপস্থিত, L = অনুপস্থিত',present:'P',leave:'L',saveAtt:'উপস্থিতি সংরক্ষণ',teamW:'কর্মীরা',roles:'ভূমিকা',workTypes:'কাজের ধরন',addW:'+ কর্মী যোগ করুন',addR:'+ ভূমিকা যোগ',addWt:'+ কাজের ধরন',expTitle:'খরচ',addExp:'+ খরচ যোগ করুন',totalExp:'মোট',stgTitle:'সেটিংস',stgLang:'ভাষা',stgComp:'কোম্পানি প্রোফাইল',stgRates:'দর পরিচালনা',stgPIN:'PIN পরিবর্তন',stgLogout:'লগ আউট',
+ewTitle:'আজকের কাজ নথিভুক্ত',ewSite:'সাইট',ewRole:'আমার ভূমিকা',ewWorkT:'কাজের ধরন',ewQty:'পরিমাণ',ewRate:'হার (AED)',ewEarn:'আজকের আয়',ewSave:'কাজ সংরক্ষণ',salTitle:'আমার বেতন — মে ২০২৬',salEarn:'মোট আয়',salDays:'কাজের দিন',profTitle:'আমার প্রোফাইল',profName:'নাম',profFather:'পিতার নাম',profPhone:'ফোন',profCountry:'দেশ',profID:'ID মেয়াদ',profPass:'পাসপোর্ট',
+addWorkerT:'কর্মী যোগ করুন',addRoleT:'ভূমিকা যোগ',addWtT:'কাজের ধরন যোগ',addExpT:'খরচ যোগ করুন',addLeaveT:'ছুটি যোগ করুন',nameLbl:'পুরো নাম',fatherLbl:'পিতার নাম',phoneLbl:'ফোন',countryLbl:'দেশ',roleLbl:'ভূমিকা',siteLbl:'সাইট',idExpLbl:'ID মেয়াদ',passExpLbl:'পাসপোর্ট মেয়াদ',descLbl:'বিবরণ',qtyLbl:'পরিমাণ',unitPriceLbl:'একক মূল্য (AED)',supplierLbl:'সরবরাহকারী',totalLbl:'মোট',roleNameLbl:'ভূমিকার নাম',wtNameLbl:'কাজের ধরন',labRateLbl:'শ্রমিক হার (AED)',compRateLbl:'কোম্পানি হার (AED)',unitLbl:'একক',departureLbl:'যাত্রা',returnLbl:'ফিরে আসা',notesLbl:'নোট',saveLbl:'সংরক্ষণ',notice:'স্বাগতম! আজকের কাজ নথিভুক্ত করুন।',expiredTag:'মেয়াদ শেষ',
+voiceBtn:'মাইক চাপুন ও বলুন',voiceRec:'শুনছে... বলুন',voiceProc:'বুঝছে...',voiceOk:'এন্ট্রি পাওয়া গেছে! নিচে দেখুন।',voiceErr:'বুঝতে পারেনি। আবার চেষ্টা করুন।',voiceHint:'বলুন: সাইট, কাজের ধরন, পরিমাণ',voiceNo:'ভয়েস সাপোর্ট নেই। Chrome ব্যবহার করুন।',voiceLbl:'ভয়েস এন্ট্রি'},
+ar:{cont:'متابعة →',back:'رجوع',lo:'خروج',sel:'اختر لغتك',ldsub:'اختر بوابتك',ldOwn:'المالك',ldOwns:'إدارة كاملة',ldEmp:'الموظف',ldEmps:'تسجيل العمل',ldNq:'شركة جديدة؟',ldReg:'← تسجيل',olT:'دخول المالك',olCc:'رمز الشركة',olPh:'رقم الهاتف',olH:'الخطوة ١ من ٢',opT:'أدخل PIN',opH:'PIN تجريبي: 1234',elT:'دخول الموظف',elSub:'أدخل رقم هاتفك المسجّل',elPh:'رقم الهاتف',elNote:'استخدم الرقم المسجّل من صاحب العمل',elH:'الخطوة ١ من ٢',epT:'أدخل PIN',epF:'نسيت الرقم؟ اطلب من صاحب العمل.',epH:'PIN تجريبي: 5678',oWr:'PIN خاطئ.',eWr:'PIN خاطئ. تواصل مع صاحب العمل.',odRole:'المالك — شركة ACB',oHome:'الرئيسية',oAtt:'الحضور',oTeam:'الفريق',oExp:'المصروفات',oSet:'الإعدادات',eWork:'العمل',eSal:'الراتب',eProf:'الملف',eSet:'الإعدادات',edRole:'ماسٹر البلاط — ACB',dir:'rtl',chip:'🇸🇦 عربي ✎',
+todayEnt:'إدخالات اليوم',activeW:'الموظفون النشطون',monthBill:'فاتورة الشهر',alerts:'التنبيهات',leaveSch:'جدول الإجازات',toolNotes:'ملاحظات الأدوات',attTitle:'P = حضور، L = غياب',present:'P',leave:'L',saveAtt:'حفظ الحضور',teamW:'الموظفون',roles:'الأدوار',workTypes:'أنواع العمل',addW:'+ إضافة موظف',addR:'+ دور جديد',addWt:'+ نوع عمل',expTitle:'المصروفات',addExp:'+ إضافة مصروف',totalExp:'الإجمالي',stgTitle:'الإعدادات',stgLang:'اللغة',stgComp:'ملف الشركة',stgRates:'الأسعار',stgPIN:'تغيير PIN',stgLogout:'تسجيل الخروج',
+ewTitle:'تسجيل عمل اليوم',ewSite:'الموقع',ewRole:'دوري',ewWorkT:'نوع العمل',ewQty:'الكمية',ewRate:'السعر (AED)',ewEarn:'أرباح اليوم',ewSave:'حفظ العمل',salTitle:'راتبي — مايو ٢٠٢٦',salEarn:'إجمالي الأرباح',salDays:'أيام العمل',profTitle:'ملفي',profName:'الاسم',profFather:'اسم الأب',profPhone:'الهاتف',profCountry:'البلد',profID:'انتهاء الهوية',profPass:'جواز السفر',
+addWorkerT:'إضافة موظف',addRoleT:'إضافة دور',addWtT:'إضافة نوع عمل',addExpT:'إضافة مصروف',addLeaveT:'إضافة إجازة',nameLbl:'الاسم الكامل',fatherLbl:'اسم الأب',phoneLbl:'الهاتف',countryLbl:'البلد',roleLbl:'الدور',siteLbl:'الموقع',idExpLbl:'انتهاء الهوية',passExpLbl:'انتهاء الجواز',descLbl:'الوصف',qtyLbl:'الكمية',unitPriceLbl:'سعر الوحدة (AED)',supplierLbl:'المورّد',totalLbl:'الإجمالي',roleNameLbl:'اسم الدور',wtNameLbl:'نوع العمل',labRateLbl:'سعر العامل (AED)',compRateLbl:'سعر الشركة (AED)',unitLbl:'الوحدة',departureLbl:'المغادرة',returnLbl:'العودة',notesLbl:'ملاحظات',saveLbl:'حفظ',notice:'مرحباً! سجّل عملك اليوم.',expiredTag:'منتهية',
+voiceBtn:'اضغط الميكروفون وتحدث',voiceRec:'يستمع... تحدث الآن',voiceProc:'يفهم...',voiceOk:'تم الكشف! راجع الحقول.',voiceErr:'لم يفهم. حاول مجدداً.',voiceHint:'قل: اسم الموقع، نوع العمل، الكمية',voiceNo:'الصوت غير مدعوم. استخدم Chrome.',voiceLbl:'إدخال صوتي'},
+};
+['tl','si','ne'].forEach(l=>{T[l]=Object.assign({},T.en,{chip:l==='tl'?'🇵🇭 Tagalog ✎':l==='si'?'🇱🇰 සිංහල ✎':'🇳🇵 नेपाली ✎',dir:'ltr'});});
+
+let CL='en',selCard=null,oPin=[],ePin=[],curOT='home',curET='work';
+const codes=[['🇦🇪','+971'],['🇵🇰','+92'],['🇮🇳','+91'],['🇧🇩','+880'],['🇵🇭','+63'],['🇱🇰','+94'],['🇳🇵','+977'],['🇸🇦','+966'],['🇪🇬','+20']];
+let oCI=0,eCI=1;
+
+function pickLang(l,el){
+  CL=l;if(selCard)selCard.classList.remove('sel');el.classList.add('sel');selCard=el;
+  const b=document.getElementById('lang-btn');b.disabled=false;b.style.opacity='1';
+  document.getElementById('lang-hint').textContent=T[l].sel;
+}
+function confirmLang(){
+  try{localStorage.setItem('tt_lang',CL);}catch(e){}
+  applyLang();go('landing');
+}
+function applyLang(){
+  const t=T[CL];
+  document.getElementById('app').style.direction=t.dir;
+  const m={'ld-sub':t.ldsub,'ld-own':t.ldOwn,'ld-owns':t.ldOwns,'ld-emp':t.ldEmp,'ld-emps':t.ldEmps,'ld-nq':t.ldNq,'ld-reg':t.ldReg,'lang-chip':t.chip,
+    'ob-back':t.back,'ol-t':t.olT,'ol-cc':t.olCc,'ol-ph':t.olPh,'ol-cont':t.cont,'ol-hint':t.olH,
+    'opb':t.back,'op-t':t.opT,'op-hint':t.opH,'eb-back':t.back,'el-t':t.elT,'el-sub':t.elSub,'el-ph':t.elPh,'el-note':t.elNote,'el-cont':t.cont,'el-hint':t.elH,
+    'epb':t.back,'ep-t':t.epT,'ep-forgot':t.epF,'ep-hint':t.epH,
+    'od-role':t.odRole,'od-lo':t.lo,'ed-role':t.edRole,'ed-lo':t.lo,
+    'ont-home':t.oHome,'ont-att':t.oAtt,'ont-team':t.oTeam,'ont-exp':t.oExp,'ont-set':t.oSet,
+    'ent-work':t.eWork,'ent-sal':t.eSal,'ent-prof':t.eProf,'ent-set':t.eSet};
+  Object.entries(m).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+}
+function cycleCode(w){if(w==='o'){oCI=(oCI+1)%codes.length;document.getElementById('o-code').textContent=codes[oCI][0]+' '+codes[oCI][1];}else{eCI=(eCI+1)%codes.length;document.getElementById('e-code').textContent=codes[eCI][0]+' '+codes[eCI][1];}}
+function go(id){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  document.getElementById('scr-'+id).classList.add('on');
+  if(id==='owner-pin'){oPin=[];renderPad('o');}
+  if(id==='emp-pin'){ePin=[];renderPad('e');}
+  if(id==='owner-dash'){ownerTab(curOT,document.getElementById('obn-'+curOT));}
+  if(id==='emp-dash'){empTab(curET,document.getElementById('ebn-'+curET));}
+}
+function logout(){try{localStorage.removeItem('tt_sess');}catch(e){}go('landing');}
+
+function renderPad(w){
+  const pins=w==='o'?oPin:ePin;
+  for(let i=0;i<4;i++){const b=document.getElementById(w+'p'+i);b.textContent=i<pins.length?'●':'';b.className='pbox'+(i===pins.length?' cur':i<pins.length?' filled':'');}
+  const pad=document.getElementById(w+'-pad');pad.innerHTML='';
+  [1,2,3,4,5,6,7,8,9,'','0','⌫'].forEach(n=>{
+    const b=document.createElement('div');b.className='nb'+(n===''?' emp':n==='⌫'?' del':'');b.textContent=n;
+    if(n!=='')b.onclick=()=>pressNum(w,String(n));pad.appendChild(b);
+  });
+}
+function pressNum(w,n){
+  const pins=w==='o'?oPin:ePin;
+  if(n==='⌫'){if(pins.length>0)pins.pop();}else if(pins.length<4)pins.push(n);
+  renderPad(w);document.getElementById(w+'-err').textContent='';
+  if(pins.length===4){setTimeout(()=>{
+    if(pins.join('')===(w==='o'?'1234':'5678')){
+      try{localStorage.setItem('tt_sess',w);}catch(e){}
+      go(w==='o'?'owner-dash':'emp-dash');
+    }else{document.getElementById(w+'-err').textContent=T[CL][w==='o'?'oWr':'eWr'];pins.length=0;renderPad(w);}
+  },250);}
+}
+
+function ownerTab(tab,btn){
+  curOT=tab;
+  document.querySelectorAll('[id^=obn-]').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  const t=T[CL],c=document.getElementById('owner-content');
+  if(tab==='home'){c.innerHTML=`
+    <div class="stat2"><div class="sc"><div class="sl">${t.activeW}</div><div class="sv">14</div></div><div class="sc"><div class="sl">${t.monthBill}</div><div class="sv" style="font-size:16px;">AED 18,400</div></div></div>
+    <div class="card"><div class="ct">${t.todayEnt}<span class="addbtn" onclick="openModal('entry')">+ Add</span></div>
+    <div class="er"><div class="er-l"><div class="es">Ahmed Ali — ZXZ Villa 123</div><div class="et">Floor Tile • 22 m²</div></div><div class="er-r"><div class="ev">AED 110</div><div class="ed">8:30am</div></div></div>
+    <div class="er"><div class="er-l"><div class="es">Ravi Kumar — Palm Site A</div><div class="et">Wall Tile • 18 m²</div></div><div class="er-r"><div class="ev">AED 90</div><div class="ed">9:15am</div></div></div>
+    <div class="er"><div class="er-l"><div class="es">Md. Hasan — ZXZ Villa 123</div><div class="et">Plaster+Tile • 15 m²</div></div><div class="er-r"><div class="ev">AED 130</div><div class="ed">10:00am</div></div></div></div>
+    <div class="card"><div class="ct">${t.alerts}</div>
+    <div style="font-size:13px;color:var(--r);padding:7px 0;border-bottom:0.5px solid var(--brd);">Ahmed Ali — Passport <span class="tag tr">${t.expiredTag}</span></div>
+    <div style="font-size:13px;color:var(--a);padding:7px 0;border-bottom:0.5px solid var(--brd);">Ravi Kumar — Passport exp in 48 days</div>
+    <div style="font-size:13px;color:var(--a);padding:7px 0;">Khalid — Passport exp in 52 days</div></div>
+    <div class="card"><div class="ct">${t.leaveSch}<span class="addbtn" onclick="openModal('leave')">+ Add</span></div>
+    <div class="er"><div class="er-l"><div class="es">Ahmed Ali</div><div class="et">May 15 → Jun 20</div></div><span class="tag ta">Planned</span></div>
+    <div class="er"><div class="er-l"><div class="es">Md. Hasan</div><div class="et">Jun 1 → Jun 30</div></div><span class="tag tb2">Approved</span></div></div>
+    <div class="card"><div class="ct">${t.toolNotes}</div>
+    <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:5px;">Ahmed Ali</div>
+    <textarea style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brd);border-radius:8px;height:60px;resize:none;color:var(--txt);background:var(--bg);">Trowel x2, Tile cutter, Spirit level</textarea>
+    <div style="font-size:13px;font-weight:600;color:var(--txt);margin:10px 0 5px;">Ravi Kumar</div>
+    <textarea style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brd);border-radius:8px;height:60px;resize:none;color:var(--txt);background:var(--bg);">Rubber mallet, Grout float</textarea>
+    <button class="bbtn bg" style="margin-top:10px;padding:11px;" onclick="alert('Saved!')">${t.saveLbl}</button></div>`;}
+  else if(tab==='att'){c.innerHTML=`<div class="notice">${t.attTitle}</div>
+    <div class="card"><div class="ct">ZXZ Villa 123</div>
+    <div class="att-row"><div><div class="att-name">Ahmed Ali</div><div class="att-role">Tile Master</div></div><div class="pl-btns"><button class="plb p-on" onclick="togglePL(this,'p')">${t.present}</button><button class="plb" onclick="togglePL(this,'l')">${t.leave}</button></div></div>
+    <div class="att-row"><div><div class="att-name">Ravi Kumar</div><div class="att-role">Tile Master</div></div><div class="pl-btns"><button class="plb p-on" onclick="togglePL(this,'p')">${t.present}</button><button class="plb" onclick="togglePL(this,'l')">${t.leave}</button></div></div>
+    <div class="att-row"><div><div class="att-name">Md. Hasan</div><div class="att-role">Helper</div></div><div class="pl-btns"><button class="plb" onclick="togglePL(this,'p')">${t.present}</button><button class="plb l-on" onclick="togglePL(this,'l')">${t.leave}</button></div></div></div>
+    <div class="card"><div class="ct">Palm Site A</div>
+    <div class="att-row"><div><div class="att-name">Farhan Khan</div><div class="att-role">Tile Master</div></div><div class="pl-btns"><button class="plb p-on" onclick="togglePL(this,'p')">${t.present}</button><button class="plb" onclick="togglePL(this,'l')">${t.leave}</button></div></div>
+    <div class="att-row"><div><div class="att-name">Santosh Kumar</div><div class="att-role">Helper</div></div><div class="pl-btns"><button class="plb p-on" onclick="togglePL(this,'p')">${t.present}</button><button class="plb" onclick="togglePL(this,'l')">${t.leave}</button></div></div></div>
+    <button class="bbtn bg">${t.saveAtt}</button>`;}
+  else if(tab==='team'){c.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+    <button class="bbtn bg" style="padding:11px;font-size:13px;" onclick="openModal('worker')">${t.addW}</button>
+    <button class="bbtn" style="padding:11px;font-size:13px;background:var(--bl);color:var(--bd);border:none;border-radius:12px;cursor:pointer;font-weight:600;" onclick="openModal('role')">${t.addR}</button></div>
+    <div class="card"><div class="ct">${t.teamW}</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--brd);"><div class="av av-g" style="width:32px;height:32px;font-size:11px;">AA</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--txt);">Ahmed Ali</div><div style="font-size:11px;color:var(--txt2);">Tile Master • 🇵🇰</div></div><span class="tag tg">Active</span></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--brd);"><div class="av av-b" style="width:32px;height:32px;font-size:11px;">RK</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--txt);">Ravi Kumar</div><div style="font-size:11px;color:var(--txt2);">Tile Master • 🇮🇳</div></div><span class="tag tg">Active</span></div>
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;"><div class="av" style="width:32px;height:32px;font-size:11px;background:var(--al);color:#633806;">MH</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--txt);">Md. Hasan</div><div style="font-size:11px;color:var(--txt2);">Helper • 🇧🇩</div></div><span class="tag ta">Leave</span></div></div>
+    <div class="card"><div class="ct">${t.roles}</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;"><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--gl);color:var(--gd);">Tile Master</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--bl);color:var(--bd);">Helper</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--al);color:#633806;">Foreman</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--rl);color:#A32D2D;">Electrician</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;border:1px dashed var(--brd2);color:var(--txt3);cursor:pointer;" onclick="openModal('role')">${t.addR}</span></div></div>
+    <div class="card"><div class="ct">${t.workTypes}</div><div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--gl);color:var(--gd);">Floor Tile</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--gl);color:var(--gd);">Wall Tile</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--bl);color:var(--bd);">Marble</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--al);color:#633806;">Plaster+Tile</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:#F1EFE8;color:#444441;">Grouting</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--rl);color:#A32D2D;">Skirting+Light</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;border:1px dashed var(--brd2);color:var(--txt3);cursor:pointer;" onclick="openModal('wtype')">${t.addWt}</span></div></div>`;}
+  else if(tab==='exp'){c.innerHTML=`<button class="bbtn bg" style="margin-bottom:12px;" onclick="openModal('expense')">${t.addExp}</button>
+    <div class="card"><div class="ct">${t.expTitle}</div>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Cement bags x50</span><span style="font-size:12px;color:var(--txt3);">AED 15×50</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 750</span></div>
+    <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Al Futtaim Building</div>
+    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Tile adhesive x30</span><span style="font-size:12px;color:var(--txt3);">AED 22×30</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 660</span></div>
+    <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Emirates Hardware</div>
+    <div style="border-top:0.5px solid var(--brd);padding-top:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--txt2);">${t.totalExp}</span><span style="font-size:16px;font-weight:700;color:var(--r);">AED 1,410</span></div></div>`;}
+  else if(tab==='set'){c.innerHTML=`<div class="card"><div class="ct">${t.stgTitle}</div>
+    <div class="settings-row" onclick="go('lang')"><span class="sr-l">${t.stgLang}</span><span class="sr-r">${T[CL].chip.replace(' ✎','')}</span></div>
+    <div class="settings-row" onclick="alert('Company profile editor')"><span class="sr-l">${t.stgComp}</span><span class="sr-r">ACB →</span></div>
+    <div class="settings-row" onclick="alert('Rate manager')"><span class="sr-l">${t.stgRates}</span><span class="sr-r">→</span></div>
+    <div class="settings-row" onclick="alert('PIN change')"><span class="sr-l">${t.stgPIN}</span><span class="sr-r">→</span></div>
+    <div class="settings-row" onclick="logout()"><span class="sr-l" style="color:var(--r);">${t.stgLogout}</span><span class="sr-r">→</span></div></div>`;}
+}
+
+function empTab(tab,btn){
+  curET=tab;
+  document.querySelectorAll('[id^=ebn-]').forEach(b=>b.classList.remove('on'));
+  if(btn)btn.classList.add('on');
+  const t=T[CL],c=document.getElementById('emp-content');
+  if(tab==='work'){c.innerHTML=`<div class="notice">${t.notice}</div>
+    <div class="voice-bar">
+      <button class="mic-btn" id="mic-btn" onclick="toggleVoice()">🎤</button>
+      <div class="voice-info">
+        <div class="voice-title">${t.voiceLbl||'Voice Entry'}</div>
+        <div class="voice-sub" id="voice-sub">${t.voiceBtn||'Tap mic & speak'}</div>
+        <div class="wave-bars" id="wave-bars" style="display:none;">
+          ${[1,2,3,4,5,6,7,8].map((_,i)=>`<div class="wb" id="wb${i}" style="height:${4+Math.random()*16}px"></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="voice-result" id="voice-result">
+      <div class="vr-label" id="vr-label">${t.voiceFill||'Fields filled from voice:'}</div>
+      <div class="vr-text" id="vr-text"></div>
+    </div>
+    <div class="card"><div class="ct">${t.ewTitle}</div>
+    <div class="fmg"><label>${t.ewSite}</label><select id="v-site"><option>ZXZ Villa 123</option><option>Palm Site A</option><option>Marina B2</option></select></div>
+    <div class="fmg"><label>${t.ewRole}</label><select id="v-role"><option>Tile Master</option><option>Helper</option></select></div>
+    <div class="fmg"><label>${t.ewWorkT}</label><select id="wt-sel" onchange="calcEmp()"><option>Floor Tile</option><option>Wall Tile</option><option>Marble Floor</option><option>Marble Wall</option><option>Plaster Only</option><option>Plaster+Tile</option><option>Tile+Glue</option><option>Grouting</option><option>Skirting Simple</option><option>Skirting+Groove</option><option>Skirting+Light</option></select></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <div class="fmg"><label>${t.ewQty} (m²)</label><input type="number" value="22" id="e-qty" inputmode="numeric" oninput="calcEmp()"></div>
+    <div class="fmg"><label>${t.ewRate}</label><input type="number" value="5" id="e-rate" inputmode="numeric" oninput="calcEmp()"></div></div>
+    <div class="earn-box"><span class="earn-lbl">${t.ewEarn}</span><span class="earn-val" id="emp-earn">AED 110</span></div>
+    <button class="bbtn bb" onclick="saveWork(this)">${t.ewSave}</button></div>
+    <div class="hint" style="margin-top:4px;">${t.voiceHint||'Say: site name, work type, quantity'}</div>`;}
+  else if(tab==='sal'){c.innerHTML=`<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div><div class="salary-big" style="font-size:26px;font-weight:700;color:var(--g);">AED 2,420</div><div style="font-size:12px;color:var(--txt2);margin-top:3px;">${t.salTitle}</div></div><span class="tag ta">Processing</span></div>
+    <div class="stat2" style="margin-bottom:12px;"><div class="sc"><div class="sl">${t.salEarn}</div><div class="sv" style="color:var(--g);font-size:16px;">AED 2,420</div></div><div class="sc"><div class="sl">${t.salDays}</div><div class="sv">22</div></div></div>
+    <div class="er"><div class="er-l"><div class="es">ZXZ Villa 123</div><div class="et">Floor Tile • 22m²</div></div><div class="er-r"><div class="ev">AED 110</div><div class="ed">May 2</div></div></div>
+    <div class="er"><div class="er-l"><div class="es">Palm Site A</div><div class="et">Wall Tile • 18m²</div></div><div class="er-r"><div class="ev">AED 90</div><div class="ed">May 1</div></div></div>
+    <div class="er"><div class="er-l"><div class="es">ZXZ Villa 123</div><div class="et">Marble Floor • 30m²</div></div><div class="er-r"><div class="ev">AED 160</div><div class="ed">Apr 30</div></div></div></div>`;}
+  else if(tab==='prof'){c.innerHTML=`<div class="card"><div class="ct">${t.profTitle}</div>
+    <div class="profile-grid">
+    <div class="pg-item"><div class="pgl">${t.profName}</div><div class="pgv">Ahmed Ali</div></div>
+    <div class="pg-item"><div class="pgl">${t.profFather}</div><div class="pgv">Ghulam Ali</div></div>
+    <div class="pg-item"><div class="pgl">${t.profPhone}</div><div class="pgv">+92-300-111</div></div>
+    <div class="pg-item"><div class="pgl">${t.profCountry}</div><div class="pgv">🇵🇰 Pakistan</div></div>
+    <div class="pg-item"><div class="pgl">${t.profID}</div><div class="pgv">Dec 2026</div></div>
+    <div class="pg-item"><div class="pgl">${t.profPass}</div><div class="pgv" style="color:var(--r);">${t.expiredTag}</div></div></div></div>`;}
+  else if(tab==='set'){c.innerHTML=`<div class="card"><div class="ct">${t.eSet}</div>
+    <div class="settings-row" onclick="go('lang')"><span class="sr-l">${t.stgLang}</span><span class="sr-r">${T[CL].chip.replace(' ✎','')}</span></div>
+    <div class="settings-row" onclick="alert('PIN change')"><span class="sr-l">${t.stgPIN}</span><span class="sr-r">→</span></div>
+    <div class="settings-row" onclick="logout()"><span class="sr-l" style="color:var(--r);">${t.stgLogout}</span><span class="sr-r">→</span></div></div>`;}
+}
+
+function calcEmp(){
+  const q=parseFloat(document.getElementById('e-qty')?.value)||0;
+  const r=parseFloat(document.getElementById('e-rate')?.value)||0;
+  const el=document.getElementById('emp-earn');if(el)el.textContent='AED '+Math.round(q*r);
+}
+function saveWork(btn){btn.textContent='✅ Saved!';btn.style.background='#3B6D11';setTimeout(()=>{btn.textContent=T[CL].ewSave;btn.style.background='';},1500);}
+function togglePL(btn,type){const row=btn.closest('.pl-btns');row.querySelectorAll('.plb').forEach(b=>{b.className='plb';});btn.classList.add(type==='p'?'p-on':'l-on');}
+
+function openModal(type){
+  const t=T[CL];
+  const titles={worker:t.addWorkerT,role:t.addRoleT,wtype:t.addWtT,expense:t.addExpT,leave:t.addLeaveT,entry:t.todayEnt};
+  document.getElementById('modal-title').textContent=titles[type]||'Add';
+  let h='';
+  if(type==='worker'){h=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.nameLbl}</label><input placeholder="Ahmed Ali"></div><div class="fmg"><label>${t.fatherLbl}</label><input placeholder="Ghulam Ali"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.phoneLbl}</label><input type="tel" inputmode="numeric"></div><div class="fmg"><label>${t.countryLbl}</label><select><option>Pakistan</option><option>India</option><option>Bangladesh</option><option>Philippines</option><option>Sri Lanka</option><option>Nepal</option><option>UAE</option><option>Egypt</option><option>Other</option></select></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.roleLbl}</label><select><option>Tile Master</option><option>Helper</option><option>Foreman</option><option>Electrician</option></select></div><div class="fmg"><label>${t.siteLbl}</label><select><option>ZXZ Villa 123</option><option>Palm Site A</option><option>Marina B2</option></select></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.idExpLbl}</label><input type="date"></div><div class="fmg"><label>${t.passExpLbl}</label><input type="date"></div></div>`;}
+  else if(type==='role'){h=`<div class="fmg"><label>${t.roleNameLbl}</label><input placeholder="Electrician, Carpenter..."></div>`;}
+  else if(type==='wtype'){h=`<div class="fmg"><label>${t.wtNameLbl}</label><input placeholder="Epoxy Flooring..."></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;"><div class="fmg"><label>${t.labRateLbl}</label><input type="number" inputmode="numeric" value="5"></div><div class="fmg"><label>${t.compRateLbl}</label><input type="number" inputmode="numeric" value="10"></div><div class="fmg"><label>${t.unitLbl}</label><select><option>m²</option><option>lm</option><option>unit</option></select></div></div>`;}
+  else if(type==='expense'){h=`<div class="fmg"><label>${t.descLbl}</label><input placeholder="Cement bags..."></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.qtyLbl}</label><input type="number" inputmode="numeric" value="1" id="ex-qty" oninput="calcExp()"></div><div class="fmg"><label>${t.unitPriceLbl}</label><input type="number" inputmode="numeric" value="0" id="ex-up" oninput="calcExp()"></div></div><div style="background:var(--bg2);border-radius:10px;padding:10px 14px;margin-bottom:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--txt2);">${t.totalLbl}</span><span style="font-size:16px;font-weight:700;color:var(--txt);" id="ex-total">AED 0</span></div><div class="fmg"><label>${t.supplierLbl}</label><input placeholder="Al Futtaim..."></div>`;}
+  else if(type==='leave'){h=`<div class="fmg"><label>${t.nameLbl}</label><select><option>Ahmed Ali</option><option>Ravi Kumar</option><option>Md. Hasan</option></select></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.departureLbl}</label><input type="date"></div><div class="fmg"><label>${t.returnLbl}</label><input type="date"></div></div><div class="fmg"><label>${t.notesLbl}</label><input placeholder="Annual leave..."></div>`;}
+  else if(type==='entry'){h=`<div class="fmg"><label>${t.nameLbl}</label><select><option>Ahmed Ali</option><option>Ravi Kumar</option><option>Md. Hasan</option></select></div><div class="fmg"><label>${t.siteLbl}</label><select><option>ZXZ Villa 123</option><option>Palm Site A</option></select></div><div class="fmg"><label>${t.ewWorkT}</label><select><option>Floor Tile</option><option>Wall Tile</option><option>Marble</option><option>Grouting</option><option>Skirting</option></select></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>${t.qtyLbl}</label><input type="number" inputmode="numeric" value="22"></div><div class="fmg"><label>${t.unitLbl}</label><select><option>m²</option><option>lm</option></select></div></div>`;}
+  h+=`<button class="bbtn bg" onclick="closeModal()">${t.saveLbl}</button>`;
+  document.getElementById('modal-body').innerHTML=h;
+  document.getElementById('modal').style.display='flex';
+}
+function calcExp(){const q=parseFloat(document.getElementById('ex-qty')?.value)||0;const p=parseFloat(document.getElementById('ex-up')?.value)||0;const el=document.getElementById('ex-total');if(el)el.textContent='AED '+Math.round(q*p);}
+function closeModal(){document.getElementById('modal').style.display='none';}
+function closeModalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+// ══ VOICE RECOGNITION ENGINE ══
+let recognition=null, isRecording=false, waveInterval=null;
+
+const VOICE_KEYWORDS={
+  sites:{
+    'zxz':0,'villa 123':0,'villa':0,'123':0,'zxz villa':0,
+    'palm':1,'palm site':1,'palm a':1,'palm site a':1,
+    'marina':2,'marina b2':2,'b2':2,
+    'ولا':0,'پام':1,'مارینا':2,'زیڈ':0,
+    'विला':0,'पाम':1,'मरीना':2,
+    'ভিলা':0,'পাম':1,'মেরিনা':2,
+    'فيلا':0,'النخيل':1,'مارينا':2
+  },
+  workTypes:{
+    'floor tile':0,'floor':0,'فرش':0,'فلور':0,'floor tiles':0,'फर्श':0,'মেঝে':0,
+    'wall tile':1,'wall':1,'دیوار':1,'وال':1,'دار':1,'दीवार':1,'দেওয়াল':1,
+    'marble floor':2,'marble':2,'ماربل':2,'سنگ':2,'संगमरमर':2,'মার্বেল':2,
+    'marble wall':3,
+    'plaster only':4,'plaster':4,'پلستر':4,'پلاسٹر':4,'प्लास्टर':4,'প্লাস্টার':4,'جبص':4,
+    'plaster tile':5,'plaster and tile':5,'plaster+tile':5,'plastertile':5,
+    'tile glue':6,'glue':6,'گلو':6,'گوند':6,
+    'grouting':7,'grout':7,'گراؤٹ':7,'जोड़':7,'গ্রাউট':7,'مونة':7,
+    'skirting simple':8,'skirting':8,'simple':8,'سکرٹنگ':8,'skirt':8,
+    'skirting groove':9,'groove':9,'گرو':9,
+    'skirting light':10,'light groove':10,'lighting':10,'لائٹ':10,'لاইট':10
+  }
+};
+
+const LANG_CODES={en:'en-US',ur:'ur-PK',hi:'hi-IN',bn:'bn-BD',ar:'ar-SA',tl:'fil-PH',si:'si-LK',ne:'ne-NP'};
+
+function parseVoiceText(txt){
+  const lower=txt.toLowerCase();
+  let site=-1,workType=-1,qty=0;
+  for(const[kw,idx] of Object.entries(VOICE_KEYWORDS.sites)){if(lower.includes(kw)){site=idx;break;}}
+  for(const[kw,idx] of Object.entries(VOICE_KEYWORDS.workTypes)){if(lower.includes(kw)){workType=idx;break;}}
+  const nums=txt.match(/\d+(\.\d+)?/g);
+  if(nums){qty=parseFloat(nums[nums.length-1]);}
+  const words=['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+    'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty',
+    'thirty','forty','fifty','sixty','seventy','eighty','ninety','hundred',
+    'ایک','دو','تین','چار','پانچ','دس','بیس','تیس','پچاس',
+    'ek','do','teen','char','panch','das','bees','tees','pachas'];
+  const wordNums=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,30,40,50,60,70,80,90,100,1,2,3,4,5,10,20,30,50,1,2,3,4,5,10,20,30,50];
+  words.forEach((w,i)=>{if(lower.includes(w)&&wordNums[i]>0)qty=wordNums[i];});
+  return{site,workType,qty};
+}
+
+function applyVoiceResult(parsed,rawText){
+  const t=T[CL];
+  const siteEl=document.getElementById('v-site');
+  const wtEl=document.getElementById('wt-sel');
+  const qtyEl=document.getElementById('e-qty');
+  const resultEl=document.getElementById('voice-result');
+  const vrText=document.getElementById('vr-text');
+  let filled=[];
+  if(parsed.site>=0&&siteEl){siteEl.selectedIndex=parsed.site;filled.push(siteEl.options[parsed.site].text);}
+  if(parsed.workType>=0&&wtEl){wtEl.selectedIndex=parsed.workType;filled.push(wtEl.options[parsed.workType].text);}
+  if(parsed.qty>0&&qtyEl){qtyEl.value=parsed.qty;filled.push(parsed.qty+' m²');}
+  calcEmp();
+  if(resultEl&&vrText){
+    vrText.textContent='"'+rawText+'" → '+filled.join(', ');
+    resultEl.style.display='block';
+  }
+  return filled.length>0;
+}
+
+function toggleVoice(){
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){
+    const sub=document.getElementById('voice-sub');
+    if(sub)sub.textContent=T[CL].voiceNo||'Voice not supported. Use Chrome.';
+    return;
+  }
+  if(isRecording){stopVoice();return;}
+  startVoice();
+}
+
+function startVoice(){
+  const SpeechRec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SpeechRec();
+  recognition.lang=LANG_CODES[CL]||'en-US';
+  recognition.interimResults=false;
+  recognition.maxAlternatives=3;
+  recognition.continuous=false;
+  isRecording=true;
+  const btn=document.getElementById('mic-btn');
+  const sub=document.getElementById('voice-sub');
+  const waves=document.getElementById('wave-bars');
+  if(btn){btn.classList.add('rec');btn.textContent='🔴';}
+  if(sub)sub.textContent=T[CL].voiceRec||'Listening... speak now';
+  if(waves){waves.style.display='flex';animateWaves();}
+  recognition.onresult=function(e){
+    stopWaves();
+    if(btn){btn.classList.remove('rec');btn.classList.add('processing');btn.textContent='⏳';}
+    if(sub)sub.textContent=T[CL].voiceProc||'Understanding...';
+    const results=Array.from(e.results[0]).map(r=>r.transcript);
+    let best=results[0];
+    let parsed=null;
+    for(const r of results){
+      const p=parseVoiceText(r);
+      if(!parsed||(p.site>=0)+(p.workType>=0)+(p.qty>0)>(parsed.site>=0)+(parsed.workType>=0)+(parsed.qty>0)){parsed=p;best=r;}
+    }
+    setTimeout(()=>{
+      if(btn){btn.classList.remove('processing');btn.textContent='🎤';}
+      const ok=applyVoiceResult(parsed,best);
+      if(sub)sub.textContent=ok?(T[CL].voiceOk||'Entry detected! Check fields below.'):(T[CL].voiceErr||'Could not understand. Try again.');
+      isRecording=false;
+    },400);
+  };
+  recognition.onerror=function(e){
+    stopWaves();isRecording=false;
+    if(btn){btn.classList.remove('rec');btn.textContent='🎤';}
+    if(sub)sub.textContent=e.error==='not-allowed'?'Microphone access denied.':(T[CL].voiceErr||'Could not understand. Try again.');
+  };
+  recognition.onend=function(){if(isRecording){stopWaves();isRecording=false;if(btn){btn.classList.remove('rec');btn.textContent='🎤';}}};
+  recognition.start();
+}
+
+function stopVoice(){
+  if(recognition)recognition.stop();
+  stopWaves();isRecording=false;
+  const btn=document.getElementById('mic-btn');
+  if(btn){btn.classList.remove('rec');btn.textContent='🎤';}
+}
+
+function animateWaves(){
+  waveInterval=setInterval(()=>{
+    for(let i=0;i<8;i++){const b=document.getElementById('wb'+i);if(b)b.style.height=(4+Math.random()*22)+'px';}
+  },120);
+}
+function stopWaves(){
+  clearInterval(waveInterval);
+  const w=document.getElementById('wave-bars');if(w)w.style.display='none';
+  for(let i=0;i<8;i++){const b=document.getElementById('wb'+i);if(b)b.style.height='4px';}
+}
+// ══ END VOICE ══
+
+
+function updateClock(){const n=new Date();let h=n.getHours(),m=n.getMinutes(),a='AM';if(h>=12){a='PM';if(h>12)h-=12;}if(h===0)h=12;const el=document.getElementById('clk');if(el)el.textContent=h+':'+(m<10?'0':'')+m+' '+a;}
+updateClock();setInterval(updateClock,10000);
+
+// Init — check saved language
+(function(){
+  try{
+    const saved=localStorage.getItem('tt_lang');
+    if(saved&&T[saved]){CL=saved;applyLang();go('landing');
+      const cards=document.querySelectorAll('.lcard');
+      cards.forEach(c=>{if(c.onclick&&c.onclick.toString().includes("'"+saved+"'"))c.classList.add('sel');});
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>
