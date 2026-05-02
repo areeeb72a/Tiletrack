@@ -554,6 +554,18 @@ function calcExp(){const q=parseFloat(document.getElementById('ex-qty')?.value)|
 function closeModal(){document.getElementById('modal').style.display='none';}
 function closeModalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
 
+function quickSelectSite(idx,el){
+  document.querySelectorAll('.qs-site').forEach(b=>b.classList.remove('qs-on'));
+  el.classList.add('qs-on');
+  const sel=document.getElementById('v-site');
+  if(sel)sel.selectedIndex=idx;
+}
+function quickSelectWT(idx,el){
+  document.querySelectorAll('.qs-wt').forEach(b=>b.classList.remove('qs-on'));
+  el.classList.add('qs-on');
+  const sel=document.getElementById('wt-sel');
+  if(sel){sel.selectedIndex=idx;calcEmp();}
+}
 function quickSelectRole(idx,el){
   document.querySelectorAll('.qs-role').forEach(b=>b.classList.remove('qs-on'));
   el.classList.add('qs-on');
