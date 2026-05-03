@@ -451,6 +451,19 @@ function pressNum(w,n){
   if(pins.length===4){setTimeout(()=>{
     if(pins.join('')===(w==='o'?'1234':'5678')){
       try{localStorage.setItem('tt_sess',w);}catch(e){}
+      if(w==='emp'){
+        // Find which employee logged in by PIN
+        const matchEmp=hrEmployees.find(e=>e.ownerPin===pins.join(''));
+        window._loggedInName=matchEmp?matchEmp.name:'Ahmed Ali';
+        window._loggedInRole=matchEmp?matchEmp.role:'Tile Master';
+        // Update topbar
+        setTimeout(()=>{
+          const nameEl=document.querySelector('#scr-emp-dash .tb-name');
+          const roleEl=document.getElementById('ed-role');
+          if(nameEl)nameEl.textContent=window._loggedInName;
+          if(roleEl)roleEl.textContent=(window._loggedInRole||'Tile Master')+' — '+(companyData?companyData.name:'ACB Company');
+        },100);
+      }
       go(w==='o'?'owner-dash':'emp-dash');
     }else{document.getElementById(w+'-err').textContent=T[CL][w==='o'?'oWr':'eWr'];pins.length=0;renderPad(w);}
   },250);}
@@ -596,14 +609,33 @@ function empTab(tab,btn){
   if(btn)btn.classList.add('on');
   const t=T[CL],c=document.getElementById('emp-content');
   if(tab==='work'){
+    const isHelper=(window._loggedInRole==='Helper');
     const sites=['ZXZ Villa 123','Palm Site A','Marina B2'];
-    const wts=WORK_TYPES_LIST.map(w=>w.label);
     const qtys=[5,10,15,18,20,22,25,30,40,50];
-    const otherEmps=hrEmployees.filter(e=>e.active).map(e=>e.name);
+    const otherEmps=hrEmployees.filter(e=>e.active&&e.name!=='Ahmed Ali').map(e=>e.name);
+    const today=new Date().toISOString().slice(0,10);
+
+    if(isHelper){
+      const myName=window._loggedInName||'Ahmed Ali';
+      const masterEmp=employees.find(e=>{
+        return e.workLog&&e.workLog.some(l=>l.ownerNote&&l.ownerNote.includes(myName));
+      });
+      const myLogs=(masterEmp?masterEmp.workLog:[]).filter(l=>l.ownerNote&&l.ownerNote.includes(myName));
+      const recentLogs=myLogs.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,7);
+      c.innerHTML=`
+      <div class="notice" style="background:var(--bl);color:var(--bd);margin-bottom:10px;">👷 Your work is recorded by your Tile Master</div>
+      <div class="card">
+        <div class="ct">📋 My Work History</div>
+        ${recentLogs.length===0?'<div style="font-size:13px;color:var(--txt3);text-align:center;padding:16px;">No entries yet — your master will add them</div>':
+        recentLogs.map(log=>'<div class="er"><div class="er-l"><div class="es">'+log.date+'</div><div class="et">'+(masterEmp?masterEmp.name:'Master')+' — '+(log.entries.map(e=>(WORK_TYPES_LIST.find(w=>w.key===e.type)||{label:e.type}).label+' '+e.qty+'m²').join(', ')||'—')+'</div></div><div class="er-r"><div class="ev" style="color:'+(log.dayStatus==='P'?'var(--g)':'var(--r)')+';">'+(log.dayStatus==='P'?'✅ P':'❌')+'</div></div></div>').join('')}
+      </div>`;
+      return;
+    }
+
     c.innerHTML=`
     <div class="entry-header">
       <span class="eh-icon">⚡</span>
-      <div><div class="eh-title">${t.ewTitle}</div><div class="eh-sub">Tap to select — fast entry</div></div>
+      <div><div class="eh-title">${t.ewTitle}</div><div class="eh-sub">Tile Master — ACB Company</div></div>
     </div>
 
     <div class="card">
@@ -613,18 +645,19 @@ function empTab(tab,btn){
       </div>
       <select id="v-site" style="display:none;">${sites.map(s=>`<option>${s}</option>`).join('')}</select>
 
-      <div class="qs-label" style="margin-top:10px;">${t.ewRole}</div>
-      <div class="qs-grid" style="grid-template-columns:1fr 1fr;">
-        <div class="qs-btn qs-role qs-on" onclick="quickSelectRole(0,this)">Tile Master</div>
-        <div class="qs-btn qs-role" onclick="quickSelectRole(1,this)">Helper</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+        <div>
+          <div class="qs-label">📅 Date</div>
+          <input type="date" id="entry-date" value="${today}" style="width:100%;padding:10px;font-size:13px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+        </div>
+        <div>
+          <div class="qs-label">👷 Helper <span style="font-size:10px;color:var(--txt3);">(optional)</span></div>
+          <select id="v-helper" style="width:100%;padding:10px 8px;font-size:13px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+            <option value="">— Alone —</option>
+            ${otherEmps.map(n=>'<option value="'+n+'">'+n+'</option>').join('')}
+          </select>
+        </div>
       </div>
-      <select id="v-role" style="display:none;"><option>Tile Master</option><option>Helper</option></select>
-
-      <div class="qs-label" style="margin-top:10px;">👷 Helper / Partner Today <span style="font-size:10px;color:var(--txt3);">(optional)</span></div>
-      <select id="v-helper" style="width:100%;padding:10px 12px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
-        <option value="">— Working alone today —</option>
-        ${otherEmps.map(n=>`<option value="${n}">${n}</option>`).join('')}
-      </select>
     </div>
 
     <div class="card">
@@ -661,7 +694,7 @@ function empTab(tab,btn){
       <span class="earn-lbl">${t.ewEarn}</span>
       <span class="earn-val" id="emp-earn">AED 0</span>
     </div>
-    <button class="bbtn bb" onclick="saveWork(this)">${t.ewSave}</button>
+    <button class="bbtn bb" onclick="saveWorkWithHelper(this)">${t.ewSave}</button>
     `;}
   else if(tab==='sal'){
     const emp=employees.find(e=>e.name==='Ahmed Ali')||employees[0];
@@ -707,7 +740,45 @@ function calcEmp(){
   const r=parseFloat(document.getElementById('e-rate')?.value)||0;
   const el=document.getElementById('emp-earn');if(el)el.textContent='AED '+Math.round(q*r);
 }
+function saveWorkWithHelper(btn){
+  const helperName=document.getElementById('v-helper')?.value;
+  const site=document.getElementById('v-site');
+  const wt=document.getElementById('wt-sel');
+  const qty=document.getElementById('e-qty')?.value;
+  const date=document.getElementById('entry-date')?.value||new Date().toISOString().slice(0,10);
+
+  // Auto-mark helper attendance if selected
+  if(helperName){
+    const helperEmp=employees.find(e=>e.name===helperName);
+    if(helperEmp){
+      // Add or update workLog entry for helper
+      let log=helperEmp.workLog.find(l=>l.date===date);
+      if(!log){
+        log={date,entries:[],dayStatus:'P',ownerNote:'With Ahmed Ali'};
+        helperEmp.workLog.push(log);
+      } else {
+        log.dayStatus='P';
+        log.ownerNote='With Ahmed Ali';
+      }
+      // Add same work entry to helper's log (for their salary)
+      const wtKey=WORK_TYPES_LIST[wt?.selectedIndex||0]?.key||'floor_tile';
+      log.entries.push({type:wtKey,qty:parseFloat(qty)||0,withMaster:'Ahmed Ali'});
+    }
+  }
+
+  btn.textContent='✅ Saved!';
+  btn.style.background='#3B6D11';
+  if(helperName){
+    setTimeout(()=>{
+      alert('✅ Work saved!\n\n🔔 Helper auto-update:\n'+helperName+' marked Present for '+date+'\nSame work entry added to their salary.');
+      btn.textContent=T[CL].ewSave;btn.style.background='';
+    },300);
+  } else {
+    setTimeout(()=>{btn.textContent=T[CL].ewSave;btn.style.background='';},1500);
+  }
+}
 function saveWork(btn){btn.textContent='✅ Saved!';btn.style.background='#3B6D11';setTimeout(()=>{btn.textContent=T[CL].ewSave;btn.style.background='';},1500);}
+
 function togglePL(btn,type){const row=btn.closest('.pl-btns');row.querySelectorAll('.plb').forEach(b=>{b.className='plb';});btn.classList.add(type==='p'?'p-on':'l-on');}
 
 function openModal(type){
