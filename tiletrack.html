@@ -264,7 +264,7 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 <!-- LANDING -->
 <div class="scr" id="scr-landing">
 <div class="sa">
-  <div class="brand"><div class="bicon">🔷</div><div class="bname">TileTrack Pro</div><div class="bsub" id="ld-sub">Select your portal</div></div>
+  <div class="brand"><div class="bicon">🔷</div><div class="bname">TileTrack Pro</div><div class="bsub" id="app-company-name">${companyData?companyData.name:'ACB Company'}</div></div>
   <div style="text-align:center;margin-bottom:14px;"><span class="lang-chip" id="lang-chip" onclick="go('lang')">🇬🇧 English ✎</span></div>
   <div class="role-grid">
     <div class="rcard" onclick="go('owner-phone')"><span class="rc-ico">👔</span><div class="rc-t" id="ld-own">Owner</div><div class="rc-s" id="ld-owns">Full management</div></div>
@@ -420,6 +420,9 @@ function applyLang(){
     'ont-home':t.oHome,'ont-att':t.oAtt,'ont-team':t.oTeam,'ont-exp':t.oExp,'ont-set':t.oSet,
     'ent-work':t.eWork,'ent-sal':t.eSal,'ent-prof':t.eProf,'ent-set':t.eSet};
   Object.entries(m).forEach(([id,v])=>{const e=document.getElementById(id);if(e)e.textContent=v;});
+  // Update company name display
+  const appNameEl=document.getElementById('app-company-name');
+  if(appNameEl)appNameEl.textContent=companyData.name;
 }
 function cycleCode(w){if(w==='o'){oCI=(oCI+1)%codes.length;document.getElementById('o-code').textContent=codes[oCI][0]+' '+codes[oCI][1];}else{eCI=(eCI+1)%codes.length;document.getElementById('e-code').textContent=codes[eCI][0]+' '+codes[eCI][1];}}
 function go(id){
@@ -460,25 +463,98 @@ function ownerTab(tab,btn){
   const t=T[CL],c=document.getElementById('owner-content');
   if(tab==='clients'){renderClients(c);return;}
   if(tab==='wages'){renderWageSystem(c);return;}
-  if(tab==='home'){c.innerHTML=`
-    <div class="stat2"><div class="sc"><div class="sl">${t.activeW}</div><div class="sv">14</div></div><div class="sc"><div class="sl">${t.monthBill}</div><div class="sv" style="font-size:16px;">AED 18,400</div></div></div>
-    <div class="card"><div class="ct">${t.todayEnt}<span class="addbtn" onclick="openModal('entry')">+ Add</span></div>
-    <div class="er"><div class="er-l"><div class="es">Ahmed Ali — ZXZ Villa 123</div><div class="et">Floor Tile • 22 m²</div></div><div class="er-r"><div class="ev">AED 110</div><div class="ed">8:30am</div></div></div>
-    <div class="er"><div class="er-l"><div class="es">Ravi Kumar — Palm Site A</div><div class="et">Wall Tile • 18 m²</div></div><div class="er-r"><div class="ev">AED 90</div><div class="ed">9:15am</div></div></div>
-    <div class="er"><div class="er-l"><div class="es">Md. Hasan — ZXZ Villa 123</div><div class="et">Plaster+Tile • 15 m²</div></div><div class="er-r"><div class="ev">AED 130</div><div class="ed">10:00am</div></div></div></div>
-    <div class="card"><div class="ct">${t.alerts}</div>
-    <div style="font-size:13px;color:var(--r);padding:7px 0;border-bottom:0.5px solid var(--brd);">Ahmed Ali — Passport <span class="tag tr">${t.expiredTag}</span></div>
-    <div style="font-size:13px;color:var(--a);padding:7px 0;border-bottom:0.5px solid var(--brd);">Ravi Kumar — Passport exp in 48 days</div>
-    <div style="font-size:13px;color:var(--a);padding:7px 0;">Khalid — Passport exp in 52 days</div></div>
-    <div class="card"><div class="ct">${t.leaveSch}<span class="addbtn" onclick="openModal('leave')">+ Add</span></div>
-    <div class="er"><div class="er-l"><div class="es">Ahmed Ali</div><div class="et">May 15 → Jun 20</div></div><span class="tag ta">Planned</span></div>
-    <div class="er"><div class="er-l"><div class="es">Md. Hasan</div><div class="et">Jun 1 → Jun 30</div></div><span class="tag tb2">Approved</span></div></div>
-    <div class="card"><div class="ct">${t.toolNotes}</div>
-    <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:5px;">Ahmed Ali</div>
-    <textarea style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brd);border-radius:8px;height:60px;resize:none;color:var(--txt);background:var(--bg);">Trowel x2, Tile cutter, Spirit level</textarea>
-    <div style="font-size:13px;font-weight:600;color:var(--txt);margin:10px 0 5px;">Ravi Kumar</div>
-    <textarea style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brd);border-radius:8px;height:60px;resize:none;color:var(--txt);background:var(--bg);">Rubber mallet, Grout float</textarea>
-    <button class="bbtn bg" style="margin-top:10px;padding:11px;" onclick="alert('Saved!')">${t.saveLbl}</button></div>`;}
+  if(tab==='home'){
+    const today=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+    const urgentDocs=hrEmployees.filter(e=>daysUntilExpiry(e.idExpiry)<=60||daysUntilExpiry(e.passportExpiry)<=60||daysUntilExpiry(e.visaExpiry)<=60);
+    const urgentPDC=pdcList.filter(p=>p.status==='pending'&&pdc_daysUntil(p.chqDate)<=1);
+    c.innerHTML=`
+    <!-- HERO BANNER -->
+    <div style="background:linear-gradient(135deg,#1D9E75 0%,#085041 100%);border-radius:16px;padding:16px;margin-bottom:14px;color:#fff;">
+      <div style="font-size:11px;opacity:0.8;margin-bottom:4px;">${today}</div>
+      <div style="font-size:22px;font-weight:700;">Good day, ${companyData.managerName.split(' ')[0]}! 👋</div>
+      <div style="font-size:12px;opacity:0.85;margin-top:2px;">${companyData.name}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px;">
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;">14</div>
+          <div style="font-size:10px;opacity:0.85;">Active Staff</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:18px;font-weight:700;">18.4K</div>
+          <div style="font-size:10px;opacity:0.85;">Month Bill</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:22px;font-weight:700;">3</div>
+          <div style="font-size:10px;opacity:0.85;">Sites Active</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+      <div onclick="ownerTab('att',document.getElementById('obn-att'))" style="background:var(--bg);border:0.5px solid var(--brd);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">✅</div>
+        <div style="font-size:11px;font-weight:600;color:var(--txt);margin-top:5px;">Attendance</div>
+      </div>
+      <div onclick="ownerTab('wages',document.getElementById('obn-wages'))" style="background:var(--bg);border:0.5px solid var(--brd);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">💰</div>
+        <div style="font-size:11px;font-weight:600;color:var(--txt);margin-top:5px;">Wages & OT</div>
+      </div>
+      <div onclick="ownerTab('clients',document.getElementById('obn-clients'))" style="background:var(--bg);border:0.5px solid var(--brd);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">🏢</div>
+        <div style="font-size:11px;font-weight:600;color:var(--txt);margin-top:5px;">Clients</div>
+      </div>
+      <div onclick="renderPDCDashboard(document.getElementById('owner-content'))" style="background:var(--bg);border:0.5px solid var(--brd);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;position:relative;">
+        <div style="font-size:24px;">🏦</div>
+        <div style="font-size:11px;font-weight:600;color:var(--txt);margin-top:5px;">PDC</div>
+        ${urgentPDC.length>0?`<div style="position:absolute;top:6px;right:8px;background:var(--r);color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;">${urgentPDC.length}</div>`:''}
+      </div>
+      <div onclick="openModal('entry')" style="background:var(--bl);border:0.5px solid var(--b);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">➕</div>
+        <div style="font-size:11px;font-weight:600;color:var(--bd);margin-top:5px;">Add Entry</div>
+      </div>
+      <div onclick="ownerTab('set',null)" style="background:var(--bg);border:0.5px solid var(--brd);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;">
+        <div style="font-size:24px;">⚙️</div>
+        <div style="font-size:11px;font-weight:600;color:var(--txt);margin-top:5px;">Settings</div>
+      </div>
+    </div>
+
+    <!-- ALERTS SECTION -->
+    ${(urgentDocs.length>0||urgentPDC.length>0)?`<div style="background:linear-gradient(135deg,#FFF1F0,#FFF8F0);border:1px solid #FFCCC7;border-radius:14px;padding:12px;margin-bottom:14px;">
+      <div style="font-size:13px;font-weight:700;color:#A32D2D;margin-bottom:8px;">🚨 Urgent Alerts (${urgentDocs.length+urgentPDC.length})</div>
+      ${urgentPDC.map(p=>`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);"><span style="font-size:12px;color:#A32D2D;">🏦 Cheque #${p.chqNo} — ${p.chqDate}</span><span style="font-size:11px;font-weight:600;color:#A32D2D;">DEPOSIT!</span></div>`).join('')}
+      ${urgentDocs.map(e=>{const a=[];if(daysUntilExpiry(e.idExpiry)<=60)a.push('ID');if(daysUntilExpiry(e.passportExpiry)<=60)a.push('Passport');if(daysUntilExpiry(e.visaExpiry)<=60)a.push('Visa');return`<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid rgba(0,0,0,0.06);"><span style="font-size:12px;color:#A32D2D;">${e.country} ${e.name} — ${a.join(', ')}</span><span style="font-size:11px;font-weight:600;color:#A32D2D;">⚠️</span></div>`;}).join('')}
+    </div>`:''}
+
+    <!-- TODAY'S ENTRIES -->
+    <div style="background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);">📋 Today's Work Entries</div>
+        <span class="addbtn" onclick="openModal('entry')">+ Add</span>
+      </div>
+      <div class="er"><div class="er-l"><div class="es">Ahmed Ali — ZXZ Villa 123</div><div class="et">Floor Tile • 22 m²</div></div><div class="er-r"><div class="ev">AED 110</div><div class="ed">8:30am</div></div></div>
+      <div class="er"><div class="er-l"><div class="es">Ravi Kumar — Palm Site A</div><div class="et">Wall Tile • 18 m²</div></div><div class="er-r"><div class="ev">AED 90</div><div class="ed">9:15am</div></div></div>
+      <div class="er"><div class="er-l"><div class="es">Md. Hasan — ZXZ Villa 123</div><div class="et">Plaster+Tile • 15 m²</div></div><div class="er-r"><div class="ev">AED 130</div><div class="ed">10:00am</div></div></div>
+    </div>
+
+    <!-- LEAVE SCHEDULE -->
+    <div style="background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:14px;font-weight:700;color:var(--txt);">✈️ Leave Schedule</div>
+        <span class="addbtn" onclick="openModal('leave')">+ Add</span>
+      </div>
+      <div class="er"><div class="er-l"><div class="es">Ahmed Ali</div><div class="et">May 15 → Jun 20</div></div><span class="tag ta">Planned</span></div>
+      <div class="er"><div class="er-l"><div class="es">Md. Hasan</div><div class="et">Jun 1 → Jun 30</div></div><span class="tag tb2">Approved</span></div>
+    </div>
+
+    <!-- TOOL NOTES -->
+    <div style="background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:12px;">
+      <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:10px;">🔧 Tool Notes</div>
+      <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:4px;">Ahmed Ali</div>
+      <textarea style="width:100%;padding:8px;font-size:12px;border:1px solid var(--brd);border-radius:8px;height:54px;resize:none;color:var(--txt);background:var(--bg2);">Trowel x2, Tile cutter, Spirit level</textarea>
+      <div style="font-size:13px;font-weight:600;color:var(--txt);margin:8px 0 4px;">Ravi Kumar</div>
+      <textarea style="width:100%;padding:8px;font-size:12px;border:1px solid var(--brd);border-radius:8px;height:54px;resize:none;color:var(--txt);background:var(--bg2);">Rubber mallet, Grout float</textarea>
+      <button class="bbtn bg" style="margin-top:10px;padding:10px;" onclick="alert('Saved! ✅')">Save Notes</button>
+    </div>`;}
   else if(tab==='att'){c.innerHTML=`<div class="notice">${t.attTitle}</div>
     <div class="card"><div class="ct">ZXZ Villa 123</div>
     <div class="att-row"><div><div class="att-name">Ahmed Ali</div><div class="att-role">Tile Master</div></div><div class="pl-btns"><button class="plb p-on" onclick="togglePL(this,'p')">${t.present}</button><button class="plb" onclick="togglePL(this,'l')">${t.leave}</button></div></div>
@@ -511,12 +587,7 @@ function ownerTab(tab,btn){
   <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Tile adhesive x30</span><span style="font-size:12px;color:var(--txt3);">AED 22×30</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 660</span></div>
   <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Emirates Hardware</div>
   <div style="border-top:0.5px solid var(--brd);padding-top:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--txt2);">Total</span><span style="font-size:16px;font-weight:700;color:var(--r);">AED 1,410</span></div></div>`;}
-  else if(tab==='set'){c.innerHTML=`<div class="card"><div class="ct">${t.stgTitle}</div>
-    <div class="settings-row" onclick="go('lang')"><span class="sr-l">${t.stgLang}</span><span class="sr-r">${T[CL].chip.replace(' ✎','')}</span></div>
-    <div class="settings-row" onclick="alert('Company profile editor')"><span class="sr-l">${t.stgComp}</span><span class="sr-r">ACB →</span></div>
-    <div class="settings-row" onclick="alert('Rate manager')"><span class="sr-l">${t.stgRates}</span><span class="sr-r">→</span></div>
-    <div class="settings-row" onclick="alert('PIN change')"><span class="sr-l">${t.stgPIN}</span><span class="sr-r">→</span></div>
-    <div class="settings-row" onclick="logout()"><span class="sr-l" style="color:var(--r);">${t.stgLogout}</span><span class="sr-r">→</span></div></div>`;}
+  else if(tab==='set'){renderSettingsHome(c);}
 }
 
 function empTab(tab,btn){
@@ -526,8 +597,9 @@ function empTab(tab,btn){
   const t=T[CL],c=document.getElementById('emp-content');
   if(tab==='work'){
     const sites=['ZXZ Villa 123','Palm Site A','Marina B2'];
-    const wts=['Floor Tile','Wall Tile','Marble Floor','Marble Wall','Plaster Only','Plaster+Tile','Tile+Glue','Grouting','Skirting Simple','Skirting+Groove','Skirting+Light'];
+    const wts=WORK_TYPES_LIST.map(w=>w.label);
     const qtys=[5,10,15,18,20,22,25,30,40,50];
+    const otherEmps=hrEmployees.filter(e=>e.active).map(e=>e.name);
     c.innerHTML=`
     <div class="entry-header">
       <span class="eh-icon">⚡</span>
@@ -541,36 +613,47 @@ function empTab(tab,btn){
       </div>
       <select id="v-site" style="display:none;">${sites.map(s=>`<option>${s}</option>`).join('')}</select>
 
-      <div class="qs-label">${t.ewRole}</div>
+      <div class="qs-label" style="margin-top:10px;">${t.ewRole}</div>
       <div class="qs-grid" style="grid-template-columns:1fr 1fr;">
         <div class="qs-btn qs-role qs-on" onclick="quickSelectRole(0,this)">Tile Master</div>
         <div class="qs-btn qs-role" onclick="quickSelectRole(1,this)">Helper</div>
       </div>
       <select id="v-role" style="display:none;"><option>Tile Master</option><option>Helper</option></select>
+
+      <div class="qs-label" style="margin-top:10px;">👷 Helper / Partner Today <span style="font-size:10px;color:var(--txt3);">(optional)</span></div>
+      <select id="v-helper" style="width:100%;padding:10px 12px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+        <option value="">— Working alone today —</option>
+        ${otherEmps.map(n=>`<option value="${n}">${n}</option>`).join('')}
+      </select>
     </div>
 
     <div class="card">
       <div class="qs-label">${t.ewWorkT}</div>
-      <div class="qs-wt-grid">
-        ${wts.map((w,i)=>`<div class="qs-btn qs-wt" onclick="quickSelectWT(${i},this)">${w}</div>`).join('')}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+        ${WORK_TYPES_LIST.filter(w=>w.type!=='maintenance').map((w,i)=>`<div class="qs-btn qs-wt" onclick="quickSelectWT(${i},this)">${w.label}</div>`).join('')}
       </div>
-      <select id="wt-sel" style="display:none;">${wts.map(w=>`<option>${w}</option>`).join('')}</select>
+      <div style="border-top:0.5px solid var(--brd);padding-top:10px;">
+        <div class="qs-label" style="margin-bottom:6px;">🔧 Maintenance</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          ${WORK_TYPES_LIST.filter(w=>w.type==='maintenance').map((w,i)=>{
+            const realIdx=WORK_TYPES_LIST.findIndex(x=>x.key===w.key);
+            return`<div class="qs-btn qs-wt" onclick="quickSelectWT(${realIdx},this);updateQtyForMaintenance('${w.key}')" style="background:var(--al);color:#633806;border-color:#BA7517;">${w.label}</div>`;
+          }).join('')}
+        </div>
+      </div>
+      <select id="wt-sel" style="display:none;">${WORK_TYPES_LIST.map(w=>`<option>${w.label}</option>`).join('')}</select>
     </div>
 
-    <div class="card">
-      <div class="qs-label">${t.ewQty} (m² / lm)</div>
-      <div class="qn-row">
+    <div class="card" id="qty-card">
+      <div class="qs-label" id="qty-card-label">${t.ewQty} (m² / lm)</div>
+      <div class="qn-row" id="qty-btns-row">
         ${qtys.map(n=>`<div class="qn-btn" data-n="${n}" onclick="quickSetQty(${n},this)">${n}</div>`).join('')}
       </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-top:4px;" id="qty-input-row">
         <input type="number" id="e-qty" value="" inputmode="numeric" placeholder="Or type..." style="flex:1;padding:10px 14px;font-size:16px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);" oninput="calcEmp();document.querySelectorAll('.qn-btn').forEach(b=>b.classList.remove('qn-on'))">
         <select id="e-unit" style="width:80px;padding:10px 8px;font-size:14px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
           <option>m²</option><option>lm</option>
         </select>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
-        <label style="font-size:12px;color:var(--txt2);font-weight:500;white-space:nowrap;">${t.ewRate}</label>
-        <input type="number" id="e-rate" value="5" inputmode="numeric" style="flex:1;padding:10px 14px;font-size:16px;border:1.5px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);" oninput="calcEmp()">
       </div>
     </div>
 
@@ -645,6 +728,54 @@ function openModal(type){
 function calcExp(){const q=parseFloat(document.getElementById('ex-qty')?.value)||0;const p=parseFloat(document.getElementById('ex-up')?.value)||0;const el=document.getElementById('ex-total');if(el)el.textContent='AED '+Math.round(q*p);}
 function closeModal(){document.getElementById('modal').style.display='none';}
 function closeModalBg(e){if(e.target===document.getElementById('modal'))closeModal();}
+
+function updateQtyForMaintenance(key){
+  const isFull=key==='maintenance_full';
+  const isHalf=key==='maintenance_half';
+  const lbl=document.getElementById('qty-card-label');
+  const row=document.getElementById('qty-btns-row');
+  const inputRow=document.getElementById('qty-input-row');
+  const earnEl=document.getElementById('emp-earn');
+
+  if(isFull||isHalf){
+    // Maintenance — show day selector not qty
+    if(lbl)lbl.textContent='Days';
+    if(row)row.innerHTML=`
+      <div class="qn-btn qn-on" data-n="${isFull?1:0.5}" onclick="quickSetQty(${isFull?1:0.5},this)">${isFull?'1 Full Day':'½ Half Day'}</div>
+      ${isFull?'<div class="qn-btn" data-n="2" onclick="quickSetQty(2,this)">2 Days</div><div class="qn-btn" data-n="3" onclick="quickSetQty(3,this)">3 Days</div>':
+      '<div class="qn-btn" data-n="1" onclick="quickSetQty(1,this)">1 Full Day</div>'}`;
+    if(inputRow)inputRow.style.display='none';
+    // Auto-set qty
+    const qtyEl=document.getElementById('e-qty');
+    if(qtyEl){qtyEl.value=isFull?1:0.5;}
+    // Find emp wage and calculate
+    const emp=employees[0];
+    const wage=emp?emp.dailyWage:110;
+    const earn=isFull?wage:wage/2;
+    if(earnEl)earnEl.textContent='AED '+earn.toFixed(0);
+    // Show info note
+    const qCard=document.getElementById('qty-card');
+    const existing=document.getElementById('maint-note');
+    if(qCard&&!existing){
+      const note=document.createElement('div');note.id='maint-note';
+      note.style.cssText='background:var(--al);border-radius:8px;padding:8px 10px;font-size:12px;color:#633806;margin-top:8px;';
+      note.innerHTML=`🔧 Maintenance: ${isFull?'Full Day':'Half Day'} wage = AED ${earn.toFixed(0)}<br><span style="font-size:10px;opacity:0.8;">Owner will bill client separately at agreed rate</span>`;
+      qCard.appendChild(note);
+    } else if(existing){
+      existing.innerHTML=`🔧 Maintenance: ${isFull?'Full Day':'Half Day'} wage = AED ${earn.toFixed(0)}<br><span style="font-size:10px;opacity:0.8;">Owner will bill client separately at agreed rate</span>`;
+    }
+  } else {
+    // Normal work type — restore normal qty
+    if(lbl)lbl.textContent='Quantity (m² / lm)';
+    if(row){
+      const qtys=[5,10,15,18,20,22,25,30,40,50];
+      row.innerHTML=qtys.map(n=>`<div class="qn-btn" data-n="${n}" onclick="quickSetQty(${n},this)">${n}</div>`).join('');
+    }
+    if(inputRow)inputRow.style.display='flex';
+    const note=document.getElementById('maint-note');
+    if(note)note.remove();
+  }
+}
 
 function quickSelectSite(idx,el){
   document.querySelectorAll('.qs-site').forEach(b=>b.classList.remove('qs-on'));
@@ -752,7 +883,7 @@ function renderInvoice(cid,invId){
   const badgeCls=inv.status==='paid'?'ib-paid':inv.status==='partial'?'ib-part':'ib-due';
   const badgeTxt=inv.status==='paid'?'✅ Paid':inv.status==='partial'?'⏳ Partial':'🔴 Due';
   let linesHtml=`<table class="line-table"><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Total</th></tr>`;
-  inv.lines.forEach((ln,li)=>{linesHtml+=`<tr><td><input class="lt-edit" value="${ln.desc}" onchange="inv_updateLine(${cid},'${invId}',${li},'desc',this.value)"></td><td><input class="lt-edit" type="number" value="${ln.qty}" style="width:52px;" onchange="inv_updateLine(${cid},'${invId}',${li},'qty',this.value)"></td><td><select class="lt-edit" style="width:48px;" onchange="inv_updateLine(${cid},'${invId}',${li},'unit',this.value)"><option ${ln.unit==='m²'?'selected':''}>m²</option><option ${ln.unit==='lm'?'selected':''}>lm</option><option ${ln.unit==='unit'?'selected':''}>unit</option></select></td><td><input class="lt-edit" type="number" value="${ln.rate}" style="width:56px;" onchange="inv_updateLine(${cid},'${invId}',${li},'rate',this.value)"></td><td style="font-weight:700;">${cl.currency} ${ln.total.toFixed(2)}</td></tr>`;});
+  inv.lines.forEach((ln,li)=>{linesHtml+=`<tr><td><input class="lt-edit" value="${ln.desc}" onchange="inv_updateLine(${cid},'${invId}',${li},'desc',this.value)"></td><td><input class="lt-edit" type="number" value="${ln.qty}" style="width:52px;" onchange="inv_updateLine(${cid},'${invId}',${li},'qty',this.value)"></td><td><select class="lt-edit" style="width:48px;" onchange="inv_updateLine(${cid},'${invId}',${li},'unit',this.value)"><option ${ln.unit==='m²'?'selected':''}>m²</option><option ${ln.unit==='lm'?'selected':''}>lm</option><option ${ln.unit==='day'?'selected':''}>day</option><option ${ln.unit==='half-day'?'selected':''}>½day</option><option ${ln.unit==='unit'?'selected':''}>unit</option></select></td><td><input class="lt-edit" type="number" value="${ln.rate}" style="width:56px;" onchange="inv_updateLine(${cid},'${invId}',${li},'rate',this.value)"></td><td style="font-weight:700;">${cl.currency} ${ln.total.toFixed(2)}</td></tr>`;});
   linesHtml+=`</table><button style="font-size:12px;color:var(--g);background:none;border:1px dashed var(--g);border-radius:8px;padding:6px 12px;cursor:pointer;margin-bottom:10px;width:100%;" onclick="inv_addLine(${cid},'${invId}')">+ Add Line Item</button>`;
   c.innerHTML=`<div class="back-row" onclick="curClientTab='invoices';renderClientDetail(${cid})"><span class="back-arrow">‹</span><span class="back-title">${inv.id}</span><span class="inv-badge ${badgeCls}" style="margin-left:auto;">${badgeTxt}</span></div>
   <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;">${cl.name} • ${site?.name||''} • <input type="date" value="${inv.date}" style="border:none;background:transparent;color:var(--b);font-size:12px;" onchange="inv.date=this.value"></div>
@@ -830,10 +961,69 @@ function inv_updateLine(cid,invId,li,field,val){
   if(rows[li+1]){const tds=rows[li+1].querySelectorAll('td');if(tds[4])tds[4].textContent=`${cl.currency} ${inv.lines[li].total.toFixed(2)}`;}
 }
 function inv_addLine(cid,invId){
+  document.getElementById('modal-title').textContent='Add Line Item';
+  const allTypes=[...WORK_TYPES_LIST,...(window._customWorkTypes||[])];
+  document.getElementById('modal-body').innerHTML=`
+    <div class="fmg"><label>Description</label>
+      <select id="inv-line-desc" onchange="inv_lineDescChange(this)" style="width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+        <option value="">— Select or type below —</option>
+        ${allTypes.map(w=>'<option value="'+w.label+'" data-unit="'+(w.unit==='day'||w.unit==='half'?w.unit:'m²')+'">'+w.label+'</option>').join('')}
+        <option value="custom">Custom description...</option>
+      </select>
+      <input type="text" id="inv-line-custom" placeholder="Custom description" style="display:none;margin-top:6px;width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;">
+      <div class="fmg"><label>Qty</label><input type="number" id="inv-line-qty" value="1" inputmode="numeric" oninput="inv_lineCalc()"></div>
+      <div class="fmg"><label>Unit</label>
+        <select id="inv-line-unit" onchange="inv_lineCalc()" style="padding:9px 6px;font-size:12px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);width:100%;">
+          <option>m²</option><option>lm</option><option>day</option><option value="half-day">½ day</option><option>unit</option>
+        </select>
+      </div>
+      <div class="fmg"><label>Rate (AED)</label><input type="number" id="inv-line-rate" value="0" inputmode="numeric" oninput="inv_lineCalc()"></div>
+      <div class="fmg"><label>Total</label><input type="text" id="inv-line-total" value="0" readonly style="background:var(--bg2);font-weight:700;padding:9px 6px;font-size:13px;border:1px solid var(--brd);border-radius:10px;color:var(--g);"></div>
+    </div>
+    <button class="bbtn bg" onclick="inv_saveNewLine(${cid},'${invId}')">Add to Invoice</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+
+function inv_lineDescChange(sel){
+  const custom=document.getElementById('inv-line-custom');
+  const unitSel=document.getElementById('inv-line-unit');
+  if(sel.value==='custom'){custom.style.display='block';}
+  else{custom.style.display='none';}
+  // Auto-set unit based on selected type
+  const opt=sel.selectedOptions[0];
+  const wt=WORK_TYPES_LIST.find(w=>w.label===sel.value);
+  if(wt){
+    if(wt.type==='maintenance'){
+      unitSel.value=wt.key==='maintenance_full'?'day':'½day';
+      document.getElementById('inv-line-qty').value=1;
+    } else if(wt.unit==='lm'){unitSel.value='lm';}
+    else{unitSel.value='m²';}
+  }
+  inv_lineCalc();
+}
+
+function inv_lineCalc(){
+  const q=parseFloat(document.getElementById('inv-line-qty')?.value)||0;
+  const r=parseFloat(document.getElementById('inv-line-rate')?.value)||0;
+  const t=document.getElementById('inv-line-total');
+  if(t)t.value='AED '+(q*r).toFixed(2);
+}
+
+function inv_saveNewLine(cid,invId){
   const cl=clients.find(x=>x.id===cid);
   const inv=cl.invoices.find(i=>i.id===invId);
-  inv.lines.push({desc:'New Item',qty:0,unit:'m²',rate:0,total:0});
-  renderInvoice(cid,invId);
+  const descSel=document.getElementById('inv-line-desc')?.value;
+  const custom=document.getElementById('inv-line-custom')?.value;
+  const desc=descSel==='custom'?custom:descSel;
+  if(!desc){alert('Please select or enter a description');return;}
+  const qty=parseFloat(document.getElementById('inv-line-qty')?.value)||0;
+  const unit=document.getElementById('inv-line-unit')?.value||'m²';
+  const rate=parseFloat(document.getElementById('inv-line-rate')?.value)||0;
+  inv.lines.push({desc,qty,unit,rate,total:qty*rate});
+  inv_recalcTotals(cl,inv);
+  closeModal();renderInvoice(cid,invId);
 }
 function inv_recalc(cid,invId,field,val){
   const cl=clients.find(x=>x.id===cid);
@@ -880,26 +1070,501 @@ function openCreateInvoice(cid,siteId){
   cl.invoices.unshift(newInv);
   curClientTab='invoices';renderInvoice(cid,newInv.id);
 }
-// ══ WAGE & OT SYSTEM ══
+// ══ COMPANY & HR SYSTEM ══
+let companyData={
+  name:'ACB Company',
+  logo:'🔷',
+  logoType:'emoji',
+  logoData:'',
+  taxNo:'TRN-100234567890003',
+  address:'Office 12, Al Quoz Industrial Area',
+  city:'Dubai',
+  country:'United Arab Emirates',
+  phone:'+971-4-123-4567',
+  email:'info@acbcompany.ae',
+  website:'',
+  managerName:'Imran Sheikh',
+  managerPhone:'+971-50-555-0001',
+  accountantName:'Hamid Raza',
+  accountantPhone:'+971-55-444-3322',
+  ownerPIN:'1234',
+  licenseNo:'DED-123456789',
+  licenseExpiry:'2027-03-31',
+  licenseType:'Professional License',
+  licensePDF:'',
+  licenseIssuer:'Dubai Economy & Tourism',
+};
+
+const hrEmployees=[
+  {id:'EMP001',name:'Ahmed Ali',fatherName:'Ghulam Ali',phone:'+971-50-111-2233',
+   emergencyName:'Ghulam Ali',emergencyPhone:'+92-300-111-2233',emergencyCountry:'Pakistan',
+   dob:'1990-03-15',nationality:'Pakistani',country:'🇵🇰',
+   idNo:'784-1990-1234567-1',idExpiry:'2026-12-31',
+   passportNo:'AK1234567',passportExpiry:'2025-03-01',
+   visaNo:'201/2024/1234567',visaExpiry:'2026-08-15',
+   contractStart:'2024-01-01',contractEnd:'2026-12-31',
+   bankName:'Emirates NBD',bankAccount:'1234567890',
+   role:'Tile Master',dailyWage:110,targetMode:'per_type',overallTarget:22,
+   typeTargets:{floor_tile:22,wall_tile:18,washroom_floor:12,washroom_wall:10,marble_floor:15,marble_wall:15,plaster_only:20,plaster_tile:18,tile_glue:20,grouting:40,skirting_simple:30,skirting_groove:25,skirting_light:20},
+   idPDF:'',passportPDF:'',photo:'',active:true,ownerPin:'5678',notes:'Senior mason, team leader'},
+  {id:'EMP002',name:'Ravi Kumar',fatherName:'Suresh Kumar',phone:'+971-55-222-3344',
+   emergencyName:'Suresh Kumar',emergencyPhone:'+91-98-7654-3210',emergencyCountry:'India',
+   dob:'1988-07-22',nationality:'Indian',country:'🇮🇳',
+   idNo:'784-1988-9876543-1',idExpiry:'2027-06-30',
+   passportNo:'BK9876543',passportExpiry:'2026-07-15',
+   visaNo:'201/2024/9876543',visaExpiry:'2027-01-31',
+   contractStart:'2024-03-01',contractEnd:'2027-02-28',
+   bankName:'ADCB',bankAccount:'9876543210',
+   role:'Tile Master',dailyWage:100,targetMode:'overall',overallTarget:20,
+   typeTargets:{floor_tile:20,wall_tile:16,washroom_floor:10,washroom_wall:8,marble_floor:14,marble_wall:14,plaster_only:18,plaster_tile:16,tile_glue:18,grouting:35,skirting_simple:28,skirting_groove:22,skirting_light:18},
+   idPDF:'',passportPDF:'',photo:'',active:true,ownerPin:'5679',notes:''},
+  {id:'EMP003',name:'Md. Hasan',fatherName:'Md. Karim',phone:'+971-52-333-4455',
+   emergencyName:'Md. Karim',emergencyPhone:'+880-171-234-5678',emergencyCountry:'Bangladesh',
+   dob:'1995-11-08',nationality:'Bangladeshi',country:'🇧🇩',
+   idNo:'784-1995-5555555-1',idExpiry:'2027-09-30',
+   passportNo:'CH5555555',passportExpiry:'2027-10-31',
+   visaNo:'201/2024/5555555',visaExpiry:'2027-08-31',
+   contractStart:'2024-06-01',contractEnd:'2027-05-31',
+   bankName:'Mashreq',bankAccount:'5555555555',
+   role:'Helper',dailyWage:80,targetMode:'overall',overallTarget:0,
+   typeTargets:{},idPDF:'',passportPDF:'',photo:'',active:true,ownerPin:'5680',notes:''},
+];
+
+function daysUntilExpiry(dateStr){
+  if(!dateStr)return 999;
+  const today=new Date();today.setHours(0,0,0,0);
+  const d=new Date(dateStr);d.setHours(0,0,0,0);
+  return Math.round((d-today)/(1000*60*60*24));
+}
+function expiryTag(dateStr){
+  const d=daysUntilExpiry(dateStr);
+  if(d<0)return`<span class="tag tr">EXPIRED</span>`;
+  if(d<=60)return`<span class="tag ta">Exp in ${d}d</span>`;
+  return`<span style="font-size:11px;color:var(--txt2);">${dateStr}</span>`;
+}
+
+function renderSettingsHome(c){
+  const expAlerts=hrEmployees.filter(e=>{
+    return daysUntilExpiry(e.idExpiry)<=60||daysUntilExpiry(e.passportExpiry)<=60||daysUntilExpiry(e.visaExpiry)<=60;
+  });
+  const licAlert=daysUntilExpiry(companyData.licenseExpiry)<=60;
+  c.innerHTML=`
+  <div style="text-align:center;margin-bottom:16px;">
+    <div id="co-logo-display" onclick="settings_editLogo()" style="width:70px;height:70px;border-radius:18px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 10px;cursor:pointer;border:2px dashed rgba(255,255,255,0.3);" title="Tap to change logo">
+      ${companyData.logoType==='image'&&companyData.logoData?`<img src="${companyData.logoData}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`:companyData.logo}
+    </div>
+    <div style="font-size:18px;font-weight:700;color:var(--txt);" id="co-name-display">${companyData.name}</div>
+    <div style="font-size:12px;color:var(--txt2);margin-top:2px;">${companyData.city}, ${companyData.country}</div>
+  </div>
+
+  ${(expAlerts.length>0||licAlert)?`<div style="background:var(--rl);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid var(--r);">
+    <div style="font-size:13px;font-weight:700;color:#A32D2D;margin-bottom:6px;">🚨 Document Alerts</div>
+    ${licAlert?'<div style="font-size:12px;color:#A32D2D;padding:4px 0;font-weight:600;">📜 Trade License expires in '+daysUntilExpiry(companyData.licenseExpiry)+' days — '+companyData.licenseExpiry+'</div>':''}
+    ${expAlerts.map(e=>{
+      const alerts=[];
+      if(daysUntilExpiry(e.idExpiry)<=60)alerts.push('ID: '+e.idExpiry);
+      if(daysUntilExpiry(e.passportExpiry)<=60)alerts.push('Passport: '+e.passportExpiry);
+      if(daysUntilExpiry(e.visaExpiry)<=60)alerts.push('Visa: '+e.visaExpiry);
+      return'<div style="font-size:12px;color:#A32D2D;padding:4px 0;">'+e.country+' '+e.name+' — '+alerts.join(', ')+'</div>';
+    }).join('')}
+  </div>`:''}
+
+  <div class="card">
+    <div class="settings-row" onclick="renderCompanyEdit(document.getElementById('owner-content'))"><span class="sr-l">🏢 Company Profile & License</span><span class="sr-r">${companyData.name} →</span></div>
+    <div class="settings-row" onclick="renderHRList(document.getElementById('owner-content'))"><span class="sr-l">👷 Employee HR Profiles</span><span class="sr-r">${hrEmployees.length} employees →</span></div>
+    <div class="settings-row" onclick="renderWorkTypes(document.getElementById('owner-content'))"><span class="sr-l">🪟 Work Types</span><span class="sr-r">${WORK_TYPES_LIST.length} types →</span></div>
+    <div class="settings-row" onclick="renderWageSettings()"><span class="sr-l">💰 Wages & Targets</span><span class="sr-r">Edit →</span></div>
+    <div class="settings-row" onclick="go('lang')"><span class="sr-l">🌍 Language</span><span class="sr-r">${T[CL].chip.replace(' ✎','')} →</span></div>
+    <div class="settings-row" onclick="settings_changePIN()"><span class="sr-l">🔒 Change Owner PIN</span><span class="sr-r">→</span></div>
+    <div class="settings-row" onclick="logout()"><span class="sr-l" style="color:var(--r);">Logout</span><span class="sr-r">→</span></div>
+  </div>`;
+}
+
+function settings_editLogo(){
+  document.getElementById('modal-title').textContent='Company Logo';
+  document.getElementById('modal-body').innerHTML=`
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="width:80px;height:80px;border-radius:18px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:40px;margin:0 auto;" id="logo-preview">${companyData.logo}</div>
+    </div>
+    <div class="fmg"><label>Emoji Logo</label>
+      <input id="logo-emoji" value="${companyData.logo}" placeholder="🔷" style="font-size:24px;text-align:center;" oninput="document.getElementById('logo-preview').textContent=this.value">
+    </div>
+    <div style="text-align:center;margin:10px 0;color:var(--txt2);font-size:12px;">— OR —</div>
+    <div class="fmg"><label>Upload Image Logo</label>
+      <input type="file" id="logo-file" accept="image/*" style="width:100%;padding:10px;border:1px solid var(--brd);border-radius:10px;" onchange="previewLogo(this)">
+    </div>
+    <button class="bbtn bg" onclick="saveLogo()">Save Logo</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+function previewLogo(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();
+  r.onload=e=>{document.getElementById('logo-preview').innerHTML=`<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;">`;companyData.logoData=e.target.result;companyData.logoType='image';};
+  r.readAsDataURL(file);
+}
+function saveLogo(){
+  const emoji=document.getElementById('logo-emoji')?.value;
+  if(companyData.logoType!=='image'){companyData.logo=emoji||'🔷';companyData.logoType='emoji';}
+  closeModal();renderSettingsHome(document.getElementById('owner-content'));
+}
+
+function renderCompanyEdit(c){
+  c.innerHTML=`<div class="back-row" onclick="renderSettingsHome(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">Company Profile</span></div>
+  <div class="card">
+    <div class="fmg"><label>Company Name</label><input id="co-name" value="${companyData.name}" oninput="companyData.name=this.value;document.getElementById('co-name-display')&&(document.getElementById('co-name-display').textContent=this.value)"></div>
+    <div class="fmg"><label>Tax / TRN Number</label><input id="co-tax" value="${companyData.taxNo}" oninput="companyData.taxNo=this.value"></div>
+    <div class="fmg"><label>Address</label><input id="co-addr" value="${companyData.address}" oninput="companyData.address=this.value"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fmg"><label>City</label><input id="co-city" value="${companyData.city}" oninput="companyData.city=this.value"></div>
+      <div class="fmg"><label>Country</label><input id="co-cntry" value="${companyData.country}" oninput="companyData.country=this.value"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fmg"><label>Phone</label><input type="tel" value="${companyData.phone}" oninput="companyData.phone=this.value"></div>
+      <div class="fmg"><label>Email</label><input type="email" value="${companyData.email}" oninput="companyData.email=this.value"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;">Management</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fmg"><label>Manager Name</label><input value="${companyData.managerName}" oninput="companyData.managerName=this.value"></div>
+      <div class="fmg"><label>Manager Phone</label><input type="tel" value="${companyData.managerPhone}" oninput="companyData.managerPhone=this.value"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fmg"><label>Accountant Name</label><input value="${companyData.accountantName}" oninput="companyData.accountantName=this.value"></div>
+      <div class="fmg"><label>Accountant Phone</label><input type="tel" value="${companyData.accountantPhone}" oninput="companyData.accountantPhone=this.value"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;">📜 Trade License</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fmg"><label>License Number</label><input value="${companyData.licenseNo}" placeholder="DED-123456789" oninput="companyData.licenseNo=this.value"></div>
+      <div class="fmg"><label>License Type</label><input value="${companyData.licenseType}" placeholder="Professional License" oninput="companyData.licenseType=this.value"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div class="fmg"><label>Issuing Authority</label><input value="${companyData.licenseIssuer}" placeholder="Dubai Economy" oninput="companyData.licenseIssuer=this.value"></div>
+      <div class="fmg"><label>Expiry Date</label><input type="date" value="${companyData.licenseExpiry}" oninput="companyData.licenseExpiry=this.value"></div>
+    </div>
+    ${daysUntilExpiry(companyData.licenseExpiry)<=60?`<div style="background:var(--rl);border-radius:8px;padding:8px 10px;font-size:12px;color:#A32D2D;margin-bottom:8px;">⚠️ License expires in ${daysUntilExpiry(companyData.licenseExpiry)} days!</div>`:`<div style="font-size:11px;color:var(--g);margin-bottom:8px;">✅ License valid — expires ${companyData.licenseExpiry}</div>`}
+    <div class="fmg"><label>Attach License Copy (PDF / Image — optional)</label>
+      <input type="file" id="co-licpdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);" onchange="lic_readFile(this)">
+    </div>
+    ${companyData.licensePDF?`<div style="display:flex;align-items:center;gap:8px;margin-top:6px;padding:8px 10px;background:var(--gl);border-radius:8px;"><span>✅</span><span style="font-size:12px;color:var(--gd);flex:1;">License copy on file</span><button onclick="companyData.licensePDF='';alert('Removed')" style="font-size:10px;color:var(--r);background:none;border:none;cursor:pointer;">✕ Remove</button></div>`:'<div style="font-size:11px;color:var(--txt3);margin-top:4px;">No file attached yet — optional</div>'}
+  </div>
+  <button class="bbtn bg" onclick="alert('✅ Company profile saved!\\nLicense: '+companyData.licenseNo+'\\nExpiry: '+companyData.licenseExpiry);renderSettingsHome(document.getElementById('owner-content'))">Save Company Profile</button>`;
+}
+
+function lic_readFile(input){
+  const file=input.files[0];if(!file)return;
+  const r=new FileReader();r.onload=e=>{companyData.licensePDF=e.target.result;};r.readAsDataURL(file);
+}
+
+function renderWorkTypes(c){
+  c=c||document.getElementById('owner-content');
+  c.innerHTML=`<div class="back-row" onclick="renderSettingsHome(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">Work Types</span></div>
+  <div style="font-size:12px;color:var(--txt2);margin-bottom:12px;">These appear in employee work entry. Owner can add custom types.</div>
+  <div class="card">
+    ${WORK_TYPES_LIST.map((wt,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--brd);">
+      <div><div style="font-size:13px;font-weight:600;color:var(--txt);">${wt.label}</div><div style="font-size:11px;color:var(--txt2);">Unit: ${wt.unit}</div></div>
+      <span class="tag tg">Built-in</span>
+    </div>`).join('')}
+    ${(window._customWorkTypes||[]).map((wt,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--brd);">
+      <div><div style="font-size:13px;font-weight:600;color:var(--txt);">${wt.label}</div><div style="font-size:11px;color:var(--txt2);">Unit: ${wt.unit} • Labour: AED ${wt.labRate} • Company: AED ${wt.compRate}</div></div>
+      <button onclick="wt_delete(${i})" style="font-size:11px;color:var(--r);background:none;border:none;cursor:pointer;">✕</button>
+    </div>`).join('')}
+  </div>
+  <button class="bbtn bg" onclick="wt_openAdd()">+ Add New Work Type</button>`;
+}
+
+function wt_openAdd(){
+  document.getElementById('modal-title').textContent='Add Work Type';
+  document.getElementById('modal-body').innerHTML=`
+    <div class="fmg"><label>Work Type Name</label><input id="wt-name" placeholder="Epoxy Flooring, Waterproofing..."></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+      <div class="fmg"><label>Labour Rate (AED)</label><input type="number" id="wt-lab" value="5" inputmode="numeric"></div>
+      <div class="fmg"><label>Company Rate (AED)</label><input type="number" id="wt-comp" value="10" inputmode="numeric"></div>
+      <div class="fmg"><label>Unit</label><select id="wt-unit"><option>m²</option><option>lm</option><option>unit</option></select></div>
+    </div>
+    <button class="bbtn bg" onclick="wt_save()">Add Work Type</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+
+function wt_save(){
+  const name=document.getElementById('wt-name')?.value?.trim();
+  if(!name){alert('Please enter a work type name');return;}
+  if(!window._customWorkTypes)window._customWorkTypes=[];
+  const newWt={key:'custom_'+Date.now(),label:name,unit:document.getElementById('wt-unit')?.value||'m²',labRate:parseFloat(document.getElementById('wt-lab')?.value)||0,compRate:parseFloat(document.getElementById('wt-comp')?.value)||0};
+  window._customWorkTypes.push(newWt);
+  WORK_TYPES_LIST.push({key:newWt.key,label:newWt.label,unit:newWt.unit});
+  closeModal();renderWorkTypes();
+  alert('✅ "'+name+'" added! It will now appear in employee work entry.');
+}
+
+function wt_delete(i){
+  if(!window._customWorkTypes)return;
+  const wt=window._customWorkTypes[i];
+  if(confirm('Remove "'+wt.label+'"?')){
+    const idx=WORK_TYPES_LIST.findIndex(w=>w.key===wt.key);
+    if(idx>-1)WORK_TYPES_LIST.splice(idx,1);
+    window._customWorkTypes.splice(i,1);
+    renderWorkTypes();
+  }
+}
+function renderHRList(c){
+  c.innerHTML=`<div class="back-row" onclick="renderSettingsHome(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">Employee HR Profiles</span></div>
+  <button class="bbtn bg" style="margin-bottom:12px;" onclick="renderHRForm(null)">+ Add New Employee</button>
+  ${hrEmployees.map(emp=>{
+    const idDays=daysUntilExpiry(emp.idExpiry);
+    const ppDays=daysUntilExpiry(emp.passportExpiry);
+    const visaDays=daysUntilExpiry(emp.visaExpiry);
+    const hasAlert=idDays<=60||ppDays<=60||visaDays<=60;
+    return`<div class="client-card" onclick="renderHRForm('${emp.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--txt);">${emp.country} ${emp.name}</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px;">${emp.role} • AED ${emp.dailyWage}/day</div>
+          <div style="font-size:11px;color:var(--txt3);margin-top:1px;">${emp.phone}</div>
+        </div>
+        <div style="text-align:right;">
+          <span class="${emp.active?'tag tg':'tag tr'}">${emp.active?'Active':'Inactive'}</span>
+          ${hasAlert?`<div style="font-size:10px;color:var(--r);margin-top:4px;font-weight:600;">⚠️ Doc Alert</div>`:''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;font-size:10px;flex-wrap:wrap;">
+        <span>ID: ${expiryTag(emp.idExpiry)}</span>
+        <span>Passport: ${expiryTag(emp.passportExpiry)}</span>
+        <span>Visa: ${expiryTag(emp.visaExpiry)}</span>
+      </div>
+    </div>`;
+  }).join('')}`;
+}
+
+function renderHRForm(empId){
+  const emp=empId?hrEmployees.find(e=>e.id===empId):null;
+  const isNew=!emp;
+  const c=document.getElementById('owner-content');
+  // Store current empId globally for hrTab to use
+  window._curHRempId=empId||null;
+
+  c.innerHTML=`<div class="back-row" onclick="renderHRList(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">${isNew?'New Employee':emp.name}</span></div>
+  <div class="tab-btns" id="hr-tabs">
+    <button class="tab-btn on" onclick="hrTab('personal',this)">👤 Personal</button>
+    <button class="tab-btn" onclick="hrTab('docs',this)">📄 Documents</button>
+    <button class="tab-btn" onclick="hrTab('work',this)">💰 Work</button>
+    <button class="tab-btn" onclick="hrTab('bank',this)">🏦 Bank</button>
+  </div>
+  <div id="hr-tab-content"></div>
+  <button class="bbtn bg" style="margin-top:10px;" onclick="saveHRProfile('${empId||''}')">💾 Save Employee Profile</button>
+  ${!isNew?`<button class="bbtn" style="background:var(--rl);color:#A32D2D;border:none;margin-top:6px;" onclick="toggleEmpActive('${empId}')">${emp.active?'Deactivate':'Reactivate'} Employee</button>`:''}`;
+
+  // Load personal tab immediately
+  hrTab('personal', c.querySelector('#hr-tabs .tab-btn'));
+}
+
+function hrTab(tab, btn){
+  document.querySelectorAll('#hr-tabs .tab-btn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+  const tc=document.getElementById('hr-tab-content');
+  if(!tc) return;
+  const empId=window._curHRempId;
+  const emp=empId?hrEmployees.find(e=>e.id===empId):null;
+  const v=key=>emp&&emp[key]!=null?emp[key]:'';
+
+  if(tab==='personal'){
+    tc.innerHTML=`<div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Full Name</label><input id="hr-name" value="${v('name')}" placeholder="Ahmed Ali"></div>
+        <div class="fmg"><label>Father Name</label><input id="hr-father" value="${v('fatherName')}" placeholder="Ghulam Ali"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Date of Birth</label><input type="date" id="hr-dob" value="${v('dob')}"></div>
+        <div class="fmg"><label>Nationality</label><input id="hr-nat" value="${v('nationality')}" placeholder="Pakistani"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Phone (UAE)</label><input type="tel" id="hr-phone" value="${v('phone')}"></div>
+        <div class="fmg"><label>Role</label><select id="hr-role">
+          <option ${v('role')==='Tile Master'?'selected':''}>Tile Master</option>
+          <option ${v('role')==='Helper'?'selected':''}>Helper</option>
+          <option ${v('role')==='Foreman'?'selected':''}>Foreman</option>
+          <option ${v('role')==='Electrician'?'selected':''}>Electrician</option>
+          <option ${v('role')==='Carpenter'?'selected':''}>Carpenter</option>
+        </select></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--txt);margin:10px 0 8px;">🆘 Emergency Contact</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Contact Name</label><input id="hr-emname" value="${v('emergencyName')}" placeholder="Father / Brother"></div>
+        <div class="fmg"><label>Their Country</label><input id="hr-emcountry" value="${v('emergencyCountry')}" placeholder="Pakistan"></div>
+      </div>
+      <div class="fmg"><label>Emergency Phone (with country code)</label><input type="tel" id="hr-emphone" value="${v('emergencyPhone')}" placeholder="+92-300-..."></div>
+      <div class="fmg"><label>Notes</label><textarea id="hr-notes" style="height:60px;">${v('notes')}</textarea></div>
+    </div>`;
+  }
+  else if(tab==='docs'){
+    tc.innerHTML=`
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🪪 Emirates ID</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>ID Number</label><input id="hr-idno" value="${v('idNo')}" placeholder="784-1990-..."></div>
+        <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-idexp" value="${v('idExpiry')}"></div>
+      </div>
+      <div class="fmg"><label>Attach ID Copy (PDF / Image — optional)</label>
+        <input type="file" id="hr-idpdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);">
+      </div>
+      ${v('idPDF')?'<div style="font-size:11px;color:var(--g);margin-top:4px;">✅ ID copy on file</div>':''}
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">📕 Passport</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Passport Number</label><input id="hr-ppno" value="${v('passportNo')}" placeholder="AB1234567"></div>
+        <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-ppexp" value="${v('passportExpiry')}"></div>
+      </div>
+      <div class="fmg"><label>Attach Passport Copy (PDF / Image — optional)</label>
+        <input type="file" id="hr-pppdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);">
+      </div>
+      ${v('passportPDF')?'<div style="font-size:11px;color:var(--g);margin-top:4px;">✅ Passport copy on file</div>':''}
+    </div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🛂 Visa / Residency</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Visa Number</label><input id="hr-visano" value="${v('visaNo')}" placeholder="201/2024/..."></div>
+        <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-visaexp" value="${v('visaExpiry')}"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div class="fmg"><label>Contract Start</label><input type="date" id="hr-cstart" value="${v('contractStart')}"></div>
+        <div class="fmg"><label>Contract End</label><input type="date" id="hr-cend" value="${v('contractEnd')}"></div>
+      </div>
+    </div>`;
+  }
+  else if(tab==='work'){
+    const tt=emp&&emp.typeTargets?emp.typeTargets:{};
+    const mode=v('targetMode')||'overall';
+    tc.innerHTML=`<div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div class="fmg"><label>Daily Wage (AED)</label><input type="number" id="hr-wage" value="${v('dailyWage')}" inputmode="numeric" style="font-size:18px;font-weight:700;color:var(--g);"></div>
+        <div class="fmg"><label>Employee Portal PIN</label><input type="number" id="hr-pin" value="${v('ownerPin')}" inputmode="numeric" placeholder="4 digits" maxlength="4"></div>
+      </div>
+      <div class="fmg"><label>Target Mode</label>
+        <select id="hr-tmode" onchange="hrTargetModeChange(this.value,'${empId||''}')">
+          <option value="overall" ${mode==='overall'?'selected':''}>Overall Daily Target (1 number for all work)</option>
+          <option value="per_type" ${mode==='per_type'?'selected':''}>Per Work Type (each category separate)</option>
+        </select>
+      </div>
+      <div id="hr-target-section">
+        ${mode==='overall'?`<div class="fmg"><label>Daily Target (m²) = 1 day wage</label><input type="number" id="hr-target" value="${v('overallTarget')}" inputmode="numeric" style="font-size:16px;color:var(--b);font-weight:700;"></div>`
+        :`<div style="font-size:11px;color:var(--txt2);margin-bottom:8px;font-weight:600;">m² or lm per day = 1 day wage:</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          ${WORK_TYPES_LIST.map(wt=>`<div class="fmg"><label style="font-size:10px;">${wt.label} (${wt.unit})</label><input type="number" id="tt_${wt.key}" value="${tt[wt.key]||0}" inputmode="numeric" style="padding:7px;font-size:13px;"></div>`).join('')}
+        </div>`}
+      </div>
+    </div>`;
+  }
+  else if(tab==='bank'){
+    tc.innerHTML=`<div class="card">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🏦 Bank Details (for salary transfer)</div>
+      <div class="fmg"><label>Bank Name</label><input id="hr-bname" value="${v('bankName')}" placeholder="Emirates NBD"></div>
+      <div class="fmg"><label>Account Number / IBAN</label><input id="hr-bacct" value="${v('bankAccount')}" placeholder="AE070331234567890123456"></div>
+    </div>`;
+  }
+}
+
+function hrTargetModeChange(val, empId){
+  const emp=empId?hrEmployees.find(e=>e.id===empId):null;
+  const tt=emp&&emp.typeTargets?emp.typeTargets:{};
+  const ov=emp?emp.overallTarget:22;
+  const sec=document.getElementById('hr-target-section');
+  if(!sec) return;
+  if(val==='overall'){
+    sec.innerHTML=`<div class="fmg"><label>Daily Target (m²) = 1 day wage</label><input type="number" id="hr-target" value="${ov}" inputmode="numeric" style="font-size:16px;color:var(--b);font-weight:700;"></div>`;
+  } else {
+    sec.innerHTML=`<div style="font-size:11px;color:var(--txt2);margin-bottom:8px;font-weight:600;">m² or lm per day = 1 day wage:</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      ${WORK_TYPES_LIST.map(wt=>`<div class="fmg"><label style="font-size:10px;">${wt.label} (${wt.unit})</label><input type="number" id="tt_${wt.key}" value="${tt[wt.key]||0}" inputmode="numeric" style="padding:7px;font-size:13px;"></div>`).join('')}
+    </div>`;
+  }
+}
+
+function saveHRProfile(empId){
+  const g=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  const emp=empId?hrEmployees.find(e=>e.id===empId):null;
+
+  // Read file attachments
+  const idFile=document.getElementById('hr-idpdf');
+  const ppFile=document.getElementById('hr-pppdf');
+
+  const readFile=(input,cb)=>{
+    if(!input||!input.files||!input.files[0]){cb('');return;}
+    const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(input.files[0]);
+  };
+
+  const data={
+    name:g('hr-name')||g('hr-name'),fatherName:g('hr-father'),
+    phone:g('hr-phone'),emergencyName:g('hr-emname'),
+    emergencyPhone:g('hr-emphone'),emergencyCountry:g('hr-emcountry'),
+    dob:g('hr-dob'),nationality:g('hr-nat'),
+    idNo:g('hr-idno'),idExpiry:g('hr-idexp'),
+    passportNo:g('hr-ppno'),passportExpiry:g('hr-ppexp'),
+    visaNo:g('hr-visano'),visaExpiry:g('hr-visaexp'),
+    contractStart:g('hr-cstart'),contractEnd:g('hr-cend'),
+    bankName:g('hr-bname'),bankAccount:g('hr-bacct'),
+    dailyWage:parseFloat(g('hr-wage'))||0,
+    ownerPin:g('hr-pin')||'5678',
+    notes:g('hr-notes')||'',
+    role:document.getElementById('hr-role')?.value||'Tile Master',
+    targetMode:document.getElementById('hr-tmode')?.value||'overall',
+    overallTarget:parseFloat(g('hr-target'))||0,
+  };
+
+  if(emp){Object.assign(emp,data);}
+  else{
+    const newEmp={id:'EMP'+Date.now(),country:'🌍',active:true,typeTargets:{},idPDF:'',passportPDF:'',photo:'',...data};
+    hrEmployees.push(newEmp);
+    // Also add to wage employees
+    employees.push({id:newEmp.id,name:newEmp.name,role:newEmp.role,country:newEmp.country,dailyWage:newEmp.dailyWage,targetMode:newEmp.targetMode,overallTarget:newEmp.overallTarget,typeTargets:newEmp.typeTargets||{},workLog:[]});
+  }
+  alert(`✅ ${data.name} profile saved!`);
+  renderHRList(document.getElementById('owner-content'));
+}
+
+function toggleEmpActive(empId){
+  const emp=hrEmployees.find(e=>e.id===empId);
+  if(!emp)return;
+  emp.active=!emp.active;
+  alert(`${emp.name} ${emp.active?'reactivated ✅':'deactivated ❌'}`);
+  renderHRList(document.getElementById('owner-content'));
+}
+
+function settings_changePIN(){
+  const newPin=prompt('Enter new 4-digit Owner PIN:');
+  if(newPin&&newPin.length===4&&!isNaN(newPin)){
+    companyData.ownerPIN=newPin;
+    alert('✅ PIN changed! New PIN: '+newPin+'\n\nPlease remember it.');
+  } else if(newPin){alert('PIN must be exactly 4 digits.');}
+}
+// ══ END COMPANY & HR SYSTEM ══
+
+
 const WORK_TYPES_LIST=[
-  {key:'floor_tile',label:'Floor Tile',unit:'m²'},
-  {key:'wall_tile',label:'Wall Tile',unit:'m²'},
-  {key:'marble_floor',label:'Marble Floor',unit:'m²'},
-  {key:'marble_wall',label:'Marble Wall',unit:'m²'},
-  {key:'plaster_only',label:'Plaster Only',unit:'m²'},
-  {key:'plaster_tile',label:'Plaster+Tile',unit:'m²'},
-  {key:'tile_glue',label:'Tile+Glue',unit:'m²'},
-  {key:'grouting',label:'Grouting',unit:'m²'},
-  {key:'skirting_simple',label:'Skirting Simple',unit:'lm'},
-  {key:'skirting_groove',label:'Skirting+Groove',unit:'lm'},
-  {key:'skirting_light',label:'Skirting+Light',unit:'lm'},
+  {key:'floor_tile',label:'Floor Tile',unit:'m²',type:'area'},
+  {key:'wall_tile',label:'Wall Tile',unit:'m²',type:'area'},
+  {key:'washroom_floor',label:'Washroom Floor Tile',unit:'m²',type:'area'},
+  {key:'washroom_wall',label:'Washroom Wall Tile',unit:'m²',type:'area'},
+  {key:'marble_floor',label:'Marble Floor',unit:'m²',type:'area'},
+  {key:'marble_wall',label:'Marble Wall',unit:'m²',type:'area'},
+  {key:'plaster_only',label:'Plaster Only',unit:'m²',type:'area'},
+  {key:'plaster_tile',label:'Plaster+Tile',unit:'m²',type:'area'},
+  {key:'tile_glue',label:'Tile+Glue',unit:'m²',type:'area'},
+  {key:'grouting',label:'Grouting',unit:'m²',type:'area'},
+  {key:'skirting_simple',label:'Skirting Simple',unit:'lm',type:'length'},
+  {key:'skirting_groove',label:'Skirting+Groove',unit:'lm',type:'length'},
+  {key:'skirting_light',label:'Skirting+Light',unit:'lm',type:'length'},
+  {key:'maintenance_full',label:'Maintenance (Full Day)',unit:'day',type:'maintenance'},
+  {key:'maintenance_half',label:'Maintenance (Half Day)',unit:'half',type:'maintenance'},
 ];
 
 const employees=[
   {id:'EMP001',name:'Ahmed Ali',role:'Tile Master',country:'🇵🇰',
    dailyWage:110,targetMode:'per_type',
    overallTarget:22,
-   typeTargets:{floor_tile:22,wall_tile:18,marble_floor:15,marble_wall:15,plaster_only:20,plaster_tile:18,tile_glue:20,grouting:40,skirting_simple:30,skirting_groove:25,skirting_light:20},
+   typeTargets:{floor_tile:22,wall_tile:18,washroom_floor:12,washroom_wall:10,marble_floor:15,marble_wall:15,plaster_only:20,plaster_tile:18,tile_glue:20,grouting:40,skirting_simple:30,skirting_groove:25,skirting_light:20},
    workLog:[
      {date:'2026-05-01',entries:[{type:'floor_tile',qty:30}],dayStatus:'P',ownerNote:''},
      {date:'2026-05-02',entries:[{type:'wall_tile',qty:18}],dayStatus:'P',ownerNote:''},
@@ -909,7 +1574,7 @@ const employees=[
   {id:'EMP002',name:'Ravi Kumar',role:'Tile Master',country:'🇮🇳',
    dailyWage:100,targetMode:'overall',
    overallTarget:20,
-   typeTargets:{floor_tile:20,wall_tile:16,marble_floor:14,marble_wall:14,plaster_only:18,plaster_tile:16,tile_glue:18,grouting:35,skirting_simple:28,skirting_groove:22,skirting_light:18},
+   typeTargets:{floor_tile:20,wall_tile:16,washroom_floor:10,washroom_wall:8,marble_floor:14,marble_wall:14,plaster_only:18,plaster_tile:16,tile_glue:18,grouting:35,skirting_simple:28,skirting_groove:22,skirting_light:18},
    workLog:[
      {date:'2026-05-01',entries:[{type:'floor_tile',qty:25}],dayStatus:'P',ownerNote:''},
      {date:'2026-05-02',entries:[{type:'wall_tile',qty:20}],dayStatus:'P',ownerNote:''},
