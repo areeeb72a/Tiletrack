@@ -334,9 +334,9 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 <div class="bnav">
   <button class="bni on" id="obn-home" onclick="ownerTab('home',this)"><span class="bi">🏠</span><span class="bt" id="ont-home">Home</span></button>
   <button class="bni" id="obn-att" onclick="ownerTab('att',this)"><span class="bi">✅</span><span class="bt" id="ont-att">Attend</span></button>
+  <button class="bni" id="obn-wages" onclick="ownerTab('wages',this)"><span class="bi">💰</span><span class="bt" id="ont-wages">Wages</span></button>
   <button class="bni" id="obn-clients" onclick="ownerTab('clients',this)"><span class="bi">🏢</span><span class="bt" id="ont-clients">Clients</span></button>
-  <button class="bni" id="obn-team" onclick="ownerTab('team',this)"><span class="bi">👥</span><span class="bt" id="ont-team">Team</span></button>
-  <button class="bni" id="obn-exp" onclick="ownerTab('exp',this)"><span class="bi">💸</span><span class="bt" id="ont-exp">More</span></button>
+  <button class="bni" id="obn-exp" onclick="ownerTab('exp',this)"><span class="bi">⋯</span><span class="bt" id="ont-exp">More</span></button>
 </div>
 </div>
 
@@ -459,6 +459,7 @@ function ownerTab(tab,btn){
   if(btn)btn.classList.add('on');
   const t=T[CL],c=document.getElementById('owner-content');
   if(tab==='clients'){renderClients(c);return;}
+  if(tab==='wages'){renderWageSystem(c);return;}
   if(tab==='home'){c.innerHTML=`
     <div class="stat2"><div class="sc"><div class="sl">${t.activeW}</div><div class="sv">14</div></div><div class="sc"><div class="sl">${t.monthBill}</div><div class="sv" style="font-size:16px;">AED 18,400</div></div></div>
     <div class="card"><div class="ct">${t.todayEnt}<span class="addbtn" onclick="openModal('entry')">+ Add</span></div>
@@ -579,12 +580,31 @@ function empTab(tab,btn){
     </div>
     <button class="bbtn bb" onclick="saveWork(this)">${t.ewSave}</button>
     `;}
-  else if(tab==='sal'){c.innerHTML=`<div class="card">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div><div class="salary-big" style="font-size:26px;font-weight:700;color:var(--g);">AED 2,420</div><div style="font-size:12px;color:var(--txt2);margin-top:3px;">${t.salTitle}</div></div><span class="tag ta">Processing</span></div>
-    <div class="stat2" style="margin-bottom:12px;"><div class="sc"><div class="sl">${t.salEarn}</div><div class="sv" style="color:var(--g);font-size:16px;">AED 2,420</div></div><div class="sc"><div class="sl">${t.salDays}</div><div class="sv">22</div></div></div>
-    <div class="er"><div class="er-l"><div class="es">ZXZ Villa 123</div><div class="et">Floor Tile • 22m²</div></div><div class="er-r"><div class="ev">AED 110</div><div class="ed">May 2</div></div></div>
-    <div class="er"><div class="er-l"><div class="es">Palm Site A</div><div class="et">Wall Tile • 18m²</div></div><div class="er-r"><div class="ev">AED 90</div><div class="ed">May 1</div></div></div>
-    <div class="er"><div class="er-l"><div class="es">ZXZ Villa 123</div><div class="et">Marble Floor • 30m²</div></div><div class="er-r"><div class="ev">AED 160</div><div class="ed">Apr 30</div></div></div></div>`;}
+  else if(tab==='sal'){
+    const emp=employees.find(e=>e.name==='Ahmed Ali')||employees[0];
+    const now=new Date();
+    const r=wage_calcMonth(emp,now.getFullYear(),now.getMonth()+1);
+    c.innerHTML=`<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div><div style="font-size:11px;color:var(--txt2);">${t.salTitle}</div><div style="font-size:24px;font-weight:700;color:var(--g);">AED ${r.totalSalary.toFixed(0)}</div></div>
+      <span class="tag ta">Processing</span>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+      <div class="sc"><div class="sl">${t.salDays}</div><div class="sv">${r.presentDays}</div></div>
+      <div class="sc"><div class="sl">OT Meters</div><div class="sv" style="color:var(--a);">${r.totalOTMeters}m²</div></div>
+      <div class="sc"><div class="sl">OT Days</div><div class="sv" style="color:var(--a);">${r.otDays.toFixed(1)}</div></div>
+    </div>
+    <div style="background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span style="color:var(--txt2);">Base (${r.presentDays} days × AED ${emp.dailyWage})</span><span style="font-weight:600;">AED ${r.baseSalary.toFixed(0)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span style="color:var(--txt2);">OT Bonus (${r.otDays.toFixed(2)} days × AED ${emp.dailyWage})</span><span style="font-weight:600;color:var(--a);">AED ${r.otSalary.toFixed(0)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0 4px;font-size:15px;font-weight:700;border-top:0.5px solid var(--brd);margin-top:4px;"><span>Total</span><span style="color:var(--g);">AED ${r.totalSalary.toFixed(0)}</span></div>
+    </div>
+    <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px;">Daily Target: ${emp.overallTarget}m² = 1 day wage</div>
+    ${r.dayDetails.slice(0,5).map(d=>`<div class="er">
+      <div class="er-l"><div class="es">${d.date}</div><div class="et">${d.status==='L'?'Leave':d.done+'m² done / '+d.target+'m² target'}</div></div>
+      <div class="er-r"><div class="ev" style="color:${d.ot>0?'var(--a)':d.status==='L'?'var(--r)':'var(--g)'};">${d.status==='L'?'Leave':d.status==='P'?'✅ P':d.status}</div>${d.ot>0?`<div class="ed">+${d.ot}m² OT</div>`:''}</div>
+    </div>`).join('')}
+    </div>`;}
   else if(tab==='prof'){c.innerHTML=`<div class="card"><div class="ct">${t.profTitle}</div>
     <div class="profile-grid">
     <div class="pg-item"><div class="pgl">${t.profName}</div><div class="pgv">Ahmed Ali</div></div>
@@ -860,7 +880,248 @@ function openCreateInvoice(cid,siteId){
   cl.invoices.unshift(newInv);
   curClientTab='invoices';renderInvoice(cid,newInv.id);
 }
-// ══ PDC SYSTEM ══
+// ══ WAGE & OT SYSTEM ══
+const WORK_TYPES_LIST=[
+  {key:'floor_tile',label:'Floor Tile',unit:'m²'},
+  {key:'wall_tile',label:'Wall Tile',unit:'m²'},
+  {key:'marble_floor',label:'Marble Floor',unit:'m²'},
+  {key:'marble_wall',label:'Marble Wall',unit:'m²'},
+  {key:'plaster_only',label:'Plaster Only',unit:'m²'},
+  {key:'plaster_tile',label:'Plaster+Tile',unit:'m²'},
+  {key:'tile_glue',label:'Tile+Glue',unit:'m²'},
+  {key:'grouting',label:'Grouting',unit:'m²'},
+  {key:'skirting_simple',label:'Skirting Simple',unit:'lm'},
+  {key:'skirting_groove',label:'Skirting+Groove',unit:'lm'},
+  {key:'skirting_light',label:'Skirting+Light',unit:'lm'},
+];
+
+const employees=[
+  {id:'EMP001',name:'Ahmed Ali',role:'Tile Master',country:'🇵🇰',
+   dailyWage:110,targetMode:'per_type',
+   overallTarget:22,
+   typeTargets:{floor_tile:22,wall_tile:18,marble_floor:15,marble_wall:15,plaster_only:20,plaster_tile:18,tile_glue:20,grouting:40,skirting_simple:30,skirting_groove:25,skirting_light:20},
+   workLog:[
+     {date:'2026-05-01',entries:[{type:'floor_tile',qty:30}],dayStatus:'P',ownerNote:''},
+     {date:'2026-05-02',entries:[{type:'wall_tile',qty:18}],dayStatus:'P',ownerNote:''},
+     {date:'2026-04-30',entries:[{type:'floor_tile',qty:15}],dayStatus:'P',ownerNote:'Short day — material late'},
+     {date:'2026-04-29',entries:[{type:'marble_floor',qty:20}],dayStatus:'P',ownerNote:''},
+   ]},
+  {id:'EMP002',name:'Ravi Kumar',role:'Tile Master',country:'🇮🇳',
+   dailyWage:100,targetMode:'overall',
+   overallTarget:20,
+   typeTargets:{floor_tile:20,wall_tile:16,marble_floor:14,marble_wall:14,plaster_only:18,plaster_tile:16,tile_glue:18,grouting:35,skirting_simple:28,skirting_groove:22,skirting_light:18},
+   workLog:[
+     {date:'2026-05-01',entries:[{type:'floor_tile',qty:25}],dayStatus:'P',ownerNote:''},
+     {date:'2026-05-02',entries:[{type:'wall_tile',qty:20}],dayStatus:'P',ownerNote:''},
+   ]},
+  {id:'EMP003',name:'Md. Hasan',role:'Helper',country:'🇧🇩',
+   dailyWage:80,targetMode:'overall',
+   overallTarget:0,
+   typeTargets:{},
+   workLog:[
+     {date:'2026-05-01',entries:[],dayStatus:'L',ownerNote:'Leave'},
+     {date:'2026-05-02',entries:[],dayStatus:'P',ownerNote:''},
+   ]},
+];
+
+// Calculate OT for an employee for a given month
+function wage_calcMonth(emp, year, month){
+  const logs=emp.workLog.filter(l=>{
+    const d=new Date(l.date);
+    return d.getFullYear()===year&&(d.getMonth()+1)===month;
+  });
+  let presentDays=0,leaveDays=0,totalOTMeters=0;
+  const dayDetails=[];
+
+  logs.forEach(log=>{
+    if(log.dayStatus==='L'){leaveDays++;dayDetails.push({date:log.date,status:'L',target:0,done:0,ot:0,note:log.ownerNote});return;}
+    if(log.dayStatus==='A'){dayDetails.push({date:log.date,status:'A',target:0,done:0,ot:0,note:log.ownerNote});return;}
+
+    // Calculate total work done vs target
+    let totalDone=0,totalTarget=0;
+
+    if(emp.targetMode==='overall'){
+      totalDone=log.entries.reduce((s,e)=>s+e.qty,0);
+      totalTarget=emp.overallTarget;
+    } else {
+      // Per type target — weighted calculation
+      log.entries.forEach(e=>{
+        totalDone+=e.qty;
+        totalTarget+=(emp.typeTargets[e.type]||emp.overallTarget);
+      });
+      if(log.entries.length===0)totalTarget=emp.overallTarget;
+    }
+
+    const ot=Math.max(0,totalDone-totalTarget);
+    totalOTMeters+=ot;
+    presentDays++;
+    dayDetails.push({date:log.date,status:log.dayStatus,target:totalTarget,done:totalDone,ot,note:log.ownerNote});
+  });
+
+  // OT days = total OT meters / daily target
+  const dailyTarget=emp.overallTarget||22;
+  const otDays=dailyTarget>0?totalOTMeters/dailyTarget:0;
+  const otDaysRounded=Math.floor(otDays*100)/100;
+  const baseSalary=presentDays*emp.dailyWage;
+  const otSalary=otDaysRounded*emp.dailyWage;
+  const totalSalary=baseSalary+otSalary;
+
+  return{presentDays,leaveDays,totalOTMeters,otDays:otDaysRounded,baseSalary,otSalary,totalSalary,dayDetails,dailyTarget};
+}
+
+function renderWageSystem(c){
+  const now=new Date();
+  const year=now.getFullYear(),month=now.getMonth()+1;
+  const monthName=now.toLocaleString('en',{month:'long'});
+
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div style="font-size:16px;font-weight:700;color:var(--txt);">💰 Wages & OT — ${monthName} ${year}</div>
+  </div>`;
+
+  // Summary cards
+  const totalWages=employees.reduce((s,emp)=>{const r=wage_calcMonth(emp,year,month);return s+r.totalSalary;},0);
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div class="sc"><div class="sl">Total Employees</div><div class="sv">${employees.length}</div></div>
+    <div class="sc"><div class="sl">Total Wages Due</div><div class="sv" style="font-size:15px;color:var(--g);">AED ${totalWages.toFixed(0)}</div></div>
+  </div>`;
+
+  // Per employee
+  employees.forEach(emp=>{
+    const r=wage_calcMonth(emp,year,month);
+    h+=`<div class="client-card" onclick="renderEmployeeWage('${emp.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--txt);">${emp.country} ${emp.name}</div>
+          <div style="font-size:11px;color:var(--txt2);margin-top:2px;">${emp.role} • Daily: AED ${emp.dailyWage}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:16px;font-weight:700;color:var(--g);">AED ${r.totalSalary.toFixed(0)}</div>
+          <div style="font-size:10px;color:var(--txt2);margin-top:2px;">${r.presentDays}P + ${r.otDays.toFixed(1)} OT days</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;padding-top:8px;border-top:0.5px solid var(--brd);">
+        <div style="font-size:11px;color:var(--txt2);">Base: <span style="font-weight:600;color:var(--txt);">AED ${r.baseSalary.toFixed(0)}</span></div>
+        <div style="font-size:11px;color:var(--txt2);">OT (${r.totalOTMeters}m²): <span style="font-weight:600;color:var(--a);">AED ${r.otSalary.toFixed(0)}</span></div>
+        <div style="font-size:11px;color:var(--txt2);">Leave: <span style="font-weight:600;color:var(--txt);">${r.leaveDays}d</span></div>
+      </div>
+    </div>`;
+  });
+
+  h+=`<button class="bbtn" style="background:#7C3AED;color:#fff;border:none;padding:12px;border-radius:12px;font-size:13px;font-weight:600;width:100%;cursor:pointer;" onclick="renderWageSettings()">⚙️ Edit Wages & Targets</button>`;
+  c.innerHTML=h;
+}
+
+function renderEmployeeWage(empId){
+  const emp=employees.find(e=>e.id===empId);
+  const now=new Date();
+  const year=now.getFullYear(),month=now.getMonth()+1;
+  const r=wage_calcMonth(emp,year,month);
+  const c=document.getElementById('owner-content');
+  const monthName=now.toLocaleString('en',{month:'long'});
+
+  let h=`<div class="back-row" onclick="renderWageSystem(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">${emp.name} — ${monthName}</span></div>
+
+  <div class="card" style="background:var(--gl);border-color:var(--g);">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;">
+      <div><div style="font-size:10px;color:var(--gd);font-weight:600;">BASE</div><div style="font-size:18px;font-weight:700;color:var(--gd);">AED ${r.baseSalary.toFixed(0)}</div><div style="font-size:10px;color:var(--gd);">${r.presentDays} days × ${emp.dailyWage}</div></div>
+      <div style="border-left:0.5px solid var(--g);border-right:0.5px solid var(--g);"><div style="font-size:10px;color:var(--gd);font-weight:600;">OT BONUS</div><div style="font-size:18px;font-weight:700;color:var(--a);">AED ${r.otSalary.toFixed(0)}</div><div style="font-size:10px;color:var(--gd);">${r.totalOTMeters}m² ÷ ${r.dailyTarget} = ${r.otDays.toFixed(2)} days</div></div>
+      <div><div style="font-size:10px;color:var(--gd);font-weight:600;">TOTAL</div><div style="font-size:18px;font-weight:700;color:var(--gd);">AED ${r.totalSalary.toFixed(0)}</div><div style="font-size:10px;color:var(--gd);">${r.leaveDays} leave days</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;">📅 Daily Breakdown</div>`;
+
+  r.dayDetails.sort((a,b)=>b.date.localeCompare(a.date)).forEach(d=>{
+    const overAch=d.done>d.target&&d.target>0;
+    const underAch=d.done<d.target&&d.target>0&&d.status==='P';
+    h+=`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:0.5px solid var(--brd);">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--txt);">${d.date}</div>
+        ${d.status==='P'?`<div style="font-size:11px;color:var(--txt2);">Done: ${d.done}${d.done>0?'m²':''} / Target: ${d.target}m²</div>`:''}
+        ${d.note?`<div style="font-size:10px;color:var(--txt3);">${d.note}</div>`:''}
+      </div>
+      <div style="text-align:right;">
+        <span style="font-size:12px;font-weight:700;padding:3px 8px;border-radius:6px;${d.status==='L'?'background:var(--rl);color:#A32D2D':d.status==='A'?'background:var(--bg2);color:var(--txt3)':overAch?'background:var(--gl);color:var(--gd)':underAch?'background:var(--al);color:#633806':'background:var(--gl);color:var(--gd)'}">
+          ${d.status==='L'?'Leave':d.status==='A'?'Absent':d.status}
+        </span>
+        ${d.ot>0?`<div style="font-size:10px;color:var(--a);font-weight:600;margin-top:3px;">+${d.ot}m² OT</div>`:''}
+        ${underAch?`<div style="font-size:10px;color:var(--a);margin-top:3px;">Under target</div>`:''}
+      </div>
+    </div>`;
+  });
+
+  h+=`</div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">✏️ Adjust a Day</div>
+    <div style="font-size:12px;color:var(--txt2);margin-bottom:8px;">If employee worked less than target — owner can decide:</div>
+    <select id="adj-date" style="width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);margin-bottom:8px;">
+      ${r.dayDetails.filter(d=>d.status==='P').map(d=>`<option value="${d.date}">${d.date} — Done: ${d.done}m² / Target: ${d.target}m²</option>`).join('')}
+    </select>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+      <button class="bbtn bg" style="padding:9px;font-size:12px;" onclick="adj_setStatus('${empId}','P')">✅ Full Day</button>
+      <button class="bbtn" style="padding:9px;font-size:12px;background:var(--al);color:#633806;border:none;border-radius:10px;font-weight:600;cursor:pointer;" onclick="adj_setStatus('${empId}','H')">½ Half Day</button>
+      <button class="bbtn" style="padding:9px;font-size:12px;background:var(--rl);color:#A32D2D;border:none;border-radius:10px;font-weight:600;cursor:pointer;" onclick="adj_setStatus('${empId}','A')">❌ Absent</button>
+    </div>
+    <input type="text" id="adj-note" placeholder="Note (optional)" style="width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+  </div>`;
+
+  c.innerHTML=h;
+}
+
+function adj_setStatus(empId,status){
+  const emp=employees.find(e=>e.id===empId);
+  const date=document.getElementById('adj-date')?.value;
+  const note=document.getElementById('adj-note')?.value||'';
+  if(!date)return;
+  const log=emp.workLog.find(l=>l.date===date);
+  if(log){log.dayStatus=status;log.ownerNote=note;}
+  const statusTxt=status==='P'?'Full Day ✅':status==='H'?'Half Day ½':'Absent ❌';
+  alert(`Updated ${emp.name}\n${date} → ${statusTxt}\n${note?'Note: '+note:''}`);
+  renderEmployeeWage(empId);
+}
+
+function renderWageSettings(){
+  const c=document.getElementById('owner-content');
+  let h=`<div class="back-row" onclick="renderWageSystem(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">Wage & Target Settings</span></div>`;
+
+  employees.forEach(emp=>{
+    h+=`<div class="card">
+      <div style="font-size:14px;font-weight:700;color:var(--txt);margin-bottom:12px;">${emp.country} ${emp.name}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div class="fmg"><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px;">Daily Wage (AED)</label>
+          <input type="number" value="${emp.dailyWage}" inputmode="numeric" style="width:100%;padding:10px;font-size:15px;font-weight:700;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--g);" onchange="emp_setWage('${emp.id}',this.value)">
+        </div>
+        <div class="fmg"><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px;">Target Mode</label>
+          <select style="width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);" onchange="emp_setMode('${emp.id}',this.value)">
+            <option value="overall" ${emp.targetMode==='overall'?'selected':''}>Overall Daily Target</option>
+            <option value="per_type" ${emp.targetMode==='per_type'?'selected':''}>Per Work Type</option>
+          </select>
+        </div>
+      </div>
+      ${emp.targetMode==='overall'?`
+      <div class="fmg"><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:4px;">Daily Target (m²) — 1 day wage = this much work</label>
+        <input type="number" value="${emp.overallTarget}" inputmode="numeric" style="width:100%;padding:10px;font-size:15px;font-weight:700;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--b);" onchange="emp_setTarget('${emp.id}',this.value)">
+      </div>`:`
+      <div style="font-size:11px;color:var(--txt2);margin-bottom:8px;font-weight:600;">Per Work Type Targets (m² or lm per day = 1 wage):</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        ${WORK_TYPES_LIST.map(wt=>`<div><label style="font-size:10px;color:var(--txt2);">${wt.label} (${wt.unit})</label>
+          <input type="number" value="${emp.typeTargets[wt.key]||0}" inputmode="numeric" style="width:100%;padding:8px;font-size:13px;border:1px solid var(--brd);border-radius:8px;background:var(--bg);color:var(--txt);" onchange="emp_setTypeTarget('${emp.id}','${wt.key}',this.value)">
+        </div>`).join('')}
+      </div>`}
+    </div>`;
+  });
+
+  c.innerHTML=h;
+}
+
+function emp_setWage(empId,val){const emp=employees.find(e=>e.id===empId);if(emp)emp.dailyWage=parseFloat(val)||0;}
+function emp_setMode(empId,val){const emp=employees.find(e=>e.id===empId);if(emp){emp.targetMode=val;renderWageSettings();}}
+function emp_setTarget(empId,val){const emp=employees.find(e=>e.id===empId);if(emp)emp.overallTarget=parseFloat(val)||0;}
+function emp_setTypeTarget(empId,key,val){const emp=employees.find(e=>e.id===empId);if(emp)emp.typeTargets[key]=parseFloat(val)||0;}
+// ══ END WAGE SYSTEM ══
+
+
 const pdcList=[ // demo data
   {id:'PDC-001',chqNo:'445521',bank:'Emirates NBD',acctName:'Al Noor Contracting LLC',amount:2000,currency:'AED',chqDate:'2026-05-04',clientId:1,invId:'INV-1021',status:'pending',note:'',addedDate:'2026-04-15'},
   {id:'PDC-002',chqNo:'887632',bank:'ADCB',acctName:'Al Noor Contracting LLC',amount:1500,currency:'AED',chqDate:'2026-05-20',clientId:1,invId:'INV-1021',status:'pending',note:'',addedDate:'2026-04-15'},
