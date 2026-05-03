@@ -147,6 +147,71 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 /* LANG CHIP */
 .lang-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;background:var(--gl);border:1px solid var(--g);font-size:12px;color:var(--gd);cursor:pointer;font-weight:500;}
 
+/* CLIENT & INVOICE */
+.client-card{background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;}
+.client-card:active{background:var(--bg2);}
+.cc-name{font-size:15px;font-weight:700;color:var(--txt);}
+.cc-sub{font-size:12px;color:var(--txt2);margin-top:2px;}
+.cc-stats{display:flex;gap:14px;margin-top:8px;}
+.cc-stat{font-size:11px;color:var(--txt3);}
+.cc-stat span{font-weight:600;color:var(--txt2);}
+.inv-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--brd);cursor:pointer;}
+.inv-row:last-child{border-bottom:none;}
+.inv-no{font-size:13px;font-weight:700;color:var(--b);}
+.inv-site{font-size:11px;color:var(--txt2);margin-top:2px;}
+.inv-amt{font-size:14px;font-weight:700;color:var(--txt);}
+.inv-bal{font-size:11px;margin-top:2px;text-align:right;}
+.bal-paid{color:var(--g);}
+.bal-part{color:var(--a);}
+.bal-due{color:var(--r);}
+.line-table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:12px;}
+.line-table th{font-size:10px;font-weight:600;color:var(--txt3);text-align:left;padding:5px 4px;border-bottom:0.5px solid var(--brd);}
+.line-table td{padding:7px 4px;border-bottom:0.5px solid var(--brd);color:var(--txt);}
+.line-table td:last-child,.line-table th:last-child{text-align:right;}
+.line-table tr:last-child td{border-bottom:none;}
+.lt-edit{width:100%;padding:5px;font-size:12px;border:0.5px solid var(--brd);border-radius:6px;background:var(--bg);color:var(--txt);}
+.inv-totals{background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px;}
+.it-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:var(--txt2);}
+.it-row.bold{font-weight:700;color:var(--txt);font-size:14px;border-top:0.5px solid var(--brd);margin-top:4px;padding-top:8px;}
+.it-row.payable{font-weight:700;color:var(--g);font-size:16px;}
+.pay-item{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--brd);font-size:12px;}
+.pay-item:last-child{border-bottom:none;}
+.inv-badge{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;}
+.ib-paid{background:var(--gl);color:var(--gd);}
+.ib-part{background:var(--al);color:#633806;}
+.ib-due{background:var(--rl);color:#A32D2D;}
+.tab-btns{display:flex;border-bottom:0.5px solid var(--brd);margin-bottom:12px;}
+.tab-btn{flex:1;padding:9px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--txt2);border-bottom:2px solid transparent;}
+.tab-btn.on{color:var(--g);border-bottom-color:var(--g);}
+.curr-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--brd);font-size:12px;font-weight:600;cursor:pointer;background:var(--bg2);color:var(--txt2);margin:3px;}
+.curr-btn.on{background:var(--gl);color:var(--gd);border-color:var(--g);}
+.back-row{display:flex;align-items:center;gap:8px;padding:10px 0 6px;cursor:pointer;}
+.back-arrow{font-size:18px;color:var(--b);}
+.back-title{font-size:15px;font-weight:700;color:var(--txt);}
+
+/* PDC */
+.pdc-card{border-radius:12px;padding:12px 14px;margin-bottom:10px;border-left:4px solid #7C3AED;}
+.pdc-pending{background:#F5F0FF;border-left-color:#7C3AED;}
+.pdc-deposit{background:#FEF3C7;border-left-color:var(--a);}
+.pdc-cleared{background:var(--gl);border-left-color:var(--g);}
+.pdc-bounced{background:var(--rl);border-left-color:var(--r);}
+@media(prefers-color-scheme:dark){.pdc-pending{background:#2D1F4E;}.pdc-deposit{background:#3D2E00;}.pdc-cleared{background:#0D2E1A;}.pdc-bounced{background:#2E0A0A;}}
+.pdc-no{font-size:14px;font-weight:700;color:var(--txt);}
+.pdc-bank{font-size:11px;color:var(--txt2);margin-top:2px;}
+.pdc-amt{font-size:16px;font-weight:700;}
+.pdc-amt.purple{color:#7C3AED;}
+.pdc-amt.amber{color:var(--a);}
+.pdc-amt.green{color:var(--g);}
+.pdc-amt.red{color:var(--r);}
+.pdc-date{font-size:11px;margin-top:2px;}
+.pdc-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.pdc-btn{padding:6px 12px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;}
+.pdc-btn-dep{background:#FEF3C7;color:#92400E;}
+.pdc-btn-clr{background:var(--gl);color:var(--gd);}
+.pdc-btn-bnc{background:var(--rl);color:#A32D2D;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--r);display:inline-block;margin-left:4px;animation:pulse2 1.5s infinite;}
+@keyframes pulse2{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
 /* MODAL */
 .modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:200;}
 
@@ -268,10 +333,10 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
 <div class="sa" id="owner-content"></div>
 <div class="bnav">
   <button class="bni on" id="obn-home" onclick="ownerTab('home',this)"><span class="bi">🏠</span><span class="bt" id="ont-home">Home</span></button>
-  <button class="bni" id="obn-att" onclick="ownerTab('att',this)"><span class="bi">✅</span><span class="bt" id="ont-att">Attendance</span></button>
+  <button class="bni" id="obn-att" onclick="ownerTab('att',this)"><span class="bi">✅</span><span class="bt" id="ont-att">Attend</span></button>
+  <button class="bni" id="obn-clients" onclick="ownerTab('clients',this)"><span class="bi">🏢</span><span class="bt" id="ont-clients">Clients</span></button>
   <button class="bni" id="obn-team" onclick="ownerTab('team',this)"><span class="bi">👥</span><span class="bt" id="ont-team">Team</span></button>
-  <button class="bni" id="obn-exp" onclick="ownerTab('exp',this)"><span class="bi">💸</span><span class="bt" id="ont-exp">Expenses</span></button>
-  <button class="bni" id="obn-set" onclick="ownerTab('set',this)"><span class="bi">⚙️</span><span class="bt" id="ont-set">Settings</span></button>
+  <button class="bni" id="obn-exp" onclick="ownerTab('exp',this)"><span class="bi">💸</span><span class="bt" id="ont-exp">More</span></button>
 </div>
 </div>
 
@@ -393,6 +458,7 @@ function ownerTab(tab,btn){
   document.querySelectorAll('[id^=obn-]').forEach(b=>b.classList.remove('on'));
   if(btn)btn.classList.add('on');
   const t=T[CL],c=document.getElementById('owner-content');
+  if(tab==='clients'){renderClients(c);return;}
   if(tab==='home'){c.innerHTML=`
     <div class="stat2"><div class="sc"><div class="sl">${t.activeW}</div><div class="sv">14</div></div><div class="sc"><div class="sl">${t.monthBill}</div><div class="sv" style="font-size:16px;">AED 18,400</div></div></div>
     <div class="card"><div class="ct">${t.todayEnt}<span class="addbtn" onclick="openModal('entry')">+ Add</span></div>
@@ -431,13 +497,19 @@ function ownerTab(tab,btn){
     <div style="display:flex;align-items:center;gap:10px;padding:8px 0;"><div class="av" style="width:32px;height:32px;font-size:11px;background:var(--al);color:#633806;">MH</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:var(--txt);">Md. Hasan</div><div style="font-size:11px;color:var(--txt2);">Helper • 🇧🇩</div></div><span class="tag ta">Leave</span></div></div>
     <div class="card"><div class="ct">${t.roles}</div><div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px;"><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--gl);color:var(--gd);">Tile Master</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--bl);color:var(--bd);">Helper</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--al);color:#633806;">Foreman</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;font-weight:600;background:var(--rl);color:#A32D2D;">Electrician</span><span style="padding:5px 10px;border-radius:8px;font-size:12px;border:1px dashed var(--brd2);color:var(--txt3);cursor:pointer;" onclick="openModal('role')">${t.addR}</span></div></div>
     <div class="card"><div class="ct">${t.workTypes}</div><div style="display:flex;flex-wrap:wrap;gap:6px;"><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--gl);color:var(--gd);">Floor Tile</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--gl);color:var(--gd);">Wall Tile</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--bl);color:var(--bd);">Marble</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--al);color:#633806;">Plaster+Tile</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:#F1EFE8;color:#444441;">Grouting</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;font-weight:600;background:var(--rl);color:#A32D2D;">Skirting+Light</span><span style="padding:4px 9px;border-radius:7px;font-size:12px;border:1px dashed var(--brd2);color:var(--txt3);cursor:pointer;" onclick="openModal('wtype')">${t.addWt}</span></div></div>`;}
-  else if(tab==='exp'){c.innerHTML=`<button class="bbtn bg" style="margin-bottom:12px;" onclick="openModal('expense')">${t.addExp}</button>
-    <div class="card"><div class="ct">${t.expTitle}</div>
-    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Cement bags x50</span><span style="font-size:12px;color:var(--txt3);">AED 15×50</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 750</span></div>
-    <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Al Futtaim Building</div>
-    <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Tile adhesive x30</span><span style="font-size:12px;color:var(--txt3);">AED 22×30</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 660</span></div>
-    <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Emirates Hardware</div>
-    <div style="border-top:0.5px solid var(--brd);padding-top:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--txt2);">${t.totalExp}</span><span style="font-size:16px;font-weight:700;color:var(--r);">AED 1,410</span></div></div>`;}
+  else if(tab==='exp'){c.innerHTML=`
+  <div style="display:flex;gap:8px;margin-bottom:12px;">
+    <button class="bbtn bg" style="flex:1;padding:9px;font-size:12px;" onclick="ownerTab('exp-list',this)">💸 Expenses</button>
+    <button class="bbtn" style="flex:1;padding:9px;font-size:12px;background:#7C3AED;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:600;" onclick="renderPDCDashboard(document.getElementById('owner-content'))">🏦 PDC Tracker</button>
+    <button class="bbtn" style="flex:1;padding:9px;font-size:12px;background:var(--bg2);color:var(--txt2);border:1px solid var(--brd);border-radius:10px;cursor:pointer;font-weight:600;" onclick="ownerTab('set',null)">⚙️ Settings</button>
+  </div>
+  <button class="bbtn bg" style="margin-bottom:12px;" onclick="openModal('expense')">+ Add Expense</button>
+  <div class="card"><div class="ct">Expenses</div>
+  <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Cement bags x50</span><span style="font-size:12px;color:var(--txt3);">AED 15×50</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 750</span></div>
+  <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Al Futtaim Building</div>
+  <div style="display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:center;margin-bottom:4px;"><span style="font-size:13px;color:var(--txt);">Tile adhesive x30</span><span style="font-size:12px;color:var(--txt3);">AED 22×30</span><span style="font-size:13px;font-weight:700;color:var(--txt);text-align:right;">AED 660</span></div>
+  <div style="font-size:11px;color:var(--txt3);margin-bottom:10px;">Emirates Hardware</div>
+  <div style="border-top:0.5px solid var(--brd);padding-top:10px;display:flex;justify-content:space-between;"><span style="font-size:13px;color:var(--txt2);">Total</span><span style="font-size:16px;font-weight:700;color:var(--r);">AED 1,410</span></div></div>`;}
   else if(tab==='set'){c.innerHTML=`<div class="card"><div class="ct">${t.stgTitle}</div>
     <div class="settings-row" onclick="go('lang')"><span class="sr-l">${t.stgLang}</span><span class="sr-r">${T[CL].chip.replace(' ✎','')}</span></div>
     <div class="settings-row" onclick="alert('Company profile editor')"><span class="sr-l">${t.stgComp}</span><span class="sr-r">ACB →</span></div>
@@ -579,9 +651,393 @@ function quickSetQty(n,el){
   if(el)el.classList.add('qn-on');
 }
 
+// ══ CLIENT & INVOICE SYSTEM ══
+const CURRENCIES=['AED','SAR','PKR','USD','EUR','GBP'];
+let invCounter=1024;
+const clients=[
+  {id:1,name:'Al Noor Contracting LLC',addr1:'Office 204, Business Bay Tower',addr2:'Business Bay, Dubai',addr3:'United Arab Emirates',manager:'Mohammed Al Rashid',mgrPhone:'+971-50-111-2233',acctName:'Hamid Al Zaabi',acctPhone:'+971-55-444-5566',currency:'AED',taxPct:5,
+   sites:[{id:101,name:'Villa #854',area:'Arabian Ranches',city:'Dubai',engineer:'Eng. Tariq Nasser',engPhone:'+971-50-777-8899',foreman:'Khalid Mahmood',fmPhone:'+971-54-111-2233'},{id:102,name:'Apt Block C',area:'Al Barsha',city:'Dubai',engineer:'Eng. Sara Al Ali',engPhone:'+971-55-333-4455',foreman:'Santosh Kumar',fmPhone:'+971-52-999-0011'}],
+   invoices:[
+    {id:'INV-1021',siteId:101,date:'2026-04-15',currency:'AED',lines:[{desc:'Floor Tile',qty:240,unit:'m²',rate:10,total:2400},{desc:'Wall Tile',qty:180,unit:'m²',rate:12,total:2160},{desc:'Grouting',qty:240,unit:'m²',rate:3,total:720}],subtotal:5280,discPct:0,discAmt:0,taxPct:5,taxAmt:264,netTotal:5544,discAfter:0,payable:5544,payments:[{date:'2026-04-20',amount:3000,note:'Cheque #4421'},{date:'2026-05-01',amount:1000,note:'Bank transfer'}],status:'partial'},
+    {id:'INV-1018',siteId:102,date:'2026-03-28',currency:'AED',lines:[{desc:'Marble Floor',qty:120,unit:'m²',rate:18,total:2160},{desc:'Skirting+Light',qty:85,unit:'lm',rate:7,total:595}],subtotal:2755,discPct:5,discAmt:137.75,taxPct:5,taxAmt:130.86,netTotal:2748.11,discAfter:0,payable:2748.11,payments:[{date:'2026-04-05',amount:2748.11,note:'Full payment'}],status:'paid'}
+   ]},
+  {id:2,name:'Zara Real Estate Dev.',addr1:'Tower 7, Floor 12',addr2:'DIFC, Dubai',addr3:'United Arab Emirates',manager:'Zara Hussain',mgrPhone:'+971-50-222-3344',acctName:'Raza Khan',acctPhone:'+971-55-666-7788',currency:'AED',taxPct:5,
+   sites:[{id:201,name:'Palm Villa #12',area:'Palm Jumeirah',city:'Dubai',engineer:'Eng. Omar Farouk',engPhone:'+971-50-888-9900',foreman:'Raju Verma',fmPhone:'+971-52-777-8899'}],
+   invoices:[{id:'INV-1022',siteId:201,date:'2026-05-01',currency:'AED',lines:[{desc:'Floor Tile',qty:300,unit:'m²',rate:10,total:3000},{desc:'Wall Tile',qty:200,unit:'m²',rate:12,total:2400},{desc:'Plaster+Tile',qty:80,unit:'m²',rate:15,total:1200}],subtotal:6600,discPct:0,discAmt:0,taxPct:5,taxAmt:330,netTotal:6930,discAfter:0,payable:6930,payments:[],status:'due'}]}
+];
+let curClientId=null,curInvId=null,curClientTab='sites';
+
+function calcInvPaid(inv){return inv.payments.reduce((s,p)=>s+p.amount,0);}
+function renderClients(c){
+  curClientId=null;curInvId=null;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div style="font-size:16px;font-weight:700;color:var(--txt);">🏢 Clients</div><button class="bbtn bg" style="width:auto;padding:8px 14px;font-size:13px;margin:0;" onclick="openAddClient()">+ Add Client</button></div>`;
+  clients.forEach(cl=>{
+    const totalInv=cl.invoices.reduce((s,i)=>s+i.payable,0);
+    const totalPaid=cl.invoices.reduce((s,i)=>s+calcInvPaid(i),0);
+    const bal=totalInv-totalPaid;
+    h+=`<div class="client-card" onclick="renderClientDetail(${cl.id})"><div class="cc-name">${cl.name}</div><div class="cc-sub">${cl.addr2} • ${cl.manager}</div><div class="cc-stats"><div class="cc-stat">Sites: <span>${cl.sites.length}</span></div><div class="cc-stat">Invoices: <span>${cl.invoices.length}</span></div><div class="cc-stat">Balance: <span style="color:${bal>0?'var(--r)':'var(--g)'}">${cl.currency} ${bal.toFixed(0)}</span></div></div></div>`;
+  });
+  c.innerHTML=h;
+}
+function renderClientDetail(cid){
+  curClientId=cid;curClientTab='sites';
+  const cl=clients.find(x=>x.id===cid);
+  const c=document.getElementById('owner-content');
+  c.innerHTML=`<div class="back-row" onclick="renderClients(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">${cl.name}</span></div>
+  <div class="card" style="margin-bottom:10px;">
+    <div style="font-size:12px;color:var(--txt2);line-height:1.9;">${cl.addr1}<br>${cl.addr2}<br>${cl.addr3}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;font-size:12px;">
+      <div><div style="color:var(--txt3);font-size:11px;">Manager</div><div style="font-weight:600;color:var(--txt);">${cl.manager}</div><div style="color:var(--b);">${cl.mgrPhone}</div></div>
+      <div><div style="color:var(--txt3);font-size:11px;">Accounts</div><div style="font-weight:600;color:var(--txt);">${cl.acctName}</div><div style="color:var(--b);">${cl.acctPhone}</div></div>
+    </div>
+    <div style="margin-top:10px;font-size:12px;"><span style="color:var(--txt2);">Currency: </span>${CURRENCIES.map(cur=>`<button class="curr-btn ${cur===cl.currency?'on':''}" onclick="setClientCurr(${cl.id},'${cur}',this)">${cur}</button>`).join('')}</div>
+    <div style="margin-top:8px;display:flex;align-items:center;gap:8px;font-size:12px;"><span style="color:var(--txt2);">Tax %:</span><input type="number" value="${cl.taxPct}" style="width:70px;padding:6px 10px;border:1px solid var(--brd);border-radius:8px;font-size:13px;background:var(--bg);color:var(--txt);" onchange="cl.taxPct=parseFloat(this.value)||0"></div>
+  </div>
+  <div class="tab-btns"><button class="tab-btn on" onclick="setClientTab('sites',this)">🏗️ Sites</button><button class="tab-btn" onclick="setClientTab('invoices',this)">🧾 Invoices</button></div>
+  <div id="client-tab-content"></div>`;
+  renderClientTab(cid);
+}
+function setClientCurr(cid,cur,btn){const cl=clients.find(x=>x.id===cid);cl.currency=cur;document.querySelectorAll('.curr-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function setClientTab(tab,btn){curClientTab=tab;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderClientTab(curClientId);}
+function renderClientTab(cid){
+  const cl=clients.find(x=>x.id===cid);
+  const tc=document.getElementById('client-tab-content');
+  if(!tc)return;
+  if(curClientTab==='sites'){
+    let h=`<button class="bbtn bg" style="width:auto;padding:8px 14px;font-size:13px;margin:0 0 12px;" onclick="openAddSite(${cid})">+ Add Site</button>`;
+    cl.sites.forEach(s=>{h+=`<div class="client-card"><div class="cc-name">${s.name}</div><div class="cc-sub">${s.area}, ${s.city}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;font-size:11px;"><div><div style="color:var(--txt3);">Engineer</div><div style="color:var(--txt);font-weight:600;">${s.engineer}</div><div style="color:var(--b);">${s.engPhone}</div></div><div><div style="color:var(--txt3);">Foreman</div><div style="color:var(--txt);font-weight:600;">${s.foreman}</div><div style="color:var(--b);">${s.fmPhone}</div></div></div><button class="bbtn bb" style="width:auto;padding:6px 14px;font-size:12px;margin:10px 0 0;" onclick="openCreateInvoice(${cid},${s.id})">🧾 Create Invoice</button></div>`;});
+    tc.innerHTML=h;
+  } else {
+    let h=`<div style="margin-bottom:10px;"><select style="width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);" onchange="if(this.value)renderInvoice(${cid},this.value)"><option value="">— Search / Select Invoice —</option>${cl.invoices.map(i=>`<option value="${i.id}">${i.id} | ${cl.sites.find(s=>s.id===i.siteId)?.name||''} | ${i.date}</option>`).join('')}</select></div>`;
+    if(cl.invoices.length===0){h+='<div style="text-align:center;padding:20px;color:var(--txt3);">No invoices yet — create from Sites tab</div>';}
+    cl.invoices.forEach(inv=>{
+      const paid=calcInvPaid(inv);const bal=inv.payable-paid;
+      const siteName=cl.sites.find(s=>s.id===inv.siteId)?.name||'';
+      const badgeCls=inv.status==='paid'?'ib-paid':inv.status==='partial'?'ib-part':'ib-due';
+      const badgeTxt=inv.status==='paid'?'✅ Paid':inv.status==='partial'?'⏳ Partial':'🔴 Due';
+      h+=`<div class="inv-row" onclick="renderInvoice(${cid},'${inv.id}')"><div><div class="inv-no">${inv.id}</div><div class="inv-site">${siteName} • ${inv.date}</div></div><div style="text-align:right;"><div class="inv-amt">${cl.currency} ${inv.payable.toFixed(2)}</div><div class="inv-bal ${inv.status==='paid'?'bal-paid':inv.status==='partial'?'bal-part':'bal-due'}">${inv.status==='paid'?'Fully Paid':'Bal: '+cl.currency+' '+bal.toFixed(2)}</div><span class="inv-badge ${badgeCls}" style="margin-top:4px;display:inline-block;">${badgeTxt}</span></div></div>`;
+    });
+    tc.innerHTML=h;
+  }
+}
+function renderInvoice(cid,invId){
+  curInvId=invId;
+  const cl=clients.find(x=>x.id===cid);
+  const inv=cl.invoices.find(i=>i.id===invId);
+  if(!inv)return;
+  const site=cl.sites.find(s=>s.id===inv.siteId);
+  const c=document.getElementById('owner-content');
+  function redraw(){renderInvoice(cid,invId);}
+  const paid=calcInvPaid(inv);const bal=inv.payable-paid;
+  const badgeCls=inv.status==='paid'?'ib-paid':inv.status==='partial'?'ib-part':'ib-due';
+  const badgeTxt=inv.status==='paid'?'✅ Paid':inv.status==='partial'?'⏳ Partial':'🔴 Due';
+  let linesHtml=`<table class="line-table"><tr><th>Description</th><th>Qty</th><th>Unit</th><th>Rate</th><th>Total</th></tr>`;
+  inv.lines.forEach((ln,li)=>{linesHtml+=`<tr><td><input class="lt-edit" value="${ln.desc}" onchange="inv_updateLine(${cid},'${invId}',${li},'desc',this.value)"></td><td><input class="lt-edit" type="number" value="${ln.qty}" style="width:52px;" onchange="inv_updateLine(${cid},'${invId}',${li},'qty',this.value)"></td><td><select class="lt-edit" style="width:48px;" onchange="inv_updateLine(${cid},'${invId}',${li},'unit',this.value)"><option ${ln.unit==='m²'?'selected':''}>m²</option><option ${ln.unit==='lm'?'selected':''}>lm</option><option ${ln.unit==='unit'?'selected':''}>unit</option></select></td><td><input class="lt-edit" type="number" value="${ln.rate}" style="width:56px;" onchange="inv_updateLine(${cid},'${invId}',${li},'rate',this.value)"></td><td style="font-weight:700;">${cl.currency} ${ln.total.toFixed(2)}</td></tr>`;});
+  linesHtml+=`</table><button style="font-size:12px;color:var(--g);background:none;border:1px dashed var(--g);border-radius:8px;padding:6px 12px;cursor:pointer;margin-bottom:10px;width:100%;" onclick="inv_addLine(${cid},'${invId}')">+ Add Line Item</button>`;
+  c.innerHTML=`<div class="back-row" onclick="curClientTab='invoices';renderClientDetail(${cid})"><span class="back-arrow">‹</span><span class="back-title">${inv.id}</span><span class="inv-badge ${badgeCls}" style="margin-left:auto;">${badgeTxt}</span></div>
+  <div style="font-size:12px;color:var(--txt2);margin-bottom:10px;">${cl.name} • ${site?.name||''} • <input type="date" value="${inv.date}" style="border:none;background:transparent;color:var(--b);font-size:12px;" onchange="inv.date=this.value"></div>
+  <div class="card"><div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;">📋 Line Items (tap to edit)</div>${linesHtml}</div>
+  <div class="card inv-totals">
+    <div class="it-row"><span>Subtotal</span><span id="inv-sub">${cl.currency} ${inv.subtotal.toFixed(2)}</span></div>
+    <div class="it-row"><span>Discount % <input type="number" value="${inv.discPct}" min="0" max="100" style="width:44px;padding:2px 5px;border:1px solid var(--brd);border-radius:6px;font-size:12px;background:var(--bg);color:var(--txt);" onchange="inv_recalc(${cid},'${invId}','discPct',this.value)"></span><span id="inv-disc">- ${cl.currency} ${inv.discAmt.toFixed(2)}</span></div>
+    <div class="it-row"><span>Tax % <input type="number" value="${inv.taxPct}" min="0" max="100" style="width:44px;padding:2px 5px;border:1px solid var(--brd);border-radius:6px;font-size:12px;background:var(--bg);color:var(--txt);" onchange="inv_recalc(${cid},'${invId}','taxPct',this.value)"></span><span id="inv-tax">${cl.currency} ${inv.taxAmt.toFixed(2)}</span></div>
+    <div class="it-row bold"><span>Net Total</span><span id="inv-net">${cl.currency} ${inv.netTotal.toFixed(2)}</span></div>
+    <div class="it-row"><span>Discount After Tax <input type="number" value="${inv.discAfter}" min="0" style="width:65px;padding:2px 5px;border:1px solid var(--brd);border-radius:6px;font-size:12px;background:var(--bg);color:var(--txt);" onchange="inv_recalc(${cid},'${invId}','discAfter',this.value)"></span><span>- <span id="inv-daft">${inv.discAfter.toFixed(2)}</span></span></div>
+    <div class="it-row payable"><span>💰 Payable</span><span id="inv-pay">${cl.currency} ${inv.payable.toFixed(2)}</span></div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;">💳 Payment History</div>
+    <div id="pay-hist">${inv.payments.length===0?'<div style="font-size:12px;color:var(--txt3);text-align:center;padding:8px 0;">No payments yet</div>':inv.payments.map(p=>`<div class="pay-item"><div><div style="font-weight:600;color:var(--txt);">${cl.currency} ${p.amount.toFixed(2)}</div><div style="color:var(--txt2);">${p.date} — ${p.note}</div></div><span style="color:var(--g);font-size:11px;font-weight:700;">✓ Received</span></div>`).join('')}</div>
+    <div style="background:var(--bg2);border-radius:10px;padding:10px;margin-top:10px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;"><span style="color:var(--txt2);">Total Paid</span><span style="font-weight:700;color:var(--g);">${cl.currency} ${paid.toFixed(2)}</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:14px;font-weight:700;"><span style="color:var(--txt2);">Balance Due</span><span style="color:${bal>0?'var(--r)':'var(--g)'};">${cl.currency} ${bal.toFixed(2)}</span></div>
+      <div style="display:flex;gap:8px;margin-bottom:10px;">
+        <button class="tab-btn on" id="pt-cash" onclick="switchPayTab('cash')" style="flex:1;border-radius:8px;border:1px solid var(--brd);">💵 Cash/Transfer</button>
+        <button class="tab-btn" id="pt-pdc" onclick="switchPayTab('pdc')" style="flex:1;border-radius:8px;border:1px solid var(--brd);">🏦 PDC Cheque</button>
+      </div>
+      <div id="pay-tab-cash">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <input type="number" id="pay-amt" placeholder="Amount" inputmode="numeric" style="padding:10px;font-size:14px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+          <input type="text" id="pay-note" placeholder="Bank/Note" style="padding:10px;font-size:12px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+        </div>
+        <button class="bbtn bg" style="padding:12px;" onclick="inv_addPayment(${cid},'${invId}')">✅ Record Payment</button>
+      </div>
+      <div id="pay-tab-pdc" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <input type="text" id="pdc-chqno" placeholder="Cheque No." style="padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+          <input type="text" id="pdc-bank" placeholder="Bank Name" style="padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <input type="number" id="pdc-amt" placeholder="Amount" inputmode="numeric" style="padding:10px;font-size:14px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);">
+          <div><label style="font-size:11px;color:var(--txt2);display:block;margin-bottom:3px;">Cheque Date</label><input type="date" id="pdc-date" style="width:100%;padding:9px 10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);"></div>
+        </div>
+        <input type="text" id="pdc-acctname" placeholder="Account Name on Cheque" style="width:100%;padding:10px;font-size:13px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);margin-bottom:8px;">
+        <div style="background:var(--al);border-radius:8px;padding:8px 10px;font-size:11px;color:#633806;margin-bottom:8px;">🔔 You will receive a reminder 1 day before the cheque date to deposit it.</div>
+        <button class="bbtn" style="padding:12px;background:#7C3AED;color:#fff;" onclick="pdc_save(${cid},'${invId}')">🏦 Add PDC Cheque</button>
+      </div>
+    </div>
+  </div>
+  <div id="pdc-inv-list">${pdc_forInvoice(cid,invId)}</div>`;
+}
+function inv_recalcTotals(cl,inv){
+  inv.subtotal=inv.lines.reduce((s,l)=>s+l.total,0);
+  inv.discAmt=inv.subtotal*(inv.discPct/100);
+  const ad=inv.subtotal-inv.discAmt;
+  inv.taxAmt=ad*(inv.taxPct/100);
+  inv.netTotal=ad+inv.taxAmt;
+  inv.payable=Math.max(0,inv.netTotal-inv.discAfter);
+  const paid=calcInvPaid(inv);
+  inv.status=paid>=inv.payable&&inv.payable>0?'paid':paid>0?'partial':'due';
+}
+function inv_updateDisplay(cl,inv){
+  const s=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  s('inv-sub',`${cl.currency} ${inv.subtotal.toFixed(2)}`);
+  s('inv-disc',`- ${cl.currency} ${inv.discAmt.toFixed(2)}`);
+  s('inv-tax',`${cl.currency} ${inv.taxAmt.toFixed(2)}`);
+  s('inv-net',`${cl.currency} ${inv.netTotal.toFixed(2)}`);
+  s('inv-daft',inv.discAfter.toFixed(2));
+  s('inv-pay',`${cl.currency} ${inv.payable.toFixed(2)}`);
+}
+function inv_updateLine(cid,invId,li,field,val){
+  const cl=clients.find(x=>x.id===cid);
+  const inv=cl.invoices.find(i=>i.id===invId);
+  if(field==='qty'||field==='rate')inv.lines[li][field]=parseFloat(val)||0;
+  else inv.lines[li][field]=val;
+  inv.lines[li].total=inv.lines[li].qty*inv.lines[li].rate;
+  inv_recalcTotals(cl,inv);
+  inv_updateDisplay(cl,inv);
+  const rows=document.querySelectorAll('.line-table tr');
+  if(rows[li+1]){const tds=rows[li+1].querySelectorAll('td');if(tds[4])tds[4].textContent=`${cl.currency} ${inv.lines[li].total.toFixed(2)}`;}
+}
+function inv_addLine(cid,invId){
+  const cl=clients.find(x=>x.id===cid);
+  const inv=cl.invoices.find(i=>i.id===invId);
+  inv.lines.push({desc:'New Item',qty:0,unit:'m²',rate:0,total:0});
+  renderInvoice(cid,invId);
+}
+function inv_recalc(cid,invId,field,val){
+  const cl=clients.find(x=>x.id===cid);
+  const inv=cl.invoices.find(i=>i.id===invId);
+  inv[field]=parseFloat(val)||0;
+  inv_recalcTotals(cl,inv);
+  inv_updateDisplay(cl,inv);
+}
+function inv_addPayment(cid,invId){
+  const cl=clients.find(x=>x.id===cid);
+  const inv=cl.invoices.find(i=>i.id===invId);
+  const amt=parseFloat(document.getElementById('pay-amt')?.value)||0;
+  const note=document.getElementById('pay-note')?.value||'Payment';
+  if(amt<=0){alert('Please enter a valid amount');return;}
+  inv.payments.push({date:new Date().toISOString().slice(0,10),amount:amt,note});
+  inv_recalcTotals(cl,inv);
+  renderInvoice(cid,invId);
+}
+function openAddClient(){
+  document.getElementById('modal-title').textContent='Add New Client';
+  document.getElementById('modal-body').innerHTML=`<div class="fmg"><label>Company Name</label><input id="nc-name" placeholder="Al Noor Contracting LLC"></div><div class="fmg"><label>Address Line 1</label><input id="nc-a1" placeholder="Office 204, Tower"></div><div class="fmg"><label>Address Line 2</label><input id="nc-a2" placeholder="Business Bay, Dubai"></div><div class="fmg"><label>Address Line 3</label><input id="nc-a3" placeholder="United Arab Emirates"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>Manager Name</label><input id="nc-mgr" placeholder="Name"></div><div class="fmg"><label>Manager Phone</label><input id="nc-mgrp" type="tel"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>Account Name</label><input id="nc-acc" placeholder="Name"></div><div class="fmg"><label>Account Phone</label><input id="nc-accp" type="tel"></div></div><div class="fmg"><label>Currency</label><select id="nc-curr">${CURRENCIES.map(c=>`<option>${c}</option>`).join('')}</select></div><div class="fmg"><label>Default Tax %</label><input id="nc-tax" type="number" value="5" inputmode="numeric"></div><button class="bbtn bg" onclick="inv_saveClient()">Save Client</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+function inv_saveClient(){
+  const g=id=>document.getElementById(id)?.value||'';
+  clients.push({id:Date.now(),name:g('nc-name'),addr1:g('nc-a1'),addr2:g('nc-a2'),addr3:g('nc-a3'),manager:g('nc-mgr'),mgrPhone:g('nc-mgrp'),acctName:g('nc-acc'),acctPhone:g('nc-accp'),currency:g('nc-curr'),taxPct:parseFloat(g('nc-tax'))||0,sites:[],invoices:[]});
+  closeModal();renderClients(document.getElementById('owner-content'));
+}
+function openAddSite(cid){
+  document.getElementById('modal-title').textContent='Add Site';
+  document.getElementById('modal-body').innerHTML=`<div class="fmg"><label>Villa / Unit No.</label><input id="ns-name" placeholder="Villa #854"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>Area</label><input id="ns-area" placeholder="Arabian Ranches"></div><div class="fmg"><label>City</label><input id="ns-city" placeholder="Dubai"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>Engineer Name</label><input id="ns-eng" placeholder="Eng. Tariq"></div><div class="fmg"><label>Engineer Phone</label><input id="ns-engp" type="tel"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;"><div class="fmg"><label>Foreman Name</label><input id="ns-fm" placeholder="Khalid"></div><div class="fmg"><label>Foreman Phone</label><input id="ns-fmp" type="tel"></div></div><button class="bbtn bg" onclick="inv_saveSite(${cid})">Save Site</button>`;
+  document.getElementById('modal').style.display='flex';
+}
+function inv_saveSite(cid){
+  const g=id=>document.getElementById(id)?.value||'';
+  const cl=clients.find(x=>x.id===cid);
+  cl.sites.push({id:Date.now(),name:g('ns-name'),area:g('ns-area'),city:g('ns-city'),engineer:g('ns-eng'),engPhone:g('ns-engp'),foreman:g('ns-fm'),fmPhone:g('ns-fmp')});
+  closeModal();renderClientDetail(cid);
+}
+function openCreateInvoice(cid,siteId){
+  invCounter++;
+  const cl=clients.find(x=>x.id===cid);
+  const newInv={id:`INV-${invCounter}`,siteId,date:new Date().toISOString().slice(0,10),currency:cl.currency,lines:[{desc:'Floor Tile',qty:0,unit:'m²',rate:0,total:0}],subtotal:0,discPct:0,discAmt:0,taxPct:cl.taxPct,taxAmt:0,netTotal:0,discAfter:0,payable:0,payments:[],status:'due'};
+  cl.invoices.unshift(newInv);
+  curClientTab='invoices';renderInvoice(cid,newInv.id);
+}
+// ══ PDC SYSTEM ══
+const pdcList=[ // demo data
+  {id:'PDC-001',chqNo:'445521',bank:'Emirates NBD',acctName:'Al Noor Contracting LLC',amount:2000,currency:'AED',chqDate:'2026-05-04',clientId:1,invId:'INV-1021',status:'pending',note:'',addedDate:'2026-04-15'},
+  {id:'PDC-002',chqNo:'887632',bank:'ADCB',acctName:'Al Noor Contracting LLC',amount:1500,currency:'AED',chqDate:'2026-05-20',clientId:1,invId:'INV-1021',status:'pending',note:'',addedDate:'2026-04-15'},
+  {id:'PDC-003',chqNo:'334411',bank:'Mashreq Bank',acctName:'Zara Real Estate',amount:3000,currency:'AED',chqDate:'2026-04-10',clientId:2,invId:'INV-1022',status:'cleared',note:'Cleared on 2026-04-12',addedDate:'2026-03-20'}
+];
+let pdcIdCounter=100;
+
+function pdc_daysUntil(dateStr){
+  const today=new Date();today.setHours(0,0,0,0);
+  const d=new Date(dateStr);d.setHours(0,0,0,0);
+  return Math.round((d-today)/(1000*60*60*24));
+}
+
+function pdc_statusLabel(p){
+  const days=pdc_daysUntil(p.chqDate);
+  if(p.status==='cleared')return{text:'✅ Cleared',cls:'pdc-cleared',amtCls:'green'};
+  if(p.status==='bounced')return{text:'❌ Bounced',cls:'pdc-bounced',amtCls:'red'};
+  if(p.status==='deposited')return{text:'🏦 Deposited',cls:'pdc-deposit',amtCls:'amber'};
+  if(days<0)return{text:'⚠️ Overdue!',cls:'pdc-bounced',amtCls:'red'};
+  if(days===0)return{text:'🔔 Due TODAY',cls:'pdc-deposit',amtCls:'amber'};
+  if(days===1)return{text:'🔔 Due TOMORROW',cls:'pdc-deposit',amtCls:'amber'};
+  return{text:`📅 ${days} days`,cls:'pdc-pending',amtCls:'purple'};
+}
+
+function pdc_card(p,showActions=true){
+  const cl=clients.find(x=>x.id===p.clientId);
+  const sl=pdc_statusLabel(p);
+  const days=pdc_daysUntil(p.chqDate);
+  const urgent=p.status==='pending'&&days<=1;
+  return `<div class="pdc-card ${sl.cls}">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div>
+        <div class="pdc-no">Cheque #${p.chqNo}${urgent?`<span class="notif-dot"></span>`:''}</div>
+        <div class="pdc-bank">${p.bank} • ${p.acctName}</div>
+        <div class="pdc-bank" style="margin-top:2px;">${cl?.name||''} • ${p.invId}</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="pdc-amt ${sl.amtCls}">${p.currency} ${p.amount.toLocaleString('en',{minimumFractionDigits:2,maximumFractionDigits:2})}</div>
+        <div class="pdc-date" style="color:${urgent?'var(--r)':'var(--txt2)'};">📅 ${p.chqDate}</div>
+        <div style="font-size:11px;font-weight:600;margin-top:3px;color:${urgent?'var(--r)':'var(--txt3)'};">${sl.text}</div>
+      </div>
+    </div>
+    ${p.note?`<div style="font-size:11px;color:var(--txt2);margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(0,0,0,0.1);">${p.note}</div>`:''}
+    ${showActions&&p.status==='pending'?`<div class="pdc-actions">
+      <button class="pdc-btn pdc-btn-dep" onclick="pdc_action('${p.id}','deposited')">🏦 Mark Deposited</button>
+      <button class="pdc-btn pdc-btn-clr" onclick="pdc_action('${p.id}','cleared')">✅ Cleared / Received</button>
+      <button class="pdc-btn pdc-btn-bnc" onclick="pdc_bounce('${p.id}')">❌ Bounced</button>
+    </div>`:''}
+    ${showActions&&p.status==='deposited'?`<div class="pdc-actions">
+      <button class="pdc-btn pdc-btn-clr" onclick="pdc_action('${p.id}','cleared')">✅ Mark Cleared</button>
+      <button class="pdc-btn pdc-btn-bnc" onclick="pdc_bounce('${p.id}')">❌ Bounced</button>
+    </div>`:''}
+  </div>`;
+}
+
+function pdc_action(pdcId,newStatus){
+  const p=pdcList.find(x=>x.id===pdcId);if(!p)return;
+  p.status=newStatus;
+  if(newStatus==='cleared'){
+    // Auto-add to invoice payments
+    const cl=clients.find(x=>x.id===p.clientId);
+    if(cl){
+      const inv=cl.invoices.find(i=>i.id===p.invId);
+      if(inv){
+        inv.payments.push({date:new Date().toISOString().slice(0,10),amount:p.amount,note:`PDC Cleared — Cheque #${p.chqNo} (${p.bank})`});
+        inv_recalcTotals(cl,inv);
+      }
+    }
+    alert(`✅ Cheque #${p.chqNo} marked as CLEARED!\n\nAmount ${p.currency} ${p.amount.toFixed(2)} has been automatically added to invoice ${p.invId}.`);
+  } else if(newStatus==='deposited'){
+    alert(`🏦 Cheque #${p.chqNo} marked as DEPOSITED.\n\nWaiting for clearance.`);
+  }
+  // Refresh current view
+  if(curInvId){renderInvoice(curClientId,curInvId);}
+  else if(curOT==='clients'){renderPDCDashboard(document.getElementById('owner-content'));}
+}
+
+function pdc_bounce(pdcId){
+  const p=pdcList.find(x=>x.id===pdcId);if(!p)return;
+  const reason=prompt('Reason for bounce (optional):','')||'Returned by bank';
+  p.status='bounced';p.note=`Bounced: ${reason}`;
+  alert(`❌ Cheque #${p.chqNo} marked as BOUNCED.\n\nNote: ${reason}\n\nPlease contact ${clients.find(x=>x.id===p.clientId)?.name||'client'} immediately.`);
+  if(curInvId)renderInvoice(curClientId,curInvId);
+  else renderPDCDashboard(document.getElementById('owner-content'));
+}
+
+function pdc_save(cid,invId){
+  const g=id=>document.getElementById(id)?.value||'';
+  const chqNo=g('pdc-chqno');const bank=g('pdc-bank');const amt=parseFloat(g('pdc-amt'))||0;const date=g('pdc-date');const acct=g('pdc-acctname');
+  if(!chqNo||!bank||amt<=0||!date){alert('Please fill all PDC fields');return;}
+  const cl=clients.find(x=>x.id===cid);
+  const newPDC={id:`PDC-${++pdcIdCounter}`,chqNo,bank,acctName:acct||cl?.name||'',amount:amt,currency:cl?.currency||'AED',chqDate:date,clientId:cid,invId,status:'pending',note:'',addedDate:new Date().toISOString().slice(0,10)};
+  pdcList.unshift(newPDC);
+  // Schedule notification check
+  pdc_scheduleReminder(newPDC);
+  alert(`🏦 PDC Added Successfully!\n\nCheque #${chqNo}\nBank: ${bank}\nAmount: ${cl?.currency||'AED'} ${amt.toFixed(2)}\nDate: ${date}\n\n🔔 You will receive a reminder 1 day before the cheque date.`);
+  renderInvoice(cid,invId);
+}
+
+function pdc_forInvoice(cid,invId){
+  const list=pdcList.filter(p=>p.clientId===cid&&p.invId===invId);
+  if(list.length===0)return'';
+  return`<div class="card"><div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:10px;">🏦 PDC Cheques for this Invoice</div>${list.map(p=>pdc_card(p,true)).join('')}</div>`;
+}
+
+function renderPDCDashboard(c){
+  const today=new Date();today.setHours(0,0,0,0);
+  const urgent=pdcList.filter(p=>p.status==='pending'&&pdc_daysUntil(p.chqDate)<=1);
+  const pending=pdcList.filter(p=>p.status==='pending'&&pdc_daysUntil(p.chqDate)>1);
+  const deposited=pdcList.filter(p=>p.status==='deposited');
+  const done=pdcList.filter(p=>p.status==='cleared'||p.status==='bounced');
+  const totalPending=pdcList.filter(p=>p.status==='pending'||p.status==='deposited').reduce((s,p)=>s+p.amount,0);
+
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+    <div style="font-size:16px;font-weight:700;color:var(--txt);">🏦 PDC Tracker</div>
+    <button class="bbtn" style="width:auto;padding:7px 12px;font-size:12px;margin:0;background:#7C3AED;color:#fff;border-radius:10px;border:none;cursor:pointer;" onclick="ownerTab('clients',document.getElementById('obn-clients'))">← Clients</button>
+  </div>`;
+
+  if(urgent.length>0){
+    h+=`<div style="background:var(--rl);border-radius:12px;padding:12px;margin-bottom:12px;border:1px solid var(--r);">
+      <div style="font-size:13px;font-weight:700;color:#A32D2D;margin-bottom:8px;">🚨 Action Required (${urgent.length})</div>
+      ${urgent.map(p=>pdc_card(p)).join('')}
+    </div>`;
+  }
+
+  h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+    <div style="background:#F5F0FF;border-radius:10px;padding:10px;"><div style="font-size:11px;color:#7C3AED;font-weight:600;">Pending Cheques</div><div style="font-size:18px;font-weight:700;color:#7C3AED;">${pdcList.filter(p=>p.status==='pending').length}</div></div>
+    <div style="background:var(--gl);border-radius:10px;padding:10px;"><div style="font-size:11px;color:var(--gd);font-weight:600;">Total Expected</div><div style="font-size:16px;font-weight:700;color:var(--gd);">AED ${totalPending.toFixed(0)}</div></div>
+  </div>`;
+
+  if(pending.length>0){h+=`<div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px;">📅 Upcoming PDCs</div>${pending.map(p=>pdc_card(p)).join('')}</div>`;}
+  if(deposited.length>0){h+=`<div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px;">🏦 Deposited — Awaiting Clearance</div>${deposited.map(p=>pdc_card(p)).join('')}</div>`;}
+  if(done.length>0){h+=`<div class="card"><div style="font-size:13px;font-weight:700;margin-bottom:10px;">✅ Completed</div>${done.map(p=>pdc_card(p,false)).join('')}</div>`;}
+
+  c.innerHTML=h;
+}
+
+function pdc_scheduleReminder(pdc){
+  if(!('Notification' in window))return;
+  const daysUntil=pdc_daysUntil(pdc.chqDate);
+  if(daysUntil<1||daysUntil>30)return;
+  Notification.requestPermission().then(perm=>{
+    if(perm==='granted'&&daysUntil===1){
+      setTimeout(()=>{
+        new Notification('🏦 PDC Reminder — Deposit Tomorrow!',{body:`Cheque #${pdc.chqNo} | ${pdc.bank} | ${pdc.currency} ${pdc.amount.toFixed(2)}\nDate: ${pdc.chqDate}`,icon:'🔷'});
+      },1000);
+    }
+  });
+}
+
+function pdc_checkTodayReminders(){
+  pdcList.forEach(p=>{
+    if(p.status==='pending'){
+      const d=pdc_daysUntil(p.chqDate);
+      if(d===1||d===0){pdc_scheduleReminder(p);}
+    }
+  });
+  // Update nav badge
+  const urgent=pdcList.filter(p=>p.status==='pending'&&pdc_daysUntil(p.chqDate)<=1).length;
+  const btn=document.getElementById('obn-clients');
+  if(btn&&urgent>0){
+    const bt=btn.querySelector('.bt');
+    if(bt&&!bt.innerHTML.includes('notif-dot'))bt.innerHTML=`Clients<span class="notif-dot"></span>`;
+  }
+}
+
+function switchPayTab(tab){
+  document.getElementById('pay-tab-cash').style.display=tab==='cash'?'block':'none';
+  document.getElementById('pay-tab-pdc').style.display=tab==='pdc'?'block':'none';
+  document.getElementById('pt-cash').classList.toggle('on',tab==='cash');
+  document.getElementById('pt-pdc').classList.toggle('on',tab==='pdc');
+}
+// ══ END PDC ══
 
 function updateClock(){const n=new Date();let h=n.getHours(),m=n.getMinutes(),a='AM';if(h>=12){a='PM';if(h>12)h-=12;}if(h===0)h=12;const el=document.getElementById('clk');if(el)el.textContent=h+':'+(m<10?'0':'')+m+' '+a;}
 updateClock();setInterval(updateClock,10000);
+setTimeout(pdc_checkTodayReminders,2000);
 
 // Init — check saved language
 (function(){
