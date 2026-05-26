@@ -3,235 +3,287 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="TileTrack Pro">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <title>TileTrack Pro</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-:root{--g:#1D9E75;--gl:#E1F5EE;--gd:#085041;--b:#378ADD;--bl:#E6F1FB;--bd:#042C53;--r:#E24B4A;--rl:#FCEBEB;--a:#BA7517;--al:#FAEEDA;--bg:#fff;--bg2:#f7f7f5;--bg3:#f0f0ec;--txt:#1a1a1a;--txt2:#666;--txt3:#999;--brd:rgba(0,0,0,0.12);--brd2:rgba(0,0,0,0.2);}
-@media(prefers-color-scheme:dark){:root{--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;--txt:#fff;--txt2:#ebebf5cc;--txt3:#ebebf599;--brd:rgba(255,255,255,0.12);--brd2:rgba(255,255,255,0.2);}}
-html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden;}
-.app{max-width:430px;margin:0 auto;height:100dvh;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden;}
+:root{
+  --g: hsl(162, 69%, 37%);
+  --gl: hsl(162, 69%, 95%);
+  --gd: hsl(162, 69%, 17%);
+  --b: hsl(210, 69%, 54%);
+  --bl: hsl(210, 69%, 95%);
+  --bd: hsl(210, 69%, 17%);
+  --r: hsl(0, 72%, 59%);
+  --rl: hsl(0, 72%, 96%);
+  --a: hsl(35, 78%, 41%);
+  --al: hsl(35, 78%, 95%);
+  --bg: hsl(0, 0%, 100%);
+  --bg2: hsl(210, 20%, 98%);
+  --bg3: hsl(210, 20%, 94%);
+  --txt: hsl(210, 24%, 12%);
+  --txt2: hsl(210, 16%, 42%);
+  --txt3: hsl(210, 12%, 65%);
+  --brd: hsla(210, 24%, 12%, 0.08);
+  --brd2: hsla(210, 24%, 12%, 0.16);
+  --shadow: 0 4px 18px -4px hsla(210, 24%, 12%, 0.06), 0 2px 6px -2px hsla(210, 24%, 12%, 0.04);
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg: hsl(210, 20%, 10%);
+    --bg2: hsl(210, 20%, 14%);
+    --bg3: hsl(210, 20%, 7%);
+    --txt: hsl(0, 0%, 98%);
+    --txt2: hsl(210, 12%, 75%);
+    --txt3: hsl(210, 8%, 55%);
+    --brd: hsla(0, 0%, 100%, 0.08);
+    --brd2: hsla(0, 0%, 100%, 0.16);
+    --gl: hsla(162, 69%, 37%, 0.12);
+    --bl: hsla(210, 69%, 54%, 0.12);
+    --rl: hsla(0, 72%, 59%, 0.12);
+    --al: hsla(35, 78%, 41%, 0.12);
+    --shadow: 0 4px 20px -2px rgba(0,0,0,0.3);
+  }
+}
+html,body{height:100%;background:var(--bg3);font-family:'Outfit',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow:hidden;}
+.app{max-width:430px;margin:0 auto;height:100dvh;background:var(--bg);display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow: 0 12px 40px rgba(0,0,0,0.15);}
 .sbar{background:var(--bg2);padding:env(safe-area-inset-top,12px) 16px 8px;display:flex;justify-content:space-between;border-bottom:0.5px solid var(--brd);flex-shrink:0;}
-.sbar span{font-size:12px;color:var(--txt2);}
+.sbar span{font-size:12px;color:var(--txt2);font-weight:600;}
 .scr{display:none;flex-direction:column;flex:1;overflow:hidden;}
 .scr.on{display:flex;}
 .sa{flex:1;overflow-y:auto;padding:16px;-webkit-overflow-scrolling:touch;}
-.back{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--b);cursor:pointer;padding:12px 16px 4px;flex-shrink:0;}
+.back{display:flex;align-items:center;gap:5px;font-size:14px;color:var(--b);cursor:pointer;padding:12px 16px 4px;flex-shrink:0;font-weight:600;transition:opacity 0.2s;}
+.back:active{opacity:0.6;}
 
 /* LANGUAGE */
 .lang-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
-.lcard{padding:14px 10px;border-radius:12px;border:1px solid var(--brd);text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.15s;}
-.lcard.sel{background:var(--gl);border-color:var(--g);}
-.lc-flag{font-size:22px;display:block;margin-bottom:6px;}
-.lc-name{font-size:14px;font-weight:600;color:var(--txt);}
+.lcard{padding:16px 10px;border-radius:14px;border:1px solid var(--brd);text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.2s ease;}
+.lcard.sel{background:var(--gl);border-color:var(--g);box-shadow: 0 0 0 3px hsla(162, 69%, 37%, 0.15);transform: translateY(-2px);}
+.lcard:active{transform:scale(0.96);}
+.lc-flag{font-size:24px;display:block;margin-bottom:6px;}
+.lc-name{font-size:14px;font-weight:700;color:var(--txt);}
 .lc-nat{font-size:12px;color:var(--txt2);margin-top:2px;}
 
 /* BRAND */
-.brand{text-align:center;padding:20px 0 18px;}
-.bicon{width:56px;height:56px;border-radius:16px;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;}
-.bname{font-size:20px;font-weight:700;color:var(--txt);}
-.bsub{font-size:13px;color:var(--txt2);margin-top:4px;}
+.brand{text-align:center;padding:24px 0 18px;}
+.bicon{width:64px;height:64px;border-radius:20px;background:linear-gradient(135deg, var(--g) 0%, var(--gd) 100%);display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;box-shadow: 0 8px 24px -6px var(--g);}
+.bname{font-size:24px;font-weight:800;color:var(--txt);letter-spacing:-0.02em;}
+.bsub{font-size:13px;color:var(--txt2);margin-top:4px;font-family:'Plus Jakarta Sans',sans-serif;}
 
 /* ROLE CARDS */
 .role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-.rcard{padding:20px 12px;border-radius:14px;border:1px solid var(--brd);text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.15s;}
-.rcard:active{transform:scale(0.97);}
-.rc-ico{font-size:26px;display:block;margin-bottom:8px;}
-.rc-t{font-size:15px;font-weight:600;color:var(--txt);}
+.rcard{padding:22px 12px;border-radius:16px;border:1px solid var(--brd);text-align:center;cursor:pointer;background:var(--bg2);transition:all 0.2s ease;box-shadow: var(--shadow);}
+.rcard:active{transform:scale(0.95);background:var(--bg);}
+.rc-ico{font-size:28px;display:block;margin-bottom:8px;}
+.rc-t{font-size:16px;font-weight:700;color:var(--txt);}
 .rc-s{font-size:12px;color:var(--txt2);margin-top:3px;}
 
 /* FORMS */
-.fmg{margin-bottom:12px;}
-.fmg label{font-size:12px;color:var(--txt2);display:block;margin-bottom:5px;font-weight:500;}
-.fmg input,.fmg select,.fmg textarea{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);-webkit-appearance:none;appearance:none;}
-.fmg textarea{resize:none;height:70px;font-size:13px;}
-.fmg input:focus,.fmg select:focus{outline:none;border-color:var(--g);}
+.fmg{margin-bottom:14px;}
+.fmg label{font-size:12px;color:var(--txt2);display:block;margin-bottom:6px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;}
+.fmg input,.fmg select,.fmg textarea{width:100%;padding:13px 14px;font-size:15px;border:1.5px solid var(--brd);border-radius:12px;background:var(--bg);color:var(--txt);-webkit-appearance:none;appearance:none;transition:all 0.2s;font-family:inherit;}
+.fmg textarea{resize:none;height:80px;font-size:13px;}
+.fmg input:focus,.fmg select:focus,.fmg textarea:focus{outline:none;border-color:var(--g);box-shadow: 0 0 0 3px hsla(162, 69%, 37%, 0.12);}
 .pfrow{display:flex;gap:8px;}
-.pfbtn{padding:12px 10px;border-radius:10px;border:1px solid var(--brd);font-size:13px;cursor:pointer;background:var(--bg2);white-space:nowrap;color:var(--txt);}
-.pfinp{flex:1;padding:12px 14px;font-size:15px;border:1px solid var(--brd);border-radius:10px;background:var(--bg);color:var(--txt);}
+.pfbtn{padding:12px 12px;border-radius:12px;border:1.5px solid var(--brd);font-size:13px;cursor:pointer;background:var(--bg2);white-space:nowrap;color:var(--txt);font-weight:600;}
+.pfinp{flex:1;padding:12px 14px;font-size:15px;border:1.5px solid var(--brd);border-radius:12px;background:var(--bg);color:var(--txt);}
 
 /* PIN */
-.pin-row{display:flex;gap:12px;justify-content:center;margin:12px 0 16px;}
-.pbox{width:58px;height:62px;border-radius:12px;border:1.5px solid var(--brd);font-size:26px;display:flex;align-items:center;justify-content:center;font-weight:700;background:var(--bg);color:var(--txt);}
+.pin-row{display:flex;gap:12px;justify-content:center;margin:16px 0 20px;}
+.pbox{width:56px;height:60px;border-radius:14px;border:2px solid var(--brd);font-size:26px;display:flex;align-items:center;justify-content:center;font-weight:700;background:var(--bg);color:var(--txt);transition:all 0.15s;}
 .pbox.filled{border-color:var(--g);background:var(--gl);color:var(--gd);}
-.pbox.cur{border-color:var(--g);box-shadow:0 0 0 3px rgba(29,158,117,0.15);}
+.pbox.cur{border-color:var(--g);box-shadow:0 0 0 4px rgba(29,158,117,0.18);}
 
 /* NUMPAD */
-.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
-.nb{padding:14px;border-radius:12px;border:1px solid var(--brd);font-size:20px;font-weight:600;text-align:center;cursor:pointer;background:var(--bg2);color:var(--txt);user-select:none;}
-.nb:active{background:var(--gl);border-color:var(--g);}
-.nb.del{font-size:14px;color:var(--txt2);}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.nb{padding:16px;border-radius:14px;border:1px solid var(--brd);font-size:22px;font-weight:700;text-align:center;cursor:pointer;background:var(--bg2);color:var(--txt);user-select:none;transition:all 0.15s;}
+.nb:active{background:var(--gl);border-color:var(--g);transform: scale(0.95);}
+.nb.del{font-size:15px;color:var(--txt2);font-weight:600;display:flex;align-items:center;justify-content:center;}
 .nb.emp{background:transparent;border-color:transparent;cursor:default;}
 
 /* BUTTONS */
-.bbtn{width:100%;padding:14px;border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:8px;transition:all 0.15s;}
-.bbtn:active{transform:scale(0.98);}
-.bg{background:var(--g);color:#fff;}
-.bb{background:var(--b);color:#fff;}
-.bo{background:transparent;border:1px solid var(--brd);color:var(--txt2);}
-.hint{font-size:12px;color:var(--txt3);text-align:center;margin-top:8px;}
-.err{font-size:13px;color:var(--r);text-align:center;min-height:18px;margin-bottom:8px;font-weight:500;}
+.bbtn{width:100%;padding:15px;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px;transition:all 0.2s ease;}
+.bbtn:active{transform:scale(0.97);opacity:0.9;}
+.bg{background:linear-gradient(135deg, var(--g) 0%, var(--gd) 100%);color:#fff;box-shadow: 0 4px 14px -4px var(--g);}
+.bb{background:linear-gradient(135deg, var(--b) 0%, var(--bd) 100%);color:#fff;box-shadow: 0 4px 14px -4px var(--b);}
+.bo{background:transparent;border:1.5px solid var(--brd);color:var(--txt2);}
+.hint{font-size:12px;color:var(--txt3);text-align:center;margin-top:8px;font-weight:500;}
+.err{font-size:13px;color:var(--r);text-align:center;min-height:18px;margin-bottom:8px;font-weight:600;}
 
 /* TOPBAR */
-.topbar{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--brd);flex-shrink:0;}
-.av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+.topbar{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:0.5px solid var(--brd);flex-shrink:0;background:var(--bg);}
+.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border: 1px solid var(--brd2);}
 .av-g{background:var(--gl);color:var(--gd);}
 .av-b{background:var(--bl);color:var(--bd);}
-.tb-name{font-size:14px;font-weight:600;color:var(--txt);}
-.tb-role{font-size:11px;color:var(--txt2);}
-.tbtn{font-size:11px;color:var(--txt3);cursor:pointer;padding:5px 10px;border:1px solid var(--brd);border-radius:8px;background:transparent;}
+.tb-name{font-size:15px;font-weight:700;color:var(--txt);}
+.tb-role{font-size:11px;color:var(--txt2);font-weight:600;}
+.tbtn{font-size:11px;color:var(--txt2);cursor:pointer;padding:6px 12px;border:1.5px solid var(--brd);border-radius:10px;background:transparent;font-weight:700;transition:all 0.15s;}
+.tbtn:active{background:var(--bg2);transform: scale(0.95);}
 
 /* BOTTOM NAV */
-.bnav{display:flex;border-top:0.5px solid var(--brd);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0px);flex-shrink:0;}
-.bni{flex:1;padding:8px 4px;text-align:center;cursor:pointer;border:none;background:transparent;}
-.bni .bi{font-size:20px;display:block;}
-.bni .bt{font-size:9px;color:var(--txt3);display:block;margin-top:2px;}
-.bni.on .bt{color:var(--g);font-weight:600;}
+.bnav{display:flex;border-top:0.5px solid var(--brd);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0px);flex-shrink:0;box-shadow: 0 -4px 16px -6px rgba(0,0,0,0.05);}
+.bni{flex:1;padding:10px 4px;text-align:center;cursor:pointer;border:none;background:transparent;transition: all 0.2s;}
+.bni .bi{font-size:22px;display:block;transition: transform 0.2s;}
+.bni:active .bi{transform: scale(0.85);}
+.bni .bt{font-size:10px;color:var(--txt3);display:block;margin-top:2px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;}
+.bni.on .bt{color:var(--g);font-weight:700;}
 
 /* CARDS */
-.card{background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:12px;}
-.ct{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
-.addbtn{font-size:12px;color:var(--g);cursor:pointer;padding:3px 10px;border:1px solid var(--g);border-radius:8px;font-weight:500;}
+.card{background:var(--bg);border:1px solid var(--brd);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow: var(--shadow);position:relative;}
+.ct{font-size:15px;font-weight:700;color:var(--txt);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;letter-spacing:-0.01em;}
+.addbtn{font-size:12px;color:var(--g);cursor:pointer;padding:4px 12px;border:1.5px solid var(--g);border-radius:10px;font-weight:700;transition:all 0.2s;}
+.addbtn:active{transform: scale(0.95);background:var(--gl);}
 
-.er{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--brd);}
+.er{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--brd);}
 .er:last-child{border-bottom:none;}
-.er-l .es{font-size:13px;color:var(--txt);font-weight:500;}
-.er-l .et{font-size:11px;color:var(--txt2);}
-.er-r .ev{font-size:14px;font-weight:600;color:var(--g);}
-.er-r .ed{font-size:10px;color:var(--txt3);}
+.er-l .es{font-size:13px;color:var(--txt);font-weight:700;}
+.er-l .et{font-size:11px;color:var(--txt2);margin-top:2px;font-weight:500;}
+.er-r .ev{font-size:14px;font-weight:700;color:var(--g);}
+.er-r .ed{font-size:10px;color:var(--txt3);margin-top:2px;font-weight:500;}
 
 /* STATS */
 .stat2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
-.sc{background:var(--bg2);border-radius:10px;padding:12px;}
-.sc .sl{font-size:11px;color:var(--txt2);font-weight:500;}
-.sc .sv{font-size:18px;font-weight:700;color:var(--txt);margin-top:3px;}
+.sc{background:var(--bg2);border-radius:12px;padding:12px;border: 1px solid var(--brd);}
+.sc .sl{font-size:11px;color:var(--txt2);font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;}
+.sc .sv{font-size:20px;font-weight:800;color:var(--txt);margin-top:4px;letter-spacing:-0.02em;}
 
 /* ATTENDANCE */
-.att-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--brd);}
+.att-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:0.5px solid var(--brd);}
 .att-row:last-child{border-bottom:none;}
-.att-name{font-size:13px;font-weight:500;color:var(--txt);}
-.att-role{font-size:11px;color:var(--txt2);}
+.att-name{font-size:14px;font-weight:700;color:var(--txt);}
+.att-role{font-size:11px;color:var(--txt2);margin-top:1px;font-weight:500;}
 .pl-btns{display:flex;gap:6px;}
-.plb{width:38px;height:32px;border-radius:8px;border:1px solid var(--brd);font-size:13px;font-weight:600;cursor:pointer;background:var(--bg2);color:var(--txt2);}
-.plb.p-on{background:var(--gl);color:var(--gd);border-color:var(--g);}
-.plb.l-on{background:var(--rl);color:#A32D2D;border-color:var(--r);}
+.plb{width:40px;height:34px;border-radius:10px;border:1.5px solid var(--brd);font-size:14px;font-weight:700;cursor:pointer;background:var(--bg2);color:var(--txt2);transition:all 0.15s;}
+.plb.p-on{background:var(--gl);color:var(--gd);border-color:var(--g);box-shadow: 0 2px 6px hsla(162, 69%, 37%, 0.15);}
+.plb.l-on{background:var(--rl);color:#A32D2D;border-color:var(--r);box-shadow: 0 2px 6px hsla(0, 72%, 59%, 0.15);}
 
 /* TAGS */
-.tag{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:600;}
+.tag{display:inline-block;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:0.02em;}
 .tg{background:var(--gl);color:var(--gd);}
 .ta{background:var(--al);color:#633806;}
 .tb2{background:var(--bl);color:var(--bd);}
 .tr{background:var(--rl);color:#A32D2D;}
 
 /* EARN BOX */
-.earn-box{background:var(--gl);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-.earn-lbl{font-size:13px;color:var(--gd);font-weight:500;}
-.earn-val{font-size:20px;font-weight:700;color:var(--gd);}
+.earn-box{background:linear-gradient(135deg, var(--gl) 0%, hsla(162, 69%, 95%, 0.5) 100%);border: 1.5px dashed var(--g);border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.earn-lbl{font-size:14px;color:var(--gd);font-weight:700;}
+.earn-val{font-size:24px;font-weight:800;color:var(--gd);letter-spacing:-0.02em;}
 
 /* PROFILE */
 .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.pg-item .pgl{font-size:11px;color:var(--txt2);margin-bottom:3px;font-weight:500;}
-.pg-item .pgv{font-size:13px;color:var(--txt);font-weight:600;}
+.pg-item{background:var(--bg2);padding:10px 12px;border-radius:10px;border:0.5px solid var(--brd);}
+.pg-item .pgl{font-size:11px;color:var(--txt2);margin-bottom:3px;font-weight:600;font-family:'Plus Jakarta Sans',sans-serif;}
+.pg-item .pgv{font-size:13px;color:var(--txt);font-weight:700;}
 
 /* NOTICE */
-.notice{background:var(--gl);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--gd);margin-bottom:12px;text-align:center;font-weight:500;}
+.notice{background:var(--gl);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--gd);margin-bottom:12px;text-align:center;font-weight:600;border: 1px solid hsla(162, 69%, 37%, 0.15);}
 
 /* SETTINGS */
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--brd);cursor:pointer;}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:0.5px solid var(--brd);cursor:pointer;transition:all 0.15s;}
+.settings-row:active{opacity:0.6;transform: translateX(4px);}
 .settings-row:last-child{border-bottom:none;}
-.sr-l{font-size:14px;color:var(--txt);}
-.sr-r{font-size:13px;color:var(--txt2);}
+.sr-l{font-size:14px;color:var(--txt);font-weight:600;}
+.sr-r{font-size:13px;color:var(--txt2);font-weight:600;}
 
 /* LANG CHIP */
-.lang-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:8px;background:var(--gl);border:1px solid var(--g);font-size:12px;color:var(--gd);cursor:pointer;font-weight:500;}
+.lang-chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:10px;background:var(--gl);border:1.5px solid var(--g);font-size:12px;color:var(--gd);cursor:pointer;font-weight:700;transition:all 0.2s;}
+.lang-chip:active{transform: scale(0.95);box-shadow: 0 0 0 3px hsla(162, 69%, 37%, 0.15);}
 
 /* CLIENT & INVOICE */
-.client-card{background:var(--bg);border:0.5px solid var(--brd);border-radius:14px;padding:14px;margin-bottom:10px;cursor:pointer;}
-.client-card:active{background:var(--bg2);}
-.cc-name{font-size:15px;font-weight:700;color:var(--txt);}
-.cc-sub{font-size:12px;color:var(--txt2);margin-top:2px;}
-.cc-stats{display:flex;gap:14px;margin-top:8px;}
-.cc-stat{font-size:11px;color:var(--txt3);}
-.cc-stat span{font-weight:600;color:var(--txt2);}
-.inv-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:0.5px solid var(--brd);cursor:pointer;}
+.client-card{background:var(--bg);border:1px solid var(--brd);border-radius:16px;padding:16px;margin-bottom:12px;cursor:pointer;box-shadow: var(--shadow);transition:all 0.2s ease;}
+.client-card:active{transform:scale(0.98);background:var(--bg2);}
+.cc-name{font-size:16px;font-weight:800;color:var(--txt);letter-spacing:-0.02em;}
+.cc-sub{font-size:12px;color:var(--txt2);margin-top:4px;font-weight:500;}
+.cc-stats{display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top: 0.5px solid var(--brd);}
+.cc-stat{font-size:11px;color:var(--txt3);font-weight:500;}
+.cc-stat span{font-weight:700;color:var(--txt2);}
+.inv-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:0.5px solid var(--brd);cursor:pointer;}
 .inv-row:last-child{border-bottom:none;}
-.inv-no{font-size:13px;font-weight:700;color:var(--b);}
-.inv-site{font-size:11px;color:var(--txt2);margin-top:2px;}
-.inv-amt{font-size:14px;font-weight:700;color:var(--txt);}
-.inv-bal{font-size:11px;margin-top:2px;text-align:right;}
+.inv-no{font-size:14px;font-weight:800;color:var(--b);}
+.inv-site{font-size:11px;color:var(--txt2);margin-top:3px;font-weight:500;}
+.inv-amt{font-size:15px;font-weight:800;color:var(--txt);}
+.inv-bal{font-size:11px;margin-top:3px;text-align:right;font-weight:600;}
 .bal-paid{color:var(--g);}
 .bal-part{color:var(--a);}
 .bal-due{color:var(--r);}
-.line-table{width:100%;border-collapse:collapse;margin-bottom:10px;font-size:12px;}
-.line-table th{font-size:10px;font-weight:600;color:var(--txt3);text-align:left;padding:5px 4px;border-bottom:0.5px solid var(--brd);}
-.line-table td{padding:7px 4px;border-bottom:0.5px solid var(--brd);color:var(--txt);}
+.line-table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:12px;}
+.line-table th{font-size:10px;font-weight:700;color:var(--txt3);text-align:left;padding:6px 4px;border-bottom:1.5px solid var(--brd);text-transform:uppercase;letter-spacing:0.04em;}
+.line-table td{padding:9px 4px;border-bottom:0.5px solid var(--brd);color:var(--txt);font-weight:500;}
 .line-table td:last-child,.line-table th:last-child{text-align:right;}
 .line-table tr:last-child td{border-bottom:none;}
-.lt-edit{width:100%;padding:5px;font-size:12px;border:0.5px solid var(--brd);border-radius:6px;background:var(--bg);color:var(--txt);}
-.inv-totals{background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px;}
-.it-row{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:var(--txt2);}
-.it-row.bold{font-weight:700;color:var(--txt);font-size:14px;border-top:0.5px solid var(--brd);margin-top:4px;padding-top:8px;}
-.it-row.payable{font-weight:700;color:var(--g);font-size:16px;}
-.pay-item{display:flex;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--brd);font-size:12px;}
+.lt-edit{width:100%;padding:6px;font-size:12px;border:1px solid var(--brd);border-radius:8px;background:var(--bg);color:var(--txt);font-family:inherit;}
+.inv-totals{background:var(--bg2);border-radius:14px;padding:14px;margin-bottom:12px;border:1px solid var(--brd);}
+.it-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;color:var(--txt2);font-weight:500;}
+.it-row.bold{font-weight:700;color:var(--txt);font-size:14px;border-top:0.5px solid var(--brd);margin-top:6px;padding-top:10px;}
+.it-row.payable{font-weight:800;color:var(--g);font-size:18px;}
+.pay-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--brd);font-size:12px;}
 .pay-item:last-child{border-bottom:none;}
 .inv-badge{padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;}
 .ib-paid{background:var(--gl);color:var(--gd);}
 .ib-part{background:var(--al);color:#633806;}
 .ib-due{background:var(--rl);color:#A32D2D;}
-.tab-btns{display:flex;border-bottom:0.5px solid var(--brd);margin-bottom:12px;}
-.tab-btn{flex:1;padding:9px;font-size:12px;font-weight:600;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--txt2);border-bottom:2px solid transparent;}
+.tab-btns{display:flex;border-bottom:1.5px solid var(--brd);margin-bottom:14px;}
+.tab-btn{flex:1;padding:10px;font-size:13px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--txt2);border-bottom:3px solid transparent;}
 .tab-btn.on{color:var(--g);border-bottom-color:var(--g);}
-.curr-btn{padding:6px 12px;border-radius:8px;border:1px solid var(--brd);font-size:12px;font-weight:600;cursor:pointer;background:var(--bg2);color:var(--txt2);margin:3px;}
-.curr-btn.on{background:var(--gl);color:var(--gd);border-color:var(--g);}
-.back-row{display:flex;align-items:center;gap:8px;padding:10px 0 6px;cursor:pointer;}
-.back-arrow{font-size:18px;color:var(--b);}
-.back-title{font-size:15px;font-weight:700;color:var(--txt);}
+.curr-btn{padding:6px 14px;border-radius:10px;border:1.5px solid var(--brd);font-size:12px;font-weight:700;cursor:pointer;background:var(--bg2);color:var(--txt2);margin:3px;transition: all 0.15s;}
+.curr-btn.on{background:var(--gl);color:var(--gd);border-color:var(--g);box-shadow: 0 2px 6px hsla(162, 69%, 37%, 0.15);}
+.back-row{display:flex;align-items:center;gap:8px;padding:10px 0 8px;cursor:pointer;}
+.back-arrow{font-size:22px;color:var(--b);font-weight:700;}
+.back-title{font-size:17px;font-weight:800;color:var(--txt);letter-spacing:-0.01em;}
 
 /* PDC */
-.pdc-card{border-radius:12px;padding:12px 14px;margin-bottom:10px;border-left:4px solid #7C3AED;}
-.pdc-pending{background:#F5F0FF;border-left-color:#7C3AED;}
-.pdc-deposit{background:#FEF3C7;border-left-color:var(--a);}
+.pdc-card{border-radius:14px;padding:14px;margin-bottom:12px;border-left:5px solid #7C3AED;box-shadow: var(--shadow);transition: transform 0.15s;}
+.pdc-card:active{transform: scale(0.98);}
+.pdc-pending{background:hsl(262, 80%, 98%);border-left-color:#7C3AED;}
+.pdc-deposit{background:hsl(45, 100%, 98%);border-left-color:var(--a);}
 .pdc-cleared{background:var(--gl);border-left-color:var(--g);}
 .pdc-bounced{background:var(--rl);border-left-color:var(--r);}
 @media(prefers-color-scheme:dark){.pdc-pending{background:#2D1F4E;}.pdc-deposit{background:#3D2E00;}.pdc-cleared{background:#0D2E1A;}.pdc-bounced{background:#2E0A0A;}}
-.pdc-no{font-size:14px;font-weight:700;color:var(--txt);}
-.pdc-bank{font-size:11px;color:var(--txt2);margin-top:2px;}
-.pdc-amt{font-size:16px;font-weight:700;}
+.pdc-no{font-size:15px;font-weight:800;color:var(--txt);letter-spacing:-0.01em;}
+.pdc-bank{font-size:11px;color:var(--txt2);margin-top:3px;font-weight:600;}
+.pdc-amt{font-size:16px;font-weight:800;}
 .pdc-amt.purple{color:#7C3AED;}
 .pdc-amt.amber{color:var(--a);}
 .pdc-amt.green{color:var(--g);}
 .pdc-amt.red{color:var(--r);}
-.pdc-date{font-size:11px;margin-top:2px;}
-.pdc-actions{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
-.pdc-btn{padding:6px 12px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;}
+.pdc-date{font-size:11px;margin-top:3px;font-weight:600;}
+.pdc-actions{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.pdc-btn{padding:8px 14px;border-radius:10px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition: all 0.15s;}
+.pdc-btn:active{transform: scale(0.95);}
 .pdc-btn-dep{background:#FEF3C7;color:#92400E;}
 .pdc-btn-clr{background:var(--gl);color:var(--gd);}
 .pdc-btn-bnc{background:var(--rl);color:#A32D2D;}
-.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--r);display:inline-block;margin-left:4px;animation:pulse2 1.5s infinite;}
+.notif-dot{width:8px;height:8px;border-radius:50%;background:var(--r);display:inline-block;margin-left:5px;animation:pulse2 1.5s infinite;}
 @keyframes pulse2{0%,100%{opacity:1;}50%{opacity:0.3;}}
 
 /* MODAL */
-.modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:flex-end;z-index:200;}
+.modal-wrap{position:absolute;inset:0;background:rgba(0,0,0,0.4);backdrop-filter: blur(4px);display:flex;align-items:flex-end;z-index:200;animation: fadeIn 0.25s;}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
 /* QUICK ENTRY */
-.qs-label{font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;}
-.qs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;}
-.qs-btn{padding:10px 6px;border-radius:10px;border:1.5px solid var(--brd);font-size:12px;font-weight:600;text-align:center;cursor:pointer;background:var(--bg2);color:var(--txt2);}
-.qs-btn.qs-on{background:var(--gl);color:var(--gd);border-color:var(--g);}
-.qs-wt-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;}
-.qn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
-.qn-btn{padding:9px 12px;border-radius:9px;border:1.5px solid var(--brd);font-size:14px;font-weight:700;cursor:pointer;background:var(--bg2);color:var(--txt2);}
-.qn-btn.qn-on{background:var(--bl);color:var(--bd);border-color:var(--b);}
-.entry-header{background:var(--g);border-radius:14px;padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
-.entry-header .eh-icon{font-size:26px;}
-.entry-header .eh-title{font-size:15px;font-weight:700;color:#fff;}
-.entry-header .eh-sub{font-size:12px;color:rgba(255,255,255,0.8);margin-top:2px;}
-.modal-sheet{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));}
-.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
-.mt{font-size:17px;font-weight:700;color:var(--txt);}
-.mc{background:var(--bg2);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--txt2);display:flex;align-items:center;justify-content:center;}
+.qs-label{font-size:11px;font-weight:700;color:var(--txt2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em;font-family:'Plus Jakarta Sans',sans-serif;}
+.qs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;}
+.qs-btn{padding:12px 6px;border-radius:12px;border:1.5px solid var(--brd);font-size:12px;font-weight:700;text-align:center;cursor:pointer;background:var(--bg2);color:var(--txt2);transition:all 0.2s;}
+.qs-btn.qs-on{background:var(--gl);color:var(--gd);border-color:var(--g);box-shadow: 0 2px 6px hsla(162, 69%, 37%, 0.15);}
+.qs-btn:active{transform:scale(0.95);}
+.qs-wt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.qn-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;}
+.qn-btn{padding:10px 14px;border-radius:10px;border:1.5px solid var(--brd);font-size:14px;font-weight:800;cursor:pointer;background:var(--bg2);color:var(--txt2);transition:all 0.15s;}
+.qn-btn.qn-on{background:var(--bl);color:var(--bd);border-color:var(--b);box-shadow: 0 2px 6px hsla(210, 69%, 54%, 0.15);}
+.entry-header{background:linear-gradient(135deg, var(--g) 0%, var(--gd) 100%);border-radius:16px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:10px;box-shadow: 0 8px 24px -6px var(--g);}
+.entry-header .eh-icon{font-size:28px;}
+.entry-header .eh-title{font-size:16px;font-weight:800;color:#fff;letter-spacing:-0.01em;}
+.entry-header .eh-sub{font-size:12px;color:rgba(255,255,255,0.85);margin-top:2px;font-weight:500;}
+.modal-sheet{background:var(--bg);border-radius:24px 24px 0 0;padding:24px 20px;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));box-shadow: 0 -8px 32px rgba(0,0,0,0.15);transform: translateY(0);animation: slideUp 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+.mt{font-size:18px;font-weight:800;color:var(--txt);letter-spacing:-0.02em;}
+.mc{background:var(--bg2);border:none;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;color:var(--txt2);display:flex;align-items:center;justify-content:center;font-weight:700;transition:all 0.15s;}
+.mc:active{background:var(--brd);transform: scale(0.9);}
+
+
 </style>
 </head>
 <body>
@@ -270,7 +322,21 @@ html,body{height:100%;background:var(--bg3);font-family:-apple-system,BlinkMacSy
     <div class="rcard" onclick="go('owner-phone')"><span class="rc-ico">👔</span><div class="rc-t" id="ld-own">Owner</div><div class="rc-s" id="ld-owns">Full management</div></div>
     <div class="rcard" onclick="go('emp-phone')"><span class="rc-ico">👷</span><div class="rc-t" id="ld-emp">Employee</div><div class="rc-s" id="ld-emps">Work entry & profile</div></div>
   </div>
-  <div style="text-align:center;padding-top:10px;"><div style="font-size:12px;color:var(--txt3);" id="ld-nq">New company?</div><div style="font-size:13px;color:var(--g);cursor:pointer;margin-top:4px;font-weight:600;" id="ld-reg">Register →</div></div>
+  <div style="text-align:center;padding-top:10px;"><div style="font-size:12px;color:var(--txt3);" id="ld-nq">New company?</div><div style="font-size:13px;color:var(--g);cursor:pointer;margin-top:4px;font-weight:600;" id="ld-reg" onclick="go('register')">Register →</div></div>
+</div>
+</div>
+
+<!-- REGISTER NEW COMPANY -->
+<div class="scr" id="scr-register">
+<div class="back" onclick="go('landing')">‹ <span>Back</span></div>
+<div class="sa">
+  <div class="brand" style="padding:10px 0 16px;"><div class="bicon" style="width:48px;height:48px;font-size:22px;background:linear-gradient(135deg, var(--b) 0%, var(--bd) 100%);">🏢</div><div class="bname" style="font-size:18px;">Register Company</div></div>
+  <div class="fmg"><label>Company Name</label><input type="text" id="reg-co-name" placeholder="e.g. Syed Contracting LLC"></div>
+  <div class="fmg"><label>Owner / Manager Name</label><input type="text" id="reg-mgr-name" placeholder="e.g. Syed Ali"></div>
+  <div class="fmg"><label>Phone Number</label><div class="pfrow"><button class="pfbtn" onclick="cycleCode('r')"><span id="r-code">🇦🇪 +971</span></button><input class="pfinp" id="reg-phone" type="tel" inputmode="numeric" placeholder="50 123 4567"></div></div>
+  <div class="fmg"><label>Set 4-Digit Owner PIN</label><input type="password" id="reg-pin" pattern="[0-9]*" inputmode="numeric" maxlength="4" placeholder="e.g. 1234" style="-webkit-text-security: disc; text-security: disc;"></div>
+  <button class="bbtn bg" onclick="registerCompanySubmit()">Register & Login →</button>
+  <div class="hint">Create a new company workspace</div>
 </div>
 </div>
 
@@ -423,14 +489,80 @@ function applyLang(){
   // Update company name display
   const appNameEl=document.getElementById('app-company-name');
   if(appNameEl)appNameEl.textContent=companyData.name;
+  updateOwnerTopbar();
 }
-function cycleCode(w){if(w==='o'){oCI=(oCI+1)%codes.length;document.getElementById('o-code').textContent=codes[oCI][0]+' '+codes[oCI][1];}else{eCI=(eCI+1)%codes.length;document.getElementById('e-code').textContent=codes[eCI][0]+' '+codes[eCI][1];}}
+function updateOwnerTopbar() {
+  const name = companyData.managerName || 'Owner';
+  const coName = companyData.name || 'Company';
+  const parts = name.trim().split(/\s+/);
+  let initials = 'OW';
+  if (parts.length > 0 && parts[0]) {
+    initials = parts[0][0].toUpperCase();
+    if (parts.length > 1 && parts[parts.length - 1]) {
+      initials += parts[parts.length - 1][0].toUpperCase();
+    }
+  }
+  const avatarEl = document.querySelector('#scr-owner-dash .av');
+  if (avatarEl) avatarEl.textContent = initials;
+  const nameEl = document.querySelector('#scr-owner-dash .tb-name');
+  if (nameEl) nameEl.textContent = name;
+  const roleEl = document.getElementById('od-role');
+  if (roleEl) {
+    const t = T[CL] || T['en'];
+    roleEl.textContent = `${t.ldOwn || 'Owner'} — ${coName}`;
+  }
+}
+let rCI=0;
+function cycleCode(w){
+  if(w==='o'){oCI=(oCI+1)%codes.length;document.getElementById('o-code').textContent=codes[oCI][0]+' '+codes[oCI][1];}
+  else if(w==='e'){eCI=(eCI+1)%codes.length;document.getElementById('e-code').textContent=codes[eCI][0]+' '+codes[eCI][1];}
+  else if(w==='r'){rCI=(rCI+1)%codes.length;document.getElementById('r-code').textContent=codes[rCI][0]+' '+codes[rCI][1];}
+}
+function registerCompanySubmit(){
+  const name = document.getElementById('reg-co-name')?.value.trim();
+  const mgrName = document.getElementById('reg-mgr-name')?.value.trim();
+  const phoneVal = document.getElementById('reg-phone')?.value.trim();
+  const pin = document.getElementById('reg-pin')?.value.trim();
+  
+  if(!name || !mgrName || !phoneVal || !pin){
+    alert("Please fill all registration fields.");
+    return;
+  }
+  if(pin.length !== 4 || isNaN(pin)){
+    alert("Owner PIN must be exactly 4 digits.");
+    return;
+  }
+  
+  // Update companyData
+  companyData.name = name;
+  companyData.managerName = mgrName;
+  companyData.managerPhone = codes[rCI][1] + ' ' + phoneVal;
+  companyData.ownerPIN = pin;
+  
+  // Save to localStorage
+  saveData();
+  
+  // Set session as owner and direct to owner dashboard
+  try {
+    localStorage.setItem('tt_sess', 'o');
+  } catch(e){}
+  
+  // Update UI headers
+  applyLang();
+  
+  alert("🎉 Company Registered Successfully!");
+  
+  go('owner-dash');
+}
 function go(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('scr-'+id).classList.add('on');
   if(id==='owner-pin'){oPin=[];renderPad('o');}
   if(id==='emp-pin'){ePin=[];renderPad('e');}
-  if(id==='owner-dash'){ownerTab(curOT,document.getElementById('obn-'+curOT));}
+  if(id==='owner-dash'){
+    updateOwnerTopbar();
+    ownerTab(curOT,document.getElementById('obn-'+curOT));
+  }
   if(id==='emp-dash'){empTab(curET,document.getElementById('ebn-'+curET));}
 }
 function logout(){try{localStorage.removeItem('tt_sess');}catch(e){}go('landing');}
@@ -690,10 +822,6 @@ function empTab(tab,btn){
       </div>
     </div>
 
-    <div class="earn-box" style="margin-bottom:12px;">
-      <span class="earn-lbl">${t.ewEarn}</span>
-      <span class="earn-val" id="emp-earn">AED 0</span>
-    </div>
     <button class="bbtn bb" onclick="saveWorkWithHelper(this)">${t.ewSave}</button>
     `;}
   else if(tab==='sal'){
@@ -702,21 +830,16 @@ function empTab(tab,btn){
     const r=wage_calcMonth(emp,now.getFullYear(),now.getMonth()+1);
     c.innerHTML=`<div class="card">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <div><div style="font-size:11px;color:var(--txt2);">${t.salTitle}</div><div style="font-size:24px;font-weight:700;color:var(--g);">AED ${r.totalSalary.toFixed(0)}</div></div>
-      <span class="tag ta">Processing</span>
+      <div><div style="font-size:11px;color:var(--txt2);">My Work & Target Record</div><div style="font-size:18px;font-weight:700;color:var(--b);">${now.toLocaleString('en',{month:'long'})} ${now.getFullYear()}</div></div>
+      <span class="tag tg">Active</span>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
       <div class="sc"><div class="sl">${t.salDays}</div><div class="sv">${r.presentDays}</div></div>
       <div class="sc"><div class="sl">OT Meters</div><div class="sv" style="color:var(--a);">${r.totalOTMeters}m²</div></div>
       <div class="sc"><div class="sl">OT Days</div><div class="sv" style="color:var(--a);">${r.otDays.toFixed(1)}</div></div>
     </div>
-    <div style="background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span style="color:var(--txt2);">Base (${r.presentDays} days × AED ${emp.dailyWage})</span><span style="font-weight:600;">AED ${r.baseSalary.toFixed(0)}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span style="color:var(--txt2);">OT Bonus (${r.otDays.toFixed(2)} days × AED ${emp.dailyWage})</span><span style="font-weight:600;color:var(--a);">AED ${r.otSalary.toFixed(0)}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0 4px;font-size:15px;font-weight:700;border-top:0.5px solid var(--brd);margin-top:4px;"><span>Total</span><span style="color:var(--g);">AED ${r.totalSalary.toFixed(0)}</span></div>
-    </div>
-    <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px;">Daily Target: ${emp.overallTarget}m² = 1 day wage</div>
-    ${r.dayDetails.slice(0,5).map(d=>`<div class="er">
+    <div style="font-size:13px;font-weight:600;color:var(--txt);margin-bottom:8px;">Daily Target: ${emp.overallTarget}m²</div>
+    ${r.dayDetails.slice(0,10).map(d=>`<div class="er">
       <div class="er-l"><div class="es">${d.date}</div><div class="et">${d.status==='L'?'Leave':d.done+'m² done / '+d.target+'m² target'}</div></div>
       <div class="er-r"><div class="ev" style="color:${d.ot>0?'var(--a)':d.status==='L'?'var(--r)':'var(--g)'};">${d.status==='L'?'Leave':d.status==='P'?'✅ P':d.status}</div>${d.ot>0?`<div class="ed">+${d.ot}m² OT</div>`:''}</div>
     </div>`).join('')}
@@ -732,6 +855,7 @@ function empTab(tab,btn){
   else if(tab==='set'){c.innerHTML=`<div class="card"><div class="ct">${t.eSet}</div>
     <div class="settings-row" onclick="go('lang')"><span class="sr-l">${t.stgLang}</span><span class="sr-r">${T[CL].chip.replace(' ✎','')}</span></div>
     <div class="settings-row" onclick="alert('PIN change')"><span class="sr-l">${t.stgPIN}</span><span class="sr-r">→</span></div>
+    <div class="settings-row" onclick="resetTestData()"><span class="sr-l" style="color:var(--r);">🔄 Reset Test Data</span><span class="sr-r">→</span></div>
     <div class="settings-row" onclick="logout()"><span class="sr-l" style="color:var(--r);">${t.stgLogout}</span><span class="sr-r">→</span></div></div>`;}
 }
 
@@ -742,32 +866,55 @@ function calcEmp(){
 }
 function saveWorkWithHelper(btn){
   const helperName=document.getElementById('v-helper')?.value;
-  const site=document.getElementById('v-site');
-  const wt=document.getElementById('wt-sel');
-  const qty=document.getElementById('e-qty')?.value;
+  const siteSel=document.getElementById('v-site');
+  const site=siteSel ? siteSel.value : 'ZXZ Villa 123';
+  const wtSel=document.getElementById('wt-sel');
+  const qty=parseFloat(document.getElementById('e-qty')?.value)||0;
   const date=document.getElementById('entry-date')?.value||new Date().toISOString().slice(0,10);
+  const wtKey=WORK_TYPES_LIST[wtSel?.selectedIndex||0]?.key||'floor_tile';
 
-  // Auto-mark helper attendance if selected
+  if(qty <= 0){
+    alert("Please enter a valid quantity!");
+    return;
+  }
+
+  // 1. Save work entry to logged-in employee's own log
+  const myName = window._loggedInName || 'Ahmed Ali';
+  const myEmp = employees.find(e => e.name === myName);
+  if (myEmp) {
+    let myLog = myEmp.workLog.find(l => l.date === date);
+    if (!myLog) {
+      myLog = { date, entries: [], dayStatus: 'P', ownerNote: '' };
+      myEmp.workLog.push(myLog);
+    } else {
+      myLog.dayStatus = 'P';
+    }
+    myLog.entries.push({ type: wtKey, qty: qty });
+  }
+
+  // 2. Auto-mark helper attendance and save work if selected
   if(helperName){
     const helperEmp=employees.find(e=>e.name===helperName);
     if(helperEmp){
-      // Add or update workLog entry for helper
       let log=helperEmp.workLog.find(l=>l.date===date);
       if(!log){
-        log={date,entries:[],dayStatus:'P',ownerNote:'With Ahmed Ali'};
+        log={date,entries:[],dayStatus:'P',ownerNote:'With ' + myName};
         helperEmp.workLog.push(log);
       } else {
         log.dayStatus='P';
-        log.ownerNote='With Ahmed Ali';
+        log.ownerNote='With ' + myName;
       }
-      // Add same work entry to helper's log (for their salary)
-      const wtKey=WORK_TYPES_LIST[wt?.selectedIndex||0]?.key||'floor_tile';
-      log.entries.push({type:wtKey,qty:parseFloat(qty)||0,withMaster:'Ahmed Ali'});
+      log.entries.push({type:wtKey,qty:qty,withMaster:myName});
     }
   }
 
   btn.textContent='✅ Saved!';
   btn.style.background='#3B6D11';
+  
+  if (curET === 'work') {
+    setTimeout(() => { empTab('work', document.getElementById('ebn-work')); }, 1000);
+  }
+  
   if(helperName){
     setTimeout(()=>{
       alert('✅ Work saved!\n\n🔔 Helper auto-update:\n'+helperName+' marked Present for '+date+'\nSame work entry added to their salary.');
@@ -876,7 +1023,7 @@ function quickSetQty(n,el){
 // ══ CLIENT & INVOICE SYSTEM ══
 const CURRENCIES=['AED','SAR','PKR','USD','EUR','GBP'];
 let invCounter=1024;
-const clients=[
+let clients=[
   {id:1,name:'Al Noor Contracting LLC',addr1:'Office 204, Business Bay Tower',addr2:'Business Bay, Dubai',addr3:'United Arab Emirates',manager:'Mohammed Al Rashid',mgrPhone:'+971-50-111-2233',acctName:'Hamid Al Zaabi',acctPhone:'+971-55-444-5566',currency:'AED',taxPct:5,
    sites:[{id:101,name:'Villa #854',area:'Arabian Ranches',city:'Dubai',engineer:'Eng. Tariq Nasser',engPhone:'+971-50-777-8899',foreman:'Khalid Mahmood',fmPhone:'+971-54-111-2233'},{id:102,name:'Apt Block C',area:'Al Barsha',city:'Dubai',engineer:'Eng. Sara Al Ali',engPhone:'+971-55-333-4455',foreman:'Santosh Kumar',fmPhone:'+971-52-999-0011'}],
    invoices:[
@@ -1166,7 +1313,7 @@ let companyData={
   licenseIssuer:'Dubai Economy & Tourism',
 };
 
-const hrEmployees=[
+let hrEmployees=[
   {id:'EMP001',name:'Ahmed Ali',fatherName:'Ghulam Ali',phone:'+971-50-111-2233',
    emergencyName:'Ghulam Ali',emergencyPhone:'+92-300-111-2233',emergencyCountry:'Pakistan',
    dob:'1990-03-15',nationality:'Pakistani',country:'🇵🇰',
@@ -1247,6 +1394,7 @@ function renderSettingsHome(c){
     <div class="settings-row" onclick="renderWageSettings()"><span class="sr-l">💰 Wages & Targets</span><span class="sr-r">Edit →</span></div>
     <div class="settings-row" onclick="go('lang')"><span class="sr-l">🌍 Language</span><span class="sr-r">${T[CL].chip.replace(' ✎','')} →</span></div>
     <div class="settings-row" onclick="settings_changePIN()"><span class="sr-l">🔒 Change Owner PIN</span><span class="sr-r">→</span></div>
+    <div class="settings-row" onclick="resetTestData()"><span class="sr-l" style="color:var(--r);">🔄 Reset Test Data</span><span class="sr-r">→</span></div>
     <div class="settings-row" onclick="logout()"><span class="sr-l" style="color:var(--r);">Logout</span><span class="sr-r">→</span></div>
   </div>`;
 }
@@ -1448,7 +1596,21 @@ function hrTab(tab, btn){
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div class="fmg"><label>Date of Birth</label><input type="date" id="hr-dob" value="${v('dob')}"></div>
-        <div class="fmg"><label>Nationality</label><input id="hr-nat" value="${v('nationality')}" placeholder="Pakistani"></div>
+        <div class="fmg"><label>Nationality</label><select id="hr-nat" style="width:100%;">
+          <option value="Pakistani" ${v('nationality')==='Pakistani'?'selected':''}>Pakistani</option>
+          <option value="Indian" ${v('nationality')==='Indian'?'selected':''}>Indian</option>
+          <option value="Bangladeshi" ${v('nationality')==='Bangladeshi'?'selected':''}>Bangladeshi</option>
+          <option value="Nepali" ${v('nationality')==='Nepali'?'selected':''}>Nepali</option>
+          <option value="Filipino" ${v('nationality')==='Filipino'?'selected':''}>Filipino</option>
+          <option value="Sri Lankan" ${v('nationality')==='Sri Lankan'?'selected':''}>Sri Lankan</option>
+          <option value="Egyptian" ${v('nationality')==='Egyptian'?'selected':''}>Egyptian</option>
+          <option value="Emirati" ${v('nationality')==='Emirati'?'selected':''}>Emirati</option>
+          <option value="Sudanese" ${v('nationality')==='Sudanese'?'selected':''}>Sudanese</option>
+          <option value="Syrian" ${v('nationality')==='Syrian'?'selected':''}>Syrian</option>
+          <option value="Afghan" ${v('nationality')==='Afghan'?'selected':''}>Afghan</option>
+          <option value="Ugandan" ${v('nationality')==='Ugandan'?'selected':''}>Ugandan</option>
+          <option value="Kenyan" ${v('nationality')==='Kenyan'?'selected':''}>Kenyan</option>
+        </select></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div class="fmg"><label>Phone (UAE)</label><input type="tel" id="hr-phone" value="${v('phone')}"></div>
@@ -1584,9 +1746,30 @@ function saveHRProfile(empId){
     overallTarget:parseFloat(g('hr-target'))||0,
   };
 
-  if(emp){Object.assign(emp,data);}
+  const natToFlag = {
+    'Pakistani': '🇵🇰',
+    'Indian': '🇮🇳',
+    'Bangladeshi': '🇧🇩',
+    'Nepali': '🇳🇵',
+    'Filipino': '🇵🇭',
+    'Sri Lankan': '🇱🇰',
+    'Egyptian': '🇪🇬',
+    'Sudanese': '🇸🇩',
+    'Syrian': '🇸🇾',
+    'Afghan': '🇦🇫',
+    'Ugandan': '🇺🇬',
+    'Kenyan': '🇰🇪',
+    'Emirati': '🇦🇪'
+  };
+  const selectedNat = g('hr-nat');
+  const mappedFlag = natToFlag[selectedNat] || '🌍';
+
+  if(emp){
+    Object.assign(emp,data);
+    emp.country = mappedFlag;
+  }
   else{
-    const newEmp={id:'EMP'+Date.now(),country:'🌍',active:true,typeTargets:{},idPDF:'',passportPDF:'',photo:'',...data};
+    const newEmp={id:'EMP'+Date.now(),country:mappedFlag,active:true,typeTargets:{},idPDF:'',passportPDF:'',photo:'',...data};
     hrEmployees.push(newEmp);
     // Also add to wage employees
     employees.push({id:newEmp.id,name:newEmp.name,role:newEmp.role,country:newEmp.country,dailyWage:newEmp.dailyWage,targetMode:newEmp.targetMode,overallTarget:newEmp.overallTarget,typeTargets:newEmp.typeTargets||{},workLog:[]});
@@ -1631,7 +1814,7 @@ const WORK_TYPES_LIST=[
   {key:'maintenance_half',label:'Maintenance (Half Day)',unit:'half',type:'maintenance'},
 ];
 
-const employees=[
+let employees=[
   {id:'EMP001',name:'Ahmed Ali',role:'Tile Master',country:'🇵🇰',
    dailyWage:110,targetMode:'per_type',
    overallTarget:22,
@@ -1858,7 +2041,7 @@ function emp_setTypeTarget(empId,key,val){const emp=employees.find(e=>e.id===emp
 // ══ END WAGE SYSTEM ══
 
 
-const pdcList=[ // demo data
+let pdcList=[ // demo data
   {id:'PDC-001',chqNo:'445521',bank:'Emirates NBD',acctName:'Al Noor Contracting LLC',amount:2000,currency:'AED',chqDate:'2026-05-04',clientId:1,invId:'INV-1021',status:'pending',note:'',addedDate:'2026-04-15'},
   {id:'PDC-002',chqNo:'887632',bank:'ADCB',acctName:'Al Noor Contracting LLC',amount:1500,currency:'AED',chqDate:'2026-05-20',clientId:1,invId:'INV-1021',status:'pending',note:'',addedDate:'2026-04-15'},
   {id:'PDC-003',chqNo:'334411',bank:'Mashreq Bank',acctName:'Zara Real Estate',amount:3000,currency:'AED',chqDate:'2026-04-10',clientId:2,invId:'INV-1022',status:'cleared',note:'Cleared on 2026-04-12',addedDate:'2026-03-20'}
@@ -2036,9 +2219,99 @@ function updateClock(){const n=new Date();let h=n.getHours(),m=n.getMinutes(),a=
 updateClock();setInterval(updateClock,10000);
 setTimeout(pdc_checkTodayReminders,2000);
 
+// ══ LOCALSTORAGE STORAGE SYNCHRONIZATION ══
+function saveData() {
+  try {
+    localStorage.setItem('tt_clients', JSON.stringify(clients));
+    localStorage.setItem('tt_company', JSON.stringify(companyData));
+    localStorage.setItem('tt_hremployees', JSON.stringify(hrEmployees));
+    localStorage.setItem('tt_employees', JSON.stringify(employees));
+    localStorage.setItem('tt_pdc', JSON.stringify(pdcList));
+    if (window._customWorkTypes) {
+      localStorage.setItem('tt_custom_wt', JSON.stringify(window._customWorkTypes));
+    }
+  } catch(e) {
+    console.error("Failed to save to localStorage:", e);
+  }
+}
+
+function loadData() {
+  try {
+    const cl = localStorage.getItem('tt_clients'); if(cl) clients = JSON.parse(cl);
+    const co = localStorage.getItem('tt_company'); if(co) companyData = JSON.parse(co);
+    const hr = localStorage.getItem('tt_hremployees'); if(hr) hrEmployees = JSON.parse(hr);
+    const em = localStorage.getItem('tt_employees'); if(em) employees = JSON.parse(em);
+    const pd = localStorage.getItem('tt_pdc'); if(pd) pdcList = JSON.parse(pd);
+    const cwt = localStorage.getItem('tt_custom_wt'); if(cwt) window._customWorkTypes = JSON.parse(cwt);
+  } catch(e) {
+    console.error("Failed to load from localStorage:", e);
+  }
+}
+
+// Intercept state changes to automatically trigger saveData
+try {
+  const originalSaveHRProfile = saveHRProfile;
+  saveHRProfile = function(...args) { originalSaveHRProfile(...args); saveData(); };
+
+  const originalToggleEmpActive = toggleEmpActive;
+  toggleEmpActive = function(...args) { originalToggleEmpActive(...args); saveData(); };
+
+  const originalSettingsChangePIN = settings_changePIN;
+  settings_changePIN = function(...args) { originalSettingsChangePIN(...args); saveData(); };
+
+  const originalInvSaveClient = inv_saveClient;
+  inv_saveClient = function(...args) { originalInvSaveClient(...args); saveData(); };
+
+  const originalInvSaveSite = inv_saveSite;
+  inv_saveSite = function(...args) { originalInvSaveSite(...args); saveData(); };
+
+  const originalInvSaveNewLine = inv_saveNewLine;
+  inv_saveNewLine = function(...args) { originalInvSaveNewLine(...args); saveData(); };
+
+  const originalInvAddPayment = inv_addPayment;
+  inv_addPayment = function(...args) { originalInvAddPayment(...args); saveData(); };
+
+  const originalPdcSave = pdc_save;
+  pdc_save = function(...args) { originalPdcSave(...args); saveData(); };
+
+  const originalAdjSetStatus = adj_setStatus;
+  adj_setStatus = function(...args) { originalAdjSetStatus(...args); saveData(); };
+
+  const originalEmpSetWage = emp_setWage;
+  emp_setWage = function(...args) { originalEmpSetWage(...args); saveData(); };
+
+  const originalEmpSetTarget = emp_setTarget;
+  emp_setTarget = function(...args) { originalEmpSetTarget(...args); saveData(); };
+
+  const originalEmpSetTypeTarget = emp_setTypeTarget;
+  emp_setTypeTarget = function(...args) { originalEmpSetTypeTarget(...args); saveData(); };
+
+  const originalPdcAction = pdc_action;
+  pdc_action = function(...args) { originalPdcAction(...args); saveData(); };
+
+  const originalPdcBounce = pdc_bounce;
+  pdc_bounce = function(...args) { originalPdcBounce(...args); saveData(); };
+
+  const originalSaveWorkWithHelper = saveWorkWithHelper;
+  saveWorkWithHelper = function(...args) { originalSaveWorkWithHelper(...args); saveData(); };
+} catch(err) {
+  console.warn("Could not hook all events for autosave:", err);
+}
+
+
+
+function resetTestData() {
+  if (confirm("⚠️ Reset Warning:\n\nAre you sure you want to delete all test entries (marked attendance, worker logs, clients, PDC, expenses) and restore default settings?\n\nThis cannot be undone!")) {
+    localStorage.clear();
+    alert("🔄 Database has been reset successfully! Reloading page...");
+    window.location.reload();
+  }
+}
+
 // Init — check saved language
 (function(){
   try{
+    loadData(); // Proactively load stored data
     const saved=localStorage.getItem('tt_lang');
     if(saved&&T[saved]){CL=saved;applyLang();go('landing');
       const cards=document.querySelectorAll('.lcard');
