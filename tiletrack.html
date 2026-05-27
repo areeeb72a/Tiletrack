@@ -1797,80 +1797,91 @@ function saveHRProfile(empId){
   const idFile=document.getElementById('hr-idpdf');
   const ppFile=document.getElementById('hr-pppdf');
 
-  const readFile=(input,cb)=>{
-    if(!input||!input.files||!input.files[0]){cb('');return;}
-    const r=new FileReader();r.onload=e=>cb(e.target.result);r.readAsDataURL(input.files[0]);
-  };
+  const proceedSave = (idPDF, passportPDF) => {
+    const data={
+      name:g('hr-name')||g('hr-name'),fatherName:g('hr-father'),
+      phone:g('hr-phone'),emergencyName:g('hr-emname'),
+      emergencyPhone:g('hr-emphone'),emergencyCountry:g('hr-emcountry'),
+      dob:g('hr-dob'),nationality:g('hr-nat'),
+      idNo:g('hr-idno'),idExpiry:g('hr-idexp'),
+      passportNo:g('hr-ppno'),passportExpiry:g('hr-ppexp'),
+      visaNo:g('hr-visano'),visaExpiry:g('hr-visaexp'),
+      contractStart:g('hr-cstart'),contractEnd:g('hr-cend'),
+      bankName:g('hr-bname'),bankAccount:g('hr-bacct'),
+      dailyWage:parseFloat(g('hr-wage'))||0,
+      ownerPin:g('hr-pin')||'5678',
+      notes:g('hr-notes')||'',
+      role:document.getElementById('hr-role')?.value||'Tile Master',
+      targetMode:document.getElementById('hr-tmode')?.value||'overall',
+      overallTarget:parseFloat(g('hr-target'))||0,
+    };
 
-  const data={
-    name:g('hr-name')||g('hr-name'),fatherName:g('hr-father'),
-    phone:g('hr-phone'),emergencyName:g('hr-emname'),
-    emergencyPhone:g('hr-emphone'),emergencyCountry:g('hr-emcountry'),
-    dob:g('hr-dob'),nationality:g('hr-nat'),
-    idNo:g('hr-idno'),idExpiry:g('hr-idexp'),
-    passportNo:g('hr-ppno'),passportExpiry:g('hr-ppexp'),
-    visaNo:g('hr-visano'),visaExpiry:g('hr-visaexp'),
-    contractStart:g('hr-cstart'),contractEnd:g('hr-cend'),
-    bankName:g('hr-bname'),bankAccount:g('hr-bacct'),
-    dailyWage:parseFloat(g('hr-wage'))||0,
-    ownerPin:g('hr-pin')||'5678',
-    notes:g('hr-notes')||'',
-    role:document.getElementById('hr-role')?.value||'Tile Master',
-    targetMode:document.getElementById('hr-tmode')?.value||'overall',
-    overallTarget:parseFloat(g('hr-target'))||0,
-  };
+    const natToFlag = {
+      'Pakistani': '🇵🇰', 'Indian': '🇮🇳', 'Bangladeshi': '🇧🇩', 'Nepali': '🇳🇵',
+      'Filipino': '🇵🇭', 'Sri Lankan': '🇱🇰', 'Egyptian': '🇪🇬', 'Sudanese': '🇸🇩',
+      'Syrian': '🇸🇾', 'Afghan': '🇦🇫', 'Ugandan': '🇺🇬', 'Kenyan': '🇰🇪', 'Emirati': '🇦🇪'
+    };
+    const selectedNat = g('hr-nat');
+    const mappedFlag = natToFlag[selectedNat] || '🌍';
 
-  const natToFlag = {
-    'Pakistani': '🇵🇰',
-    'Indian': '🇮🇳',
-    'Bangladeshi': '🇧🇩',
-    'Nepali': '🇳🇵',
-    'Filipino': '🇵🇭',
-    'Sri Lankan': '🇱🇰',
-    'Egyptian': '🇪🇬',
-    'Sudanese': '🇸🇩',
-    'Syrian': '🇸🇾',
-    'Afghan': '🇦🇫',
-    'Ugandan': '🇺🇬',
-    'Kenyan': '🇰🇪',
-    'Emirati': '🇦🇪'
-  };
-  const selectedNat = g('hr-nat');
-  const mappedFlag = natToFlag[selectedNat] || '🌍';
-
-  const typeTargets = {};
-  if (data.targetMode === 'per_type') {
-    WORK_TYPES_LIST.forEach(wt => {
-      const val = parseFloat(g(`tt_${wt.key}`)) || 0;
-      typeTargets[wt.key] = val;
-    });
-  }
-
-  if(emp){
-    Object.assign(emp,data);
-    emp.country = mappedFlag;
-    emp.typeTargets = typeTargets;
-
-    // Sync to wages list (employees array)
-    const wageEmp = employees.find(e => e.id === empId);
-    if(wageEmp) {
-      wageEmp.name = emp.name;
-      wageEmp.role = emp.role;
-      wageEmp.country = emp.country;
-      wageEmp.dailyWage = emp.dailyWage;
-      wageEmp.targetMode = emp.targetMode;
-      wageEmp.overallTarget = emp.overallTarget;
-      wageEmp.typeTargets = Object.assign({}, emp.typeTargets);
+    const typeTargets = {};
+    if (data.targetMode === 'per_type') {
+      WORK_TYPES_LIST.forEach(wt => {
+        const val = parseFloat(g(`tt_${wt.key}`)) || 0;
+        typeTargets[wt.key] = val;
+      });
     }
-  }
-  else{
-    const newEmp={id:'EMP'+Date.now(),country:mappedFlag,active:true,typeTargets:typeTargets,idPDF:'',passportPDF:'',photo:'',...data};
-    hrEmployees.push(newEmp);
-    // Also add to wage employees
-    employees.push({id:newEmp.id,name:newEmp.name,role:newEmp.role,country:newEmp.country,dailyWage:newEmp.dailyWage,targetMode:newEmp.targetMode,overallTarget:newEmp.overallTarget,typeTargets:newEmp.typeTargets||{},workLog:[]});
-  }
-  alert(`✅ ${data.name} profile saved!`);
-  renderHRList(document.getElementById('owner-content'));
+
+    if(emp){
+      Object.assign(emp,data);
+      emp.country = mappedFlag;
+      emp.typeTargets = typeTargets;
+      if (idPDF) emp.idPDF = idPDF;
+      if (passportPDF) emp.passportPDF = passportPDF;
+
+      // Sync to wages list (employees array)
+      const wageEmp = employees.find(e => e.id === empId);
+      if(wageEmp) {
+        wageEmp.name = emp.name;
+        wageEmp.role = emp.role;
+        wageEmp.country = emp.country;
+        wageEmp.dailyWage = emp.dailyWage;
+        wageEmp.targetMode = emp.targetMode;
+        wageEmp.overallTarget = emp.overallTarget;
+        wageEmp.typeTargets = Object.assign({}, emp.typeTargets);
+      }
+    }
+    else{
+      const newEmp={
+        id:'EMP'+Date.now(),country:mappedFlag,active:true,
+        typeTargets:typeTargets,idPDF:idPDF||'',passportPDF:passportPDF||'',photo:'',...data
+      };
+      hrEmployees.push(newEmp);
+      employees.push({
+        id:newEmp.id,name:newEmp.name,role:newEmp.role,country:newEmp.country,
+        dailyWage:newEmp.dailyWage,targetMode:newEmp.targetMode,
+        overallTarget:newEmp.overallTarget,typeTargets:newEmp.typeTargets||{},workLog:[]
+      });
+    }
+    
+    saveData();
+    alert(`✅ ${data.name} profile saved!`);
+    renderHRList(document.getElementById('owner-content'));
+  };
+
+  // Asynchronously read files first
+  const readFileInput = (input, cb) => {
+    if(!input || !input.files || !input.files[0]){ cb(null); return; }
+    const r=new FileReader();
+    r.onload=e=>cb(e.target.result);
+    r.readAsDataURL(input.files[0]);
+  };
+
+  readFileInput(idFile, idData => {
+    readFileInput(ppFile, ppData => {
+      proceedSave(idData, ppData);
+    });
+  });
 }
 
 function toggleEmpActive(empId){
