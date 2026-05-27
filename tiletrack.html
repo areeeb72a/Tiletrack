@@ -356,7 +356,7 @@ html,body{height:100%;background:var(--bg3);font-family:'Outfit',-apple-system,B
 <div class="scr" id="scr-owner-pin">
 <div class="back" onclick="go('owner-phone')">‹ <span id="opb">Back</span></div>
 <div class="sa">
-  <div style="text-align:center;margin-bottom:6px;padding-top:10px;"><div style="font-size:17px;font-weight:700;color:var(--txt);" id="op-t">Enter your PIN</div><div style="font-size:12px;color:var(--txt3);margin-top:4px;">+971 50 555 0001</div></div>
+  <div style="text-align:center;margin-bottom:6px;padding-top:10px;"><div style="font-size:17px;font-weight:700;color:var(--txt);" id="op-t">Enter your PIN</div><div style="font-size:12px;color:var(--txt3);margin-top:4px;" id="op-phone-display">+971 50 555 0001</div></div>
   <div class="pin-row"><div class="pbox cur" id="op0"></div><div class="pbox" id="op1"></div><div class="pbox" id="op2"></div><div class="pbox" id="op3"></div></div>
   <div class="err" id="o-err"></div>
   <div class="numpad" id="o-pad"></div>
@@ -380,7 +380,7 @@ html,body{height:100%;background:var(--bg3);font-family:'Outfit',-apple-system,B
 <div class="scr" id="scr-emp-pin">
 <div class="back" onclick="go('emp-phone')">‹ <span id="epb">Back</span></div>
 <div class="sa">
-  <div style="text-align:center;margin-bottom:6px;padding-top:10px;"><div style="font-size:17px;font-weight:700;color:var(--txt);" id="ep-t">Enter your PIN</div><div style="font-size:12px;color:var(--txt3);margin-top:4px;">+92 300 111 2222</div></div>
+  <div style="text-align:center;margin-bottom:6px;padding-top:10px;"><div style="font-size:17px;font-weight:700;color:var(--txt);" id="ep-t">Enter your PIN</div><div style="font-size:12px;color:var(--txt3);margin-top:4px;" id="ep-phone-display">+92 300 111 2222</div></div>
   <div class="pin-row"><div class="pbox cur" id="ep0"></div><div class="pbox" id="ep1"></div><div class="pbox" id="ep2"></div><div class="pbox" id="ep3"></div></div>
   <div class="err" id="e-err"></div>
   <div class="numpad" id="e-pad"></div>
@@ -534,6 +534,7 @@ function registerCompanySubmit(){
   }
   
   // Update companyData
+  companyData.code = (name.substring(0,3).toUpperCase()) + '-' + new Date().getFullYear();
   companyData.name = name;
   companyData.managerName = mgrName;
   companyData.managerPhone = codes[rCI][1] + ' ' + phoneVal;
@@ -557,8 +558,39 @@ function registerCompanySubmit(){
 function go(id){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   document.getElementById('scr-'+id).classList.add('on');
-  if(id==='owner-pin'){oPin=[];renderPad('o');}
-  if(id==='emp-pin'){ePin=[];renderPad('e');}
+  if(id==='owner-phone'){
+    const ccInput = document.querySelector('#scr-owner-phone input[type=text]');
+    if(ccInput) ccInput.value = companyData.code || 'ACB-2024';
+    const phInput = document.querySelector('#scr-owner-phone input[type=tel]');
+    if(phInput) {
+      const phParts = companyData.managerPhone ? companyData.managerPhone.split(/\s+/) : [];
+      phInput.value = phParts.length > 2 ? phParts.slice(2).join(' ') : (phParts.length > 1 ? phParts.slice(1).join(' ') : (companyData.managerPhone || '50 555 0001'));
+      if (phParts.length > 0) {
+        const fullPrefix = phParts.length > 1 ? (phParts[0] + ' ' + phParts[1]) : phParts[0];
+        const flagCode = codes.find(c => c[1] === phParts[0] || (phParts[1] && c[1] === phParts[1]) || (fullPrefix.includes(c[1])));
+        if (flagCode) {
+          document.getElementById('o-code').textContent = flagCode[0] + ' ' + flagCode[1];
+          oCI = codes.indexOf(flagCode);
+        }
+      }
+    }
+  }
+  if(id==='owner-pin'){
+    oPin=[];
+    renderPad('o');
+    const opDisplay = document.getElementById('op-phone-display');
+    if(opDisplay) opDisplay.textContent = companyData.managerPhone || '+971 50 555 0001';
+  }
+  if(id==='emp-pin'){
+    ePin=[];
+    renderPad('e');
+    const epDisplay = document.getElementById('ep-phone-display');
+    if(epDisplay) {
+      const numVal = document.querySelector('#scr-emp-phone input[type=tel]')?.value || '';
+      const codeVal = document.getElementById('e-code')?.textContent || '';
+      epDisplay.textContent = codeVal + ' ' + numVal;
+    }
+  }
   if(id==='owner-dash'){
     updateOwnerTopbar();
     ownerTab(curOT,document.getElementById('obn-'+curOT));
@@ -581,23 +613,52 @@ function pressNum(w,n){
   if(n==='⌫'){if(pins.length>0)pins.pop();}else if(pins.length<4)pins.push(n);
   renderPad(w);document.getElementById(w+'-err').textContent='';
   if(pins.length===4){setTimeout(()=>{
-    if(pins.join('')===(w==='o'?'1234':'5678')){
+    let isValid = false;
+    let matchedEmployee = null;
+    
+    if (w === 'o') {
+      isValid = pins.join('') === (companyData.ownerPIN || '1234');
+    } else if (w === 'e') {
+      matchedEmployee = hrEmployees.find(e => e.ownerPin === pins.join() || e.ownerPin === pins.join(''));
+      if (matchedEmployee && matchedEmployee.active !== false) {
+        isValid = true;
+      }
+    }
+    
+    if(isValid){
       try{localStorage.setItem('tt_sess',w);}catch(e){}
-      if(w==='emp'){
-        // Find which employee logged in by PIN
-        const matchEmp=hrEmployees.find(e=>e.ownerPin===pins.join(''));
-        window._loggedInName=matchEmp?matchEmp.name:'Ahmed Ali';
-        window._loggedInRole=matchEmp?matchEmp.role:'Tile Master';
-        // Update topbar
+      if(w==='e' && matchedEmployee){
+        window._loggedInName=matchedEmployee.name;
+        window._loggedInRole=matchedEmployee.role;
+        
+        // Update Employee Dashboard name, role and avatar initials!
         setTimeout(()=>{
           const nameEl=document.querySelector('#scr-emp-dash .tb-name');
           const roleEl=document.getElementById('ed-role');
-          if(nameEl)nameEl.textContent=window._loggedInName;
-          if(roleEl)roleEl.textContent=(window._loggedInRole||'Tile Master')+' — '+(companyData?companyData.name:'ACB Company');
+          const avatarEl=document.querySelector('#scr-emp-dash .av');
+          
+          if(nameEl) nameEl.textContent = window._loggedInName;
+          if(roleEl) roleEl.textContent = (window._loggedInRole || 'Tile Master') + ' — ' + (companyData ? companyData.name : 'ACB Company');
+          
+          if(avatarEl) {
+            const parts = window._loggedInName.trim().split(/\s+/);
+            let initials = 'EE';
+            if (parts.length > 0 && parts[0]) {
+              initials = parts[0][0].toUpperCase();
+              if (parts.length > 1 && parts[parts.length - 1]) {
+                initials += parts[parts.length - 1][0].toUpperCase();
+              }
+            }
+            avatarEl.textContent = initials;
+          }
         },100);
       }
       go(w==='o'?'owner-dash':'emp-dash');
-    }else{document.getElementById(w+'-err').textContent=T[CL][w==='o'?'oWr':'eWr'];pins.length=0;renderPad(w);}
+    }else{
+      document.getElementById(w+'-err').textContent=T[CL][w==='o'?'oWr':'eWr'];
+      pins.length=0;
+      renderPad(w);
+    }
   },250);}
 }
 
@@ -1290,6 +1351,7 @@ function openCreateInvoice(cid,siteId){
 }
 // ══ COMPANY & HR SYSTEM ══
 let companyData={
+  code: 'ACB-2024',
   name:'ACB Company',
   logo:'🔷',
   logoType:'emoji',
