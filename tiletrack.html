@@ -1355,6 +1355,7 @@ function daysUntilExpiry(dateStr){
   return Math.round((d-today)/(1000*60*60*24));
 }
 function expiryTag(dateStr){
+  if(!dateStr) return `<span style="font-size:11px;color:var(--txt3);">—</span>`;
   const d=daysUntilExpiry(dateStr);
   if(d<0)return`<span class="tag tr">EXPIRED</span>`;
   if(d<=60)return`<span class="tag ta">Exp in ${d}d</span>`;
@@ -1561,8 +1562,11 @@ function renderHRForm(empId){
   const emp=empId?hrEmployees.find(e=>e.id===empId):null;
   const isNew=!emp;
   const c=document.getElementById('owner-content');
-  // Store current empId globally for hrTab to use
   window._curHRempId=empId||null;
+
+  const v=key=>emp&&emp[key]!=null?emp[key]:'';
+  const tt=emp&&emp.typeTargets?emp.typeTargets:{};
+  const mode=v('targetMode')||'overall';
 
   c.innerHTML=`<div class="back-row" onclick="renderHRList(document.getElementById('owner-content'))"><span class="back-arrow">‹</span><span class="back-title">${isNew?'New Employee':emp.name}</span></div>
   <div class="tab-btns" id="hr-tabs">
@@ -1571,132 +1575,140 @@ function renderHRForm(empId){
     <button class="tab-btn" onclick="hrTab('work',this)">💰 Work</button>
     <button class="tab-btn" onclick="hrTab('bank',this)">🏦 Bank</button>
   </div>
-  <div id="hr-tab-content"></div>
+  
+  <div id="hr-tab-content">
+    <!-- PERSONAL TAB -->
+    <div id="hr-tab-pane-personal" class="hr-tab-pane">
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Full Name</label><input id="hr-name" value="${v('name')}" placeholder="Ahmed Ali"></div>
+          <div class="fmg"><label>Father Name</label><input id="hr-father" value="${v('fatherName')}" placeholder="Ghulam Ali"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Date of Birth</label><input type="date" id="hr-dob" value="${v('dob')}"></div>
+          <div class="fmg"><label>Nationality</label><select id="hr-nat" style="width:100%;">
+            <option value="Pakistani" ${v('nationality')==='Pakistani'?'selected':''}>Pakistani</option>
+            <option value="Indian" ${v('nationality')==='Indian'?'selected':''}>Indian</option>
+            <option value="Bangladeshi" ${v('nationality')==='Bangladeshi'?'selected':''}>Bangladeshi</option>
+            <option value="Nepali" ${v('nationality')==='Nepali'?'selected':''}>Nepali</option>
+            <option value="Filipino" ${v('nationality')==='Filipino'?'selected':''}>Filipino</option>
+            <option value="Sri Lankan" ${v('nationality')==='Sri Lankan'?'selected':''}>Sri Lankan</option>
+            <option value="Egyptian" ${v('nationality')==='Egyptian'?'selected':''}>Egyptian</option>
+            <option value="Emirati" ${v('nationality')==='Emirati'?'selected':''}>Emirati</option>
+            <option value="Sudanese" ${v('nationality')==='Sudanese'?'selected':''}>Sudanese</option>
+            <option value="Syrian" ${v('nationality')==='Syrian'?'selected':''}>Syrian</option>
+            <option value="Afghan" ${v('nationality')==='Afghan'?'selected':''}>Afghan</option>
+            <option value="Ugandan" ${v('nationality')==='Ugandan'?'selected':''}>Ugandan</option>
+            <option value="Kenyan" ${v('nationality')==='Kenyan'?'selected':''}>Kenyan</option>
+          </select></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Phone (UAE)</label><input type="tel" id="hr-phone" value="${v('phone')}"></div>
+          <div class="fmg"><label>Role</label><select id="hr-role">
+            <option ${v('role')==='Tile Master'?'selected':''}>Tile Master</option>
+            <option ${v('role')==='Helper'?'selected':''}>Helper</option>
+            <option ${v('role')==='Foreman'?'selected':''}>Foreman</option>
+            <option ${v('role')==='Electrician'?'selected':''}>Electrician</option>
+            <option ${v('role')==='Carpenter'?'selected':''}>Carpenter</option>
+          </select></div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--txt);margin:10px 0 8px;">🆘 Emergency Contact</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Contact Name</label><input id="hr-emname" value="${v('emergencyName')}" placeholder="Father / Brother"></div>
+          <div class="fmg"><label>Their Country</label><input id="hr-emcountry" value="${v('emergencyCountry')}" placeholder="Pakistan"></div>
+        </div>
+        <div class="fmg"><label>Emergency Phone (with country code)</label><input type="tel" id="hr-emphone" value="${v('emergencyPhone')}" placeholder="+92-300-..."></div>
+        <div class="fmg"><label>Notes</label><textarea id="hr-notes" style="height:60px;">${v('notes')}</textarea></div>
+      </div>
+    </div>
+    
+    <!-- DOCUMENTS TAB -->
+    <div id="hr-tab-pane-docs" class="hr-tab-pane" style="display: none;">
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🪪 Emirates ID</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>ID Number</label><input id="hr-idno" value="${v('idNo')}" placeholder="784-1990-..."></div>
+          <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-idexp" value="${v('idExpiry')}"></div>
+        </div>
+        <div class="fmg"><label>Attach ID Copy (PDF / Image — optional)</label>
+          <input type="file" id="hr-idpdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);">
+        </div>
+        ${v('idPDF')?'<div style="font-size:11px;color:var(--g);margin-top:4px;">✅ ID copy on file</div>':''}
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">📕 Passport</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Passport Number</label><input id="hr-ppno" value="${v('passportNo')}" placeholder="AB1234567"></div>
+          <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-ppexp" value="${v('passportExpiry')}"></div>
+        </div>
+        <div class="fmg"><label>Attach Passport Copy (PDF / Image — optional)</label>
+          <input type="file" id="hr-pppdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);">
+        </div>
+        ${v('passportPDF')?'<div style="font-size:11px;color:var(--g);margin-top:4px;">✅ Passport copy on file</div>':''}
+      </div>
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🛂 Visa / Residency</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Visa Number</label><input id="hr-visano" value="${v('visaNo')}" placeholder="201/2024/..."></div>
+          <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-visaexp" value="${v('visaExpiry')}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="fmg"><label>Contract Start</label><input type="date" id="hr-cstart" value="${v('contractStart')}"></div>
+          <div class="fmg"><label>Contract End</label><input type="date" id="hr-cend" value="${v('contractEnd')}"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- WORK TAB -->
+    <div id="hr-tab-pane-work" class="hr-tab-pane" style="display: none;">
+      <div class="card">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+          <div class="fmg"><label>Daily Wage (AED)</label><input type="number" id="hr-wage" value="${v('dailyWage')}" inputmode="numeric" style="font-size:18px;font-weight:700;color:var(--g);"></div>
+          <div class="fmg"><label>Employee Portal PIN</label><input type="number" id="hr-pin" value="${v('ownerPin')}" inputmode="numeric" placeholder="4 digits" maxlength="4"></div>
+        </div>
+        <div class="fmg"><label>Target Mode</label>
+          <select id="hr-tmode" onchange="hrTargetModeChange(this.value,'${empId||''}')">
+            <option value="overall" ${mode==='overall'?'selected':''}>Overall Daily Target (1 number for all work)</option>
+            <option value="per_type" ${mode==='per_type'?'selected':''}>Per Work Type (each category separate)</option>
+          </select>
+        </div>
+        <div id="hr-target-section">
+          ${mode==='overall'?`<div class="fmg"><label>Daily Target (m²) = 1 day wage</label><input type="number" id="hr-target" value="${v('overallTarget')}" inputmode="numeric" style="font-size:16px;color:var(--b);font-weight:700;"></div>`
+          :`<div style="font-size:11px;color:var(--txt2);margin-bottom:8px;font-weight:600;">m² or lm per day = 1 day wage:</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${WORK_TYPES_LIST.map(wt=>`<div class="fmg"><label style="font-size:10px;">${wt.label} (${wt.unit})</label><input type="number" id="tt_${wt.key}" value="${tt[wt.key]||0}" inputmode="numeric" style="padding:7px;font-size:13px;"></div>`).join('')}
+          </div>`}
+        </div>
+      </div>
+    </div>
+    
+    <!-- BANK TAB -->
+    <div id="hr-tab-pane-bank" class="hr-tab-pane" style="display: none;">
+      <div class="card">
+        <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🏦 Bank Details (for salary transfer)</div>
+        <div class="fmg"><label>Bank Name</label><input id="hr-bname" value="${v('bankName')}" placeholder="Emirates NBD"></div>
+        <div class="fmg"><label>Account Number / IBAN</label><input id="hr-bacct" value="${v('bankAccount')}" placeholder="AE070331234567890123456"></div>
+      </div>
+    </div>
+  </div>
+  
   <button class="bbtn bg" style="margin-top:10px;" onclick="saveHRProfile('${empId||''}')">💾 Save Employee Profile</button>
-  ${!isNew?`<button class="bbtn" style="background:var(--rl);color:#A32D2D;border:none;margin-top:6px;" onclick="toggleEmpActive('${empId}')">${emp.active?'Deactivate':'Reactivate'} Employee</button>`:''}`;
-
-  // Load personal tab immediately
-  hrTab('personal', c.querySelector('#hr-tabs .tab-btn'));
+  ${!isNew?`<button class="bbtn" style="background:var(--rl);color:#A32D2D;border:none;margin-top:6px;" onclick="toggleEmpActive('${empId}')">${emp.active?'Deactivate':'Reactivate'} Employee</button>`:''}
+  `;
 }
 
 function hrTab(tab, btn){
   document.querySelectorAll('#hr-tabs .tab-btn').forEach(b=>b.classList.remove('on'));
   if(btn) btn.classList.add('on');
-  const tc=document.getElementById('hr-tab-content');
-  if(!tc) return;
-  const empId=window._curHRempId;
-  const emp=empId?hrEmployees.find(e=>e.id===empId):null;
-  const v=key=>emp&&emp[key]!=null?emp[key]:'';
-
-  if(tab==='personal'){
-    tc.innerHTML=`<div class="card">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Full Name</label><input id="hr-name" value="${v('name')}" placeholder="Ahmed Ali"></div>
-        <div class="fmg"><label>Father Name</label><input id="hr-father" value="${v('fatherName')}" placeholder="Ghulam Ali"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Date of Birth</label><input type="date" id="hr-dob" value="${v('dob')}"></div>
-        <div class="fmg"><label>Nationality</label><select id="hr-nat" style="width:100%;">
-          <option value="Pakistani" ${v('nationality')==='Pakistani'?'selected':''}>Pakistani</option>
-          <option value="Indian" ${v('nationality')==='Indian'?'selected':''}>Indian</option>
-          <option value="Bangladeshi" ${v('nationality')==='Bangladeshi'?'selected':''}>Bangladeshi</option>
-          <option value="Nepali" ${v('nationality')==='Nepali'?'selected':''}>Nepali</option>
-          <option value="Filipino" ${v('nationality')==='Filipino'?'selected':''}>Filipino</option>
-          <option value="Sri Lankan" ${v('nationality')==='Sri Lankan'?'selected':''}>Sri Lankan</option>
-          <option value="Egyptian" ${v('nationality')==='Egyptian'?'selected':''}>Egyptian</option>
-          <option value="Emirati" ${v('nationality')==='Emirati'?'selected':''}>Emirati</option>
-          <option value="Sudanese" ${v('nationality')==='Sudanese'?'selected':''}>Sudanese</option>
-          <option value="Syrian" ${v('nationality')==='Syrian'?'selected':''}>Syrian</option>
-          <option value="Afghan" ${v('nationality')==='Afghan'?'selected':''}>Afghan</option>
-          <option value="Ugandan" ${v('nationality')==='Ugandan'?'selected':''}>Ugandan</option>
-          <option value="Kenyan" ${v('nationality')==='Kenyan'?'selected':''}>Kenyan</option>
-        </select></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Phone (UAE)</label><input type="tel" id="hr-phone" value="${v('phone')}"></div>
-        <div class="fmg"><label>Role</label><select id="hr-role">
-          <option ${v('role')==='Tile Master'?'selected':''}>Tile Master</option>
-          <option ${v('role')==='Helper'?'selected':''}>Helper</option>
-          <option ${v('role')==='Foreman'?'selected':''}>Foreman</option>
-          <option ${v('role')==='Electrician'?'selected':''}>Electrician</option>
-          <option ${v('role')==='Carpenter'?'selected':''}>Carpenter</option>
-        </select></div>
-      </div>
-      <div style="font-size:12px;font-weight:600;color:var(--txt);margin:10px 0 8px;">🆘 Emergency Contact</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Contact Name</label><input id="hr-emname" value="${v('emergencyName')}" placeholder="Father / Brother"></div>
-        <div class="fmg"><label>Their Country</label><input id="hr-emcountry" value="${v('emergencyCountry')}" placeholder="Pakistan"></div>
-      </div>
-      <div class="fmg"><label>Emergency Phone (with country code)</label><input type="tel" id="hr-emphone" value="${v('emergencyPhone')}" placeholder="+92-300-..."></div>
-      <div class="fmg"><label>Notes</label><textarea id="hr-notes" style="height:60px;">${v('notes')}</textarea></div>
-    </div>`;
-  }
-  else if(tab==='docs'){
-    tc.innerHTML=`
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🪪 Emirates ID</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>ID Number</label><input id="hr-idno" value="${v('idNo')}" placeholder="784-1990-..."></div>
-        <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-idexp" value="${v('idExpiry')}"></div>
-      </div>
-      <div class="fmg"><label>Attach ID Copy (PDF / Image — optional)</label>
-        <input type="file" id="hr-idpdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);">
-      </div>
-      ${v('idPDF')?'<div style="font-size:11px;color:var(--g);margin-top:4px;">✅ ID copy on file</div>':''}
-    </div>
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">📕 Passport</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Passport Number</label><input id="hr-ppno" value="${v('passportNo')}" placeholder="AB1234567"></div>
-        <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-ppexp" value="${v('passportExpiry')}"></div>
-      </div>
-      <div class="fmg"><label>Attach Passport Copy (PDF / Image — optional)</label>
-        <input type="file" id="hr-pppdf" accept=".pdf,image/*" style="width:100%;padding:8px;border:1px solid var(--brd);border-radius:10px;font-size:12px;background:var(--bg);color:var(--txt);">
-      </div>
-      ${v('passportPDF')?'<div style="font-size:11px;color:var(--g);margin-top:4px;">✅ Passport copy on file</div>':''}
-    </div>
-    <div class="card">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🛂 Visa / Residency</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Visa Number</label><input id="hr-visano" value="${v('visaNo')}" placeholder="201/2024/..."></div>
-        <div class="fmg"><label>Expiry Date</label><input type="date" id="hr-visaexp" value="${v('visaExpiry')}"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="fmg"><label>Contract Start</label><input type="date" id="hr-cstart" value="${v('contractStart')}"></div>
-        <div class="fmg"><label>Contract End</label><input type="date" id="hr-cend" value="${v('contractEnd')}"></div>
-      </div>
-    </div>`;
-  }
-  else if(tab==='work'){
-    const tt=emp&&emp.typeTargets?emp.typeTargets:{};
-    const mode=v('targetMode')||'overall';
-    tc.innerHTML=`<div class="card">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
-        <div class="fmg"><label>Daily Wage (AED)</label><input type="number" id="hr-wage" value="${v('dailyWage')}" inputmode="numeric" style="font-size:18px;font-weight:700;color:var(--g);"></div>
-        <div class="fmg"><label>Employee Portal PIN</label><input type="number" id="hr-pin" value="${v('ownerPin')}" inputmode="numeric" placeholder="4 digits" maxlength="4"></div>
-      </div>
-      <div class="fmg"><label>Target Mode</label>
-        <select id="hr-tmode" onchange="hrTargetModeChange(this.value,'${empId||''}')">
-          <option value="overall" ${mode==='overall'?'selected':''}>Overall Daily Target (1 number for all work)</option>
-          <option value="per_type" ${mode==='per_type'?'selected':''}>Per Work Type (each category separate)</option>
-        </select>
-      </div>
-      <div id="hr-target-section">
-        ${mode==='overall'?`<div class="fmg"><label>Daily Target (m²) = 1 day wage</label><input type="number" id="hr-target" value="${v('overallTarget')}" inputmode="numeric" style="font-size:16px;color:var(--b);font-weight:700;"></div>`
-        :`<div style="font-size:11px;color:var(--txt2);margin-bottom:8px;font-weight:600;">m² or lm per day = 1 day wage:</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-          ${WORK_TYPES_LIST.map(wt=>`<div class="fmg"><label style="font-size:10px;">${wt.label} (${wt.unit})</label><input type="number" id="tt_${wt.key}" value="${tt[wt.key]||0}" inputmode="numeric" style="padding:7px;font-size:13px;"></div>`).join('')}
-        </div>`}
-      </div>
-    </div>`;
-  }
-  else if(tab==='bank'){
-    tc.innerHTML=`<div class="card">
-      <div style="font-size:13px;font-weight:700;margin-bottom:10px;">🏦 Bank Details (for salary transfer)</div>
-      <div class="fmg"><label>Bank Name</label><input id="hr-bname" value="${v('bankName')}" placeholder="Emirates NBD"></div>
-      <div class="fmg"><label>Account Number / IBAN</label><input id="hr-bacct" value="${v('bankAccount')}" placeholder="AE070331234567890123456"></div>
-    </div>`;
-  }
+  
+  // Hide all tab panes
+  document.querySelectorAll('.hr-tab-pane').forEach(pane => {
+    pane.style.display = 'none';
+  });
+  
+  // Show active tab pane
+  const activePane = document.getElementById('hr-tab-pane-' + tab);
+  if(activePane) activePane.style.display = 'block';
 }
 
 function hrTargetModeChange(val, empId){
@@ -1764,12 +1776,33 @@ function saveHRProfile(empId){
   const selectedNat = g('hr-nat');
   const mappedFlag = natToFlag[selectedNat] || '🌍';
 
+  const typeTargets = {};
+  if (data.targetMode === 'per_type') {
+    WORK_TYPES_LIST.forEach(wt => {
+      const val = parseFloat(g(`tt_${wt.key}`)) || 0;
+      typeTargets[wt.key] = val;
+    });
+  }
+
   if(emp){
     Object.assign(emp,data);
     emp.country = mappedFlag;
+    emp.typeTargets = typeTargets;
+
+    // Sync to wages list (employees array)
+    const wageEmp = employees.find(e => e.id === empId);
+    if(wageEmp) {
+      wageEmp.name = emp.name;
+      wageEmp.role = emp.role;
+      wageEmp.country = emp.country;
+      wageEmp.dailyWage = emp.dailyWage;
+      wageEmp.targetMode = emp.targetMode;
+      wageEmp.overallTarget = emp.overallTarget;
+      wageEmp.typeTargets = Object.assign({}, emp.typeTargets);
+    }
   }
   else{
-    const newEmp={id:'EMP'+Date.now(),country:mappedFlag,active:true,typeTargets:{},idPDF:'',passportPDF:'',photo:'',...data};
+    const newEmp={id:'EMP'+Date.now(),country:mappedFlag,active:true,typeTargets:typeTargets,idPDF:'',passportPDF:'',photo:'',...data};
     hrEmployees.push(newEmp);
     // Also add to wage employees
     employees.push({id:newEmp.id,name:newEmp.name,role:newEmp.role,country:newEmp.country,dailyWage:newEmp.dailyWage,targetMode:newEmp.targetMode,overallTarget:newEmp.overallTarget,typeTargets:newEmp.typeTargets||{},workLog:[]});
