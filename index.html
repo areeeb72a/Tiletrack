@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galadari Trucks — Komatsu AI Tools</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0f1f3d;
+  --navy2:#152a4d;
+  --steel:#2c3e5c;
+  --steel-light:#3d5276;
+  --accent:#ff7a00;
+  --accent2:#ff9933;
+  --grey:#64748b;
+  --grey-light:#94a3b8;
+  --bg:#f4f6f9;
+  --card:#ffffff;
+  --border:#dde3ec;
+  --text:#1a2742;
+  --text2:#5a6b85;
+  --white:#ffffff;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* TOPBAR */
+.topbar{background:var(--navy);color:white;padding:0}
+.topbar-inner{max-width:1100px;margin:0 auto;padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800}
+.brand-text{font-size:16px;font-weight:700;letter-spacing:0.3px}
+.brand-sub{font-size:10px;color:#94a3b8;letter-spacing:1.5px;margin-top:1px}
+.topbar-badge{font-size:11px;background:rgba(255,122,0,0.15);border:1px solid rgba(255,122,0,0.3);color:var(--accent2);padding:5px 14px;border-radius:20px;font-weight:600;letter-spacing:0.5px}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:48px 24px 56px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(255,122,0,0.08),transparent 70%);border-radius:50%}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2}
+.hero-eyebrow{font-size:11px;letter-spacing:3px;color:var(--accent2);font-weight:700;margin-bottom:14px}
+.hero-title{font-size:34px;font-weight:800;color:white;line-height:1.2;margin-bottom:10px}
+.hero-title span{color:var(--accent2)}
+.hero-sub{font-size:14px;color:#aab8cc;max-width:600px;line-height:1.7}
+.hero-stats{display:flex;gap:32px;margin-top:28px}
+.hstat{text-align:left}
+.hstat-num{font-size:26px;font-weight:800;color:white}
+.hstat-lbl{font-size:11px;color:#8fa0bd;letter-spacing:1px;margin-top:2px}
+
+/* CONTAINER */
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.section{padding:48px 0}
+.sec-eyebrow{font-size:11px;letter-spacing:3px;color:var(--accent);font-weight:700;margin-bottom:8px}
+.sec-title{font-size:24px;font-weight:800;color:var(--text);margin-bottom:28px}
+
+/* TOOLS GRID */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px}
+.tool-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 2px 12px rgba(15,31,61,0.06);transition:all 0.25s}
+.tool-card:hover{box-shadow:0 8px 30px rgba(15,31,61,0.12);transform:translateY(-2px)}
+.tool-head{background:linear-gradient(135deg,var(--navy),var(--steel));padding:24px;position:relative}
+.tool-head.pdf-head{background:linear-gradient(135deg,#1e3a5f,#2c5282)}
+.tool-head.translate-head{background:linear-gradient(135deg,#1a5c4a,#2d7a63)}
+.tool-icon-badge{width:52px;height:52px;background:rgba(255,122,0,0.15);border:1px solid rgba(255,122,0,0.3);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:14px}
+.pdf-head .tool-icon-badge{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3)}
+.tool-name{font-size:18px;font-weight:800;color:white;margin-bottom:4px}
+.tool-byline{font-size:10px;letter-spacing:2px;color:var(--accent2);font-weight:700}
+.pdf-head .tool-byline{color:#90cdf4}
+.tool-body{padding:22px 24px}
+.tool-desc{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:18px}
+.tool-input{width:100%;padding:11px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;color:var(--text);background:var(--bg);margin-bottom:10px;outline:none;transition:border-color 0.2s}
+.tool-input:focus{border-color:var(--accent);background:white}
+.tool-textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'JetBrains Mono',monospace;color:var(--text);background:var(--bg);margin-bottom:14px;outline:none;resize:vertical;min-height:140px;transition:border-color 0.2s}
+.tool-textarea:focus{border-color:var(--accent);background:white}
+.tool-btn{width:100%;padding:12px;border-radius:10px;border:none;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;color:white;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 4px 14px rgba(255,122,0,0.3);transition:all 0.2s}
+.tool-btn:hover{box-shadow:0 6px 20px rgba(255,122,0,0.4);transform:translateY(-1px)}
+.tool-btn.pdf-btn{background:linear-gradient(135deg,#2c5282,#3d6ba5);box-shadow:0 4px 14px rgba(44,82,130,0.3)}
+.tool-btn.translate-btn{background:linear-gradient(135deg,#1a5c4a,#2d7a63);box-shadow:0 4px 14px rgba(45,122,99,0.3)}
+.tool-btn.pdf-btn:hover{box-shadow:0 6px 20px rgba(44,82,130,0.4)}
+.tool-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.tool-result{display:none;margin-top:14px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;font-size:13px;color:var(--text);line-height:1.7;max-height:500px;overflow-y:auto;font-family:'JetBrains Mono',monospace;white-space:pre-wrap}
+.tool-result::-webkit-scrollbar{width:5px}
+.tool-result::-webkit-scrollbar-thumb{background:var(--grey-light);border-radius:3px}
+.quick-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.qchip{padding:5px 12px;border-radius:14px;font-size:11px;font-weight:600;background:#eef2f8;color:var(--steel);border:1px solid var(--border);cursor:pointer;transition:all 0.15s}
+.qchip:hover{background:rgba(255,122,0,0.1);border-color:var(--accent);color:var(--accent)}
+.upload-mini{border:1.5px dashed var(--border);border-radius:8px;padding:10px 12px;text-align:center;cursor:pointer;font-size:11px;color:var(--text2);margin-bottom:10px;transition:all 0.2s;background:#f8fafc}
+.upload-mini:hover{border-color:var(--accent);color:var(--accent);background:rgba(255,122,0,0.04)}
+.upload-mini.has-file{border-color:#22c55e;color:#16a34a;background:rgba(34,197,94,0.06);border-style:solid}
+.ai-disclaimer{font-size:11px;color:#92400e;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;margin-top:10px;line-height:1.5}
+.subtab-row{display:flex;gap:4px;margin-bottom:14px;background:#f1f3f7;border-radius:10px;padding:4px}
+.subtab{flex:1;text-align:center;padding:8px 6px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;border-radius:7px;transition:all 0.2s;line-height:1.3}
+.subtab.active{background:white;color:var(--navy);box-shadow:0 1px 4px rgba(15,31,61,0.12)}
+.subtab-panel{display:none}
+.subtab-panel.active{display:block}
+
+/* FOOTER */
+.footer{text-align:center;padding:28px;border-top:1px solid var(--border);background:white}
+.footer-text{font-size:12px;color:var(--text2)}
+.footer-brand{font-weight:700;color:var(--navy)}
+
+@media(max-width:768px){
+  .tools-grid{grid-template-columns:1fr}
+  .hero-title{font-size:26px}
+  .hero-stats{flex-wrap:wrap;gap:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-icon">🚜</div>
+      <div>
+        <div class="brand-text">Galadari Trucks & Heavy Equipment</div>
+        <div class="brand-sub">ABU DHABI, UAE</div>
+      </div>
+    </div>
+    <div class="topbar-badge">KOMATSU PARTNER</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">INTERNAL AI TOOLS DIVISION</div>
+    <div class="hero-title">Komatsu <span>Parts Intelligence</span> Suite</div>
+    <div class="hero-sub">AI-powered tools built for our Parts team — instant part cross-referencing, supersession tracking, and document automation for faster, accurate customer service.</div>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num">2</div><div class="hstat-lbl">AI TOOLS</div></div>
+      <div class="hstat"><div class="hstat-num">24/7</div><div class="hstat-lbl">AVAILABILITY</div></div>
+      <div class="hstat"><div class="hstat-num">KOMATSU</div><div class="hstat-lbl">CERTIFIED PARTNER</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section">
+    <div class="sec-eyebrow">AI TOOLS</div>
+    <div class="sec-title">Available Tools</div>
+
+    <div class="tools-grid">
+
+      <!-- Tool 1: Komatsu Parts Identification Tool -->
+      <div class="tool-card">
+        <div class="tool-head">
+          <div class="tool-icon-badge">🔧</div>
+          <div class="tool-name">Komatsu Parts Identification Tool</div>
+          <div class="tool-byline">KPIT — BY RIZWAN</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-desc">Official Komatsu part lookup, supersession tracking, and OEM cross-referencing — Komatsu data only, no third-party brands.</div>
+
+          <div class="subtab-row">
+            <div class="subtab active" id="subtab-partno" onclick="switchSubtab('partno')">🔢 Part No<br>Lookup</div>
+            <div class="subtab" id="subtab-oem" onclick="switchSubtab('oem')">🔄 OEM Cross-<br>Reference</div>
+            <div class="subtab" id="subtab-lookup" onclick="switchSubtab('lookup')">🔍 Model +<br>Component</div>
+          </div>
+
+          <!-- Sub-tab 1: Part Number Lookup (with image upload) -->
+          <div class="subtab-panel active" id="panel-partno">
+            <div class="quick-row">
+              <span class="qchip" onclick="quickFill('t1', '175-32-41261')">175-32-41261</span>
+              <span class="qchip" onclick="quickFill('t1', '6156-11-3300')">6156-11-3300</span>
+            </div>
+            <input id="t1-input" class="tool-input" placeholder="Komatsu part number or model+component query"/>
+            <div class="upload-mini" id="t1-upload-zone" onclick="document.getElementById('t1-file').click()">
+              <span id="t1-upload-text">📷 Or upload a part label / catalog photo (JPG, PNG)</span>
+            </div>
+            <input type="file" id="t1-file" accept="image/jpeg,image/png,image/jpg" style="display:none" onchange="handleKomatsuFile(event)"/>
+            <button id="t1-btn" class="tool-btn" onclick="runKomatsu()">🔍 Analyze Part Number</button>
+            <div id="t1-result" class="tool-result"></div>
+          </div>
+
+          <!-- Sub-tab 2: OEM Cross-Reference -->
+          <div class="subtab-panel" id="panel-oem">
+            <input id="oem-partno" class="tool-input" placeholder="Non-Komatsu OEM part number (e.g. ND499000-6160)"/>
+            <input id="oem-model" class="tool-input" placeholder="Komatsu machine model (e.g. PC200-8)"/>
+            <button id="oem-btn" class="tool-btn" onclick="runOemCrossRef()">🔄 Find Komatsu Equivalent</button>
+            <div id="oem-result" class="tool-result"></div>
+          </div>
+
+          <!-- Sub-tab 3: Model + Component Lookup -->
+          <div class="subtab-panel" id="panel-lookup">
+            <input id="lookup-model" class="tool-input" placeholder="Komatsu machine model (e.g. WA380-6, D65EX-16)"/>
+            <input id="lookup-component" class="tool-input" placeholder="Component name (e.g. engine oil filter)"/>
+            <button id="lookup-btn" class="tool-btn" onclick="runModelLookup()">🔍 Find Part Number</button>
+            <div id="lookup-result" class="tool-result"></div>
+          </div>
+
+          <div class="ai-disclaimer">⚠️ AI-generated reference suggestions based on Komatsu model knowledge. Always verify against the official Komatsu EPC before ordering or quoting.</div>
+        </div>
+      </div>
+
+      <!-- Tool 2: Text to PDF -->
+      <div class="tool-card">
+        <div class="tool-head pdf-head">
+          <div class="tool-icon-badge">📄</div>
+          <div class="tool-name">Text to PDF Formatter</div>
+          <div class="tool-byline">ERP DOCUMENT ENGINE — BY RIZWAN</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-desc">Convert your raw ERP text file dumps (Quotations, Invoices, Purchase Orders) into clean, professional, PDF-ready formatted documents.</div>
+          <div class="upload-mini" id="t2-upload-zone" onclick="document.getElementById('t2-file').click()">
+            <span id="t2-upload-text">📁 Or upload a .txt file</span>
+          </div>
+          <input type="file" id="t2-file" accept=".txt,text/plain" style="display:none" onchange="handleTxtFile(event)"/>
+          <textarea id="t2-input" class="tool-textarea" placeholder="Paste your raw ERP text dump here, or upload a .txt file above..."></textarea>
+          <button id="t2-btn" class="tool-btn pdf-btn" onclick="runPdf()">📄 Format Document</button>
+          <div id="t2-result" class="tool-result"></div>
+          <button id="t2-download" class="tool-btn pdf-btn" style="display:none;margin-top:10px;background:linear-gradient(135deg,#16a34a,#22c55e)" onclick="downloadPdf()">⬇️ Download as PDF</button>
+        </div>
+      </div>
+
+      <!-- Tool 3: Multi-Language Quote Translator -->
+      <div class="tool-card">
+        <div class="tool-head translate-head">
+          <div class="tool-icon-badge">🌐</div>
+          <div class="tool-name">Quote Translator</div>
+          <div class="tool-byline">MULTI-LANGUAGE ENGINE — BY RIZWAN</div>
+        </div>
+        <div class="tool-body">
+          <div class="tool-desc">Translate your English quotations into Arabic or Urdu for customers — part numbers, prices, and dates stay exact while text is professionally translated.</div>
+          <select id="t3-lang" class="tool-input" style="margin-bottom:10px">
+            <option value="Arabic">🇦🇪 Arabic</option>
+            <option value="Urdu">🇵🇰 Urdu</option>
+          </select>
+          <div class="upload-mini" id="t3-upload-zone" onclick="document.getElementById('t3-file').click()">
+            <span id="t3-upload-text">📁 Or upload a .txt file</span>
+          </div>
+          <input type="file" id="t3-file" accept=".txt,text/plain" style="display:none" onchange="handleT3File(event)"/>
+          <textarea id="t3-input" class="tool-textarea" placeholder="Paste your English quotation text here, or upload a .txt file above..."></textarea>
+          <button id="t3-btn" class="tool-btn translate-btn" onclick="runTranslate()">🌐 Translate Quote</button>
+          <div id="t3-result" class="tool-result" style="direction:rtl;font-family:'Noto Nastaliq Urdu',sans-serif"></div>
+          <button id="t3-download" class="tool-btn translate-btn" style="display:none;margin-top:10px;background:linear-gradient(135deg,#16a34a,#22c55e)" onclick="downloadTranslatedPdf()">⬇️ Download as PDF</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-text">Internal AI Tools — <span class="footer-brand">Galadari Trucks & Heavy Equipment</span> | Abu Dhabi, UAE</div>
+  <div class="footer-text" style="margin-top:6px">Developed by <span class="footer-brand">Syed Rizwan Ahmed</span> — 📞 +971 50 656 5028</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+function quickFill(id, val){
+  document.getElementById(id+'-input').value = val;
+}
+
+// Komatsu image upload
+var komatsuImageBase64 = null;
+var komatsuImageMediaType = null;
+
+function handleKomatsuFile(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  if(file.size > 8*1024*1024){
+    alert('File size should be under 8MB.');
+    return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var result = e.target.result;
+    komatsuImageBase64 = result.split(',')[1];
+    komatsuImageMediaType = file.type;
+    document.getElementById('t1-upload-zone').classList.add('has-file');
+    document.getElementById('t1-upload-text').textContent = '✅ ' + file.name + ' attached';
+  };
+  reader.readAsDataURL(file);
+}
+
+async function runKomatsu(){
+  var partNo = document.getElementById('t1-input').value.trim();
+  if(!partNo && !komatsuImageBase64){alert('Please enter a part number or upload a photo');return;}
+  var btn = document.getElementById('t1-btn');
+  btn.textContent = '⏳ Analyzing...'; btn.disabled = true;
+  try{
+    var bodyData = {tool: 'komatsu_partno'};
+    if(komatsuImageBase64){
+      bodyData.imageBase64 = komatsuImageBase64;
+      bodyData.imageMediaType = komatsuImageMediaType;
+      bodyData.messages = [{
+        role: 'user',
+        content: [
+          {type: 'image', source: {type: 'base64', media_type: komatsuImageMediaType, data: komatsuImageBase64}},
+          {type: 'text', text: partNo ? ('Part Number visible: ' + partNo + '. Please also read any part numbers visible in this image and analyze.') : 'Please read the part number(s) visible in this image and analyze them.'}
+        ]
+      }];
+    } else {
+      bodyData.messages = [{role: 'user', content: partNo}];
+    }
+    var res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(bodyData)
+    });
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Error. Please try again.';
+    reply = reply.replace(/#{1,6} */g, '').trim();
+    document.getElementById('t1-result').style.display = 'block';
+    document.getElementById('t1-result').textContent = reply;
+  } catch(e){ alert('Network error. Please try again.'); }
+  btn.textContent = '🔍 Analyze Part Number'; btn.disabled = false;
+}
+
+// Sub-tab switching for Komatsu tool
+function switchSubtab(name){
+  document.querySelectorAll('.subtab').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.subtab-panel').forEach(function(el){ el.classList.remove('active'); });
+  document.getElementById('subtab-' + name).classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+}
+
+async function runOemCrossRef(){
+  var oemPart = document.getElementById('oem-partno').value.trim();
+  var model = document.getElementById('oem-model').value.trim();
+  if(!oemPart || !model){alert('Please enter both the OEM part number and Komatsu machine model');return;}
+  var btn = document.getElementById('oem-btn');
+  btn.textContent = '⏳ Cross-referencing...'; btn.disabled = true;
+  try{
+    var res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tool: 'komatsu_oem',
+        messages: [{role: 'user', content: 'OEM Part Number: ' + oemPart + ' | Komatsu Machine Model: ' + model}]
+      })
+    });
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Error. Please try again.';
+    reply = reply.replace(/#{1,6} */g, '').trim();
+    document.getElementById('oem-result').style.display = 'block';
+    document.getElementById('oem-result').textContent = reply;
+  } catch(e){ alert('Network error. Please try again.'); }
+  btn.textContent = '🔄 Find Komatsu Equivalent'; btn.disabled = false;
+}
+
+async function runModelLookup(){
+  var model = document.getElementById('lookup-model').value.trim();
+  var component = document.getElementById('lookup-component').value.trim();
+  if(!model || !component){alert('Please enter both the machine model and component name');return;}
+  var btn = document.getElementById('lookup-btn');
+  btn.textContent = '⏳ Searching...'; btn.disabled = true;
+  try{
+    var res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tool: 'komatsu_lookup',
+        messages: [{role: 'user', content: 'Machine Model: ' + model + ' | Component: ' + component}]
+      })
+    });
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : 'Error. Please try again.';
+    reply = reply.replace(/#{1,6} */g, '').trim();
+    document.getElementById('lookup-result').style.display = 'block';
+    document.getElementById('lookup-result').textContent = reply;
+  } catch(e){ alert('Network error. Please try again.'); }
+  btn.textContent = '🔍 Find Part Number'; btn.disabled = false;
+}
+
+// Text file upload for PDF tool
+function handleTxtFile(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById('t2-input').value = e.target.result;
+    document.getElementById('t2-upload-zone').classList.add('has-file');
+    document.getElementById('t2-upload-text').textContent = '✅ ' + file.name + ' loaded';
+  };
+  reader.readAsText(file);
+}
+
+var lastDocData = null;
+
+async function runPdf(){
+  var text = document.getElementById('t2-input').value.trim();
+  if(!text){alert('Please paste your ERP text dump or upload a file');return;}
+  var btn = document.getElementById('t2-btn');
+  btn.textContent = '⏳ Formatting...'; btn.disabled = true;
+  document.getElementById('t2-download').style.display = 'none';
+  document.getElementById('t2-result').style.display = 'none';
+  try{
+    var res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tool: 'pdf',
+        messages: [{role: 'user', content: text}]
+      })
+    });
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    var cleanJson = reply.replace(/^```json\\s*/i, '').replace(/```\\s*$/i, '').trim();
+    var docData;
+    try{
+      docData = JSON.parse(cleanJson);
+    } catch(parseErr){
+      document.getElementById('t2-result').style.display = 'block';
+      if(reply.length < 50 || !cleanJson.trim().endsWith('}')){
+        document.getElementById('t2-result').textContent = '⚠️ This document appears to be too long/complex to process in one go (many line items). Try splitting it into smaller sections, or contact support if this persists.\\n\\nPartial output received:\\n' + reply.substring(0, 500);
+      } else {
+        document.getElementById('t2-result').textContent = 'Error parsing response. Raw output:\\n\\n' + reply;
+      }
+      btn.textContent = '📄 Format Document'; btn.disabled = false;
+      return;
+    }
+    lastDocData = docData;
+    document.getElementById('t2-result').style.display = 'block';
+    document.getElementById('t2-result').textContent = '✅ Document parsed successfully!\\n\\nDocument No: ' + docData.docNo + '\\nCustomer: ' + docData.customerName + '\\nItems: ' + docData.items.length + '\\nNet Amount: ' + docData.currency + ' ' + docData.netAmount + '\\n\\nClick "Download as PDF" below to generate the formatted document.';
+    document.getElementById('t2-download').style.display = 'block';
+  } catch(e){ alert('Network error. Please try again.'); }
+  btn.textContent = '📄 Format Document'; btn.disabled = false;
+}
+
+function fmtMoney(val){
+  if(val === undefined || val === null || val === '') return '';
+  var n = parseFloat(val);
+  if(isNaN(n)) return val;
+  return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function downloadPdf(){
+  if(!lastDocData){alert('Please format a document first.');return;}
+  var d = lastDocData;
+  var doc = new jspdf.jsPDF({unit: 'pt', format: 'a4'});
+  var pageWidth = doc.internal.pageSize.getWidth();
+  var margin = 40;
+  var y = 45;
+
+  // Company Header
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.text(d.companyName || '', pageWidth/2, y, {align: 'center'});
+  y += 16;
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  var contactLine = [d.companyAddress, d.companyContact].filter(Boolean).join('  |  ');
+  doc.text(contactLine, pageWidth/2, y, {align: 'center'});
+  y += 10;
+  doc.setDrawColor(150);
+  doc.line(margin, y, pageWidth-margin, y);
+  y += 22;
+
+  // Document Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.text((d.docTitle || 'QUOTATION').split('').join(' '), pageWidth/2, y, {align: 'center'});
+  y += 22;
+
+  // Metadata two-column table
+  var metaLeft = [
+    ['To M/S', d.customerName || ''],
+    ['Address', d.customerAddress || ''],
+    ['Your Ref', d.yourRef || '']
+  ];
+  var metaRight = [
+    [(d.docNoLabel || 'Quotation No'), d.docNo || ''],
+    ['Date', d.date || ''],
+    ['Salesman', d.salesman || '']
+  ];
+  if(d.trn){ metaRight.push(['Our TRN', d.trn]); }
+
+  doc.autoTable({
+    startY: y,
+    margin: {left: margin, right: margin},
+    theme: 'plain',
+    styles: {fontSize: 9, cellPadding: 2},
+    columnStyles: {
+      0: {fontStyle: 'bold', cellWidth: 70},
+      1: {cellWidth: 175},
+      2: {fontStyle: 'bold', cellWidth: 70},
+      3: {cellWidth: 'auto'}
+    },
+    body: metaLeft.map(function(row, i){
+      var r2 = metaRight[i] || ['', ''];
+      return [row[0]+':', row[1], r2[0]+':', r2[1]];
+    })
+  });
+  y = doc.lastAutoTable.finalY + 14;
+
+  // Line items table
+  var itemRows = (d.items || []).map(function(it){
+    return [
+      it.no || '',
+      it.partNo || '',
+      it.description || '',
+      it.qty || '',
+      fmtMoney(it.unitPrice),
+      fmtMoney(it.extendedPrice),
+      it.stkAvlb || '',
+      it.eta || ''
+    ];
+  });
+
+  doc.autoTable({
+    startY: y,
+    margin: {left: margin, right: margin},
+    head: [['No', 'Part No', 'Description', 'Qty', 'Unit Price\\n('+(d.currency||'AED')+')', 'Extended Price\\n('+(d.currency||'AED')+')', 'Stk\\nAvlb', 'ETA']],
+    body: itemRows,
+    theme: 'grid',
+    headStyles: {fillColor: [30, 58, 95], textColor: 255, fontSize: 8, fontStyle: 'bold', halign: 'center'},
+    styles: {fontSize: 8.5, cellPadding: 4, valign: 'middle'},
+    columnStyles: {
+      0: {halign: 'center', cellWidth: 24},
+      1: {cellWidth: 80},
+      2: {cellWidth: 'auto'},
+      3: {halign: 'center', cellWidth: 30},
+      4: {halign: 'right', cellWidth: 58},
+      5: {halign: 'right', cellWidth: 65},
+      6: {halign: 'center', cellWidth: 32},
+      7: {halign: 'center', cellWidth: 50}
+    }
+  });
+  y = doc.lastAutoTable.finalY + 14;
+
+  // Totals block (right-aligned)
+  var totalsBody = [];
+  if(d.totalAmount) totalsBody.push(['Total Amount', fmtMoney(d.totalAmount)]);
+  if(d.discount) totalsBody.push(['Less: Discount', fmtMoney(d.discount)]);
+  if(d.grossAmount) totalsBody.push(['Gross Amount', fmtMoney(d.grossAmount)]);
+  if(d.vatAmount) totalsBody.push(['VAT Amount (' + (d.vatPercent||'5') + '%)', fmtMoney(d.vatAmount)]);
+
+  doc.autoTable({
+    startY: y,
+    margin: {left: pageWidth - margin - 220},
+    theme: 'plain',
+    styles: {fontSize: 9, cellPadding: 3},
+    columnStyles: {0: {cellWidth: 130, halign: 'left'}, 1: {cellWidth: 90, halign: 'right'}},
+    body: totalsBody
+  });
+  y = doc.lastAutoTable.finalY + 4;
+
+  doc.setDrawColor(30, 58, 95);
+  doc.setLineWidth(0.7);
+  doc.line(pageWidth - margin - 220, y, pageWidth - margin, y);
+  y += 14;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('Net Amount:', pageWidth - margin - 220, y);
+  doc.text((d.currency||'AED') + ' ' + fmtMoney(d.netAmount), pageWidth - margin, y, {align: 'right'});
+  y += 26;
+
+  // Terms & Conditions
+  if(d.terms && d.terms.length){
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('Terms and Conditions', margin, y);
+    y += 14;
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    d.terms.forEach(function(term){
+      doc.text('• ' + term, margin, y);
+      y += 13;
+    });
+  }
+
+  if(d.delivery){
+    y += 4;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Delivery:', margin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(' ' + d.delivery, margin + 50, y);
+    y += 20;
+  }
+
+  if(d.footerNote){
+    doc.setFontSize(8.5);
+    var wrapped = doc.splitTextToSize(d.footerNote, pageWidth - margin*2);
+    doc.text(wrapped, margin, y);
+  }
+
+  doc.save((d.docNo || 'document').replace(/[\\/\\\\]/g, '-') + '.pdf');
+}
+
+// Multi-Language Quote Translator
+function handleT3File(event){
+  var file = event.target.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById('t3-input').value = e.target.result;
+    document.getElementById('t3-upload-zone').classList.add('has-file');
+    document.getElementById('t3-upload-text').textContent = '✅ ' + file.name + ' loaded';
+  };
+  reader.readAsText(file);
+}
+
+var lastTranslatedDoc = null;
+var lastTranslatedLang = '';
+
+async function runTranslate(){
+  var text = document.getElementById('t3-input').value.trim();
+  var lang = document.getElementById('t3-lang').value;
+  if(!text){alert('Please paste your English quotation text or upload a file');return;}
+  var btn = document.getElementById('t3-btn');
+  btn.textContent = '⏳ Translating...'; btn.disabled = true;
+  document.getElementById('t3-result').style.display = 'none';
+  document.getElementById('t3-download').style.display = 'none';
+  try{
+    var res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tool: 'translate',
+        messages: [{role: 'user', content: 'Translate this commercial document into ' + lang + ':\\n\\n' + text}]
+      })
+    });
+    var data = await res.json();
+    var reply = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    var cleanJson = reply.replace(/^```json\\s*/i, '').replace(/```\\s*$/i, '').trim();
+    var docData;
+    try{
+      docData = JSON.parse(cleanJson);
+    } catch(parseErr){
+      document.getElementById('t3-result').style.display = 'block';
+      document.getElementById('t3-result').style.direction = 'ltr';
+      document.getElementById('t3-result').style.fontFamily = "'Inter', sans-serif";
+      if(reply.length < 50 || !cleanJson.trim().endsWith('}')){
+        document.getElementById('t3-result').textContent = '⚠️ This document appears to be too long/complex to translate in one go (many line items). Try splitting it into smaller sections, or contact support if this persists.\\n\\nPartial output received:\\n' + reply.substring(0, 500);
+      } else {
+        document.getElementById('t3-result').textContent = 'Error parsing response. Raw output:\\n\\n' + reply;
+      }
+      btn.textContent = '🌐 Translate Quote'; btn.disabled = false;
+      return;
+    }
+    lastTranslatedDoc = docData;
+    lastTranslatedLang = lang;
+    document.getElementById('t3-result').style.display = 'block';
+    document.getElementById('t3-result').style.direction = 'rtl';
+    document.getElementById('t3-result').style.fontFamily = lang === 'Urdu' ? "'Noto Nastaliq Urdu', serif" : "'Noto Sans Arabic', sans-serif";
+    document.getElementById('t3-result').textContent = '✅ ' + (docData.docTitle || 'Document') + ' — ' + docData.docNo + '\\n' + docData.customerName + '\\n' + docData.items.length + ' items — ' + docData.currency + ' ' + docData.netAmount;
+    document.getElementById('t3-download').style.display = 'block';
+  } catch(e){ alert('Network error. Please try again.'); }
+  btn.textContent = '🌐 Translate Quote'; btn.disabled = false;
+}
+
+function fmtMoneyT3(val){
+  if(val === undefined || val === null || val === '') return '';
+  var n = parseFloat(val);
+  if(isNaN(n)) return val;
+  return n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+async function downloadTranslatedPdf(){
+  if(!lastTranslatedDoc){alert('Please translate a document first.');return;}
+  var d = lastTranslatedDoc;
+  var fontFamily = lastTranslatedLang === 'Urdu' ? "'Noto Nastaliq Urdu', serif" : "'Noto Sans Arabic', sans-serif";
+  var btn = document.getElementById('t3-download');
+  btn.textContent = '⏳ Generating PDF...'; btn.disabled = true;
+
+  var itemRows = (d.items || []).map(function(it){
+    return '<tr>' +
+      '<td style="border:1px solid #999;padding:8px;text-align:center">' + (it.no||'') + '</td>' +
+      '<td style="border:1px solid #999;padding:8px;white-space:nowrap;direction:ltr;text-align:center">' + (it.partNo||'').replace(/\\n/g, '<br>') + '</td>' +
+      '<td style="border:1px solid #999;padding:8px">' + (it.description||'') + '</td>' +
+      '<td style="border:1px solid #999;padding:8px;text-align:center">' + (it.qty||'') + '</td>' +
+      '<td style="border:1px solid #999;padding:8px;text-align:left;direction:ltr">' + fmtMoneyT3(it.unitPrice) + '</td>' +
+      '<td style="border:1px solid #999;padding:8px;text-align:left;direction:ltr">' + fmtMoneyT3(it.extendedPrice) + '</td>' +
+      '<td style="border:1px solid #999;padding:8px;text-align:center">' + (it.stkAvlb||'') + '</td>' +
+      '<td style="border:1px solid #999;padding:8px;text-align:center">' + (it.eta||'') + '</td>' +
+    '</tr>';
+  }).join('');
+
+  var termsHtml = (d.terms||[]).map(function(t){ return '<div style="margin-bottom:4px">• ' + t + '</div>'; }).join('');
+
+  var metaRow = function(label, value){
+    return '<div style="display:flex;margin-bottom:5px"><div style="font-weight:700;min-width:110px">' + label + ':</div><div style="flex:1">' + value + '</div></div>';
+  };
+
+  var html = '' +
+  '<div dir="rtl" style="width:760px;padding:30px;background:#fff;direction:rtl;text-align:right;font-family:' + fontFamily + ';color:#1a1a1a;font-size:13px;line-height:1.7">' +
+    '<div style="text-align:center;font-size:18px;font-weight:700;margin-bottom:6px">' + (d.companyName||'') + '</div>' +
+    '<div style="text-align:center;font-size:11px;color:#444;margin-bottom:4px">' + (d.companyAddress||'') + '</div>' +
+    '<div style="text-align:center;font-size:11px;color:#444;margin-bottom:14px">' + (d.companyContact||'') + '</div>' +
+    '<div style="border-top:2px solid #1a1a1a;margin-bottom:14px"></div>' +
+    '<div style="text-align:center;font-size:16px;font-weight:700;margin-bottom:16px">' + (d.docTitle||'') + '</div>' +
+    '<div style="display:flex;gap:24px;margin-bottom:16px;font-size:12px">' +
+      '<div style="flex:1">' +
+        metaRow(d.customerLabel, (d.customerName||'') + '<br>' + (d.customerAddress||'')) +
+        metaRow(d.yourRefLabel, d.yourRef||'') +
+        metaRow(d.trnLabel, d.trn||'') +
+      '</div>' +
+      '<div style="flex:1">' +
+        metaRow(d.docNoLabel, d.docNo||'') +
+        metaRow(d.dateLabel, d.date||'') +
+        metaRow(d.salesmanLabel, d.salesman||'') +
+      '</div>' +
+    '</div>' +
+    '<table dir="rtl" style="width:100%;border-collapse:collapse;margin-bottom:14px;font-size:11.5px">' +
+      '<colgroup>' +
+        '<col style="width:5%">' +
+        '<col style="width:16%">' +
+        '<col style="width:auto">' +
+        '<col style="width:6%">' +
+        '<col style="width:12%">' +
+        '<col style="width:13%">' +
+        '<col style="width:8%">' +
+        '<col style="width:10%">' +
+      '</colgroup>' +
+      '<thead><tr style="background:#1e3a5f;color:#fff">' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.no||'') + '</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.partNo||'') + '</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.description||'') + '</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.qty||'') + '</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.unitPrice||'') + ' (' + d.currency + ')</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.extendedPrice||'') + ' (' + d.currency + ')</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.stkAvlb||'') + '</th>' +
+        '<th style="border:1px solid #999;padding:8px">' + (d.tableHeaders.eta||'') + '</th>' +
+      '</tr></thead>' +
+      '<tbody>' + itemRows + '</tbody>' +
+    '</table>' +
+    '<div style="margin-right:0;margin-left:auto;width:280px;font-size:12px;margin-bottom:14px">' +
+      (d.totalAmount ? '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>' + d.totalAmountLabel + ':</span><span style="direction:ltr">' + fmtMoneyT3(d.totalAmount) + '</span></div>' : '') +
+      (d.discount ? '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>' + d.discountLabel + ':</span><span style="direction:ltr">' + fmtMoneyT3(d.discount) + '</span></div>' : '') +
+      (d.grossAmount ? '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>' + d.grossAmountLabel + ':</span><span style="direction:ltr">' + fmtMoneyT3(d.grossAmount) + '</span></div>' : '') +
+      (d.vatAmount ? '<div style="display:flex;justify-content:space-between;padding:3px 0"><span>' + d.vatLabel + ':</span><span style="direction:ltr">' + fmtMoneyT3(d.vatAmount) + '</span></div>' : '') +
+      '<div style="display:flex;justify-content:space-between;border-top:2px solid #1a1a1a;padding-top:6px;margin-top:4px;font-weight:700;font-size:14px"><span>' + d.netAmountLabel + ':</span><span style="direction:ltr">' + d.currency + ' ' + fmtMoneyT3(d.netAmount) + '</span></div>' +
+    '</div>' +
+    (d.terms && d.terms.length ? '<div style="font-weight:700;margin-bottom:6px">' + (d.termsLabel||'') + '</div><div style="font-size:11.5px;margin-bottom:10px">' + termsHtml + '</div>' : '') +
+    (d.delivery ? '<div style="font-size:11.5px;margin-bottom:10px"><b>' + (d.deliveryLabel||'') + ':</b> ' + d.delivery + '</div>' : '') +
+    (d.footerNote ? '<div style="font-size:10.5px;color:#555;border-top:1px solid #ccc;padding-top:8px;margin-top:10px">' + d.footerNote + '</div>' : '') +
+  '</div>';
+
+  var renderDiv = document.createElement('div');
+  renderDiv.style.position = 'fixed';
+  renderDiv.style.top = '-9999px';
+  renderDiv.style.left = '0';
+  renderDiv.innerHTML = html;
+  document.body.appendChild(renderDiv);
+
+  try{
+    var canvas = await html2canvas(renderDiv, {scale: 2, backgroundColor: '#ffffff'});
+    document.body.removeChild(renderDiv);
+
+    var imgData = canvas.toDataURL('image/png');
+    var doc = new jspdf.jsPDF({unit: 'pt', format: 'a4'});
+    var pageWidth = doc.internal.pageSize.getWidth();
+    var pageHeight = doc.internal.pageSize.getHeight();
+    var imgWidth = pageWidth - 40;
+    var imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    var heightLeft = imgHeight;
+    var position = 20;
+
+    doc.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+    heightLeft -= (pageHeight - 40);
+
+    while(heightLeft > 0){
+      position = heightLeft - imgHeight + 20;
+      doc.addPage();
+      doc.addImage(imgData, 'PNG', 20, position, imgWidth, imgHeight);
+      heightLeft -= (pageHeight - 40);
+    }
+
+    doc.save((d.docNo || 'translated-quote').replace(/[\\/\\\\]/g, '-') + '-' + lastTranslatedLang.toLowerCase() + '.pdf');
+  } catch(e){
+    if(document.body.contains(renderDiv)) document.body.removeChild(renderDiv);
+    alert('Error generating PDF. Please try again.');
+  }
+
+  btn.textContent = '⬇️ Download as PDF'; btn.disabled = false;
+}
+</script>
+
+
+</body>
+</html>
